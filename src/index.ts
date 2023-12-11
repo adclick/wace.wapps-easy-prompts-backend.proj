@@ -1,33 +1,14 @@
-import { PrismaClient } from '@prisma/client'
 import express from 'express'
-
-const prisma = new PrismaClient();
+const userRoutes = require('./routes/userRoutes');
 const app = express();
 
+// Middleware to parse JSON in request body
 app.use(express.json());
 
-app.get('/users/:id', async (req, res) => {
-    const user = await prisma.users.findFirst({
-        where: {
-            auth0_id: req.params.id
-        }
-    });
-    
-    res.json(user)
-});
+// Use user routes
+app.use('/api', userRoutes);
 
-app.post('/prompt', async (req, res) => {
-    await prisma.prompts.create({
-        data: {
-            name: "",
-            slug: "",
-            content: "",
-            provider_id: 1,
-            technology_id: 1
-        }
-    })
-});
-
-app.listen(3000, () =>
-    console.log('REST API server ready at: http://localhost:3000'),
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () =>
+    console.log('Server ready at: http://localhost:3000'),
 )
