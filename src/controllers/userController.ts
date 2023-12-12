@@ -22,6 +22,6 @@ const getUser = async (req: Request, res: Response) => {
     }
 };
 
-module.exports = {
-    getUser,
+export default {
+    getUser
 };

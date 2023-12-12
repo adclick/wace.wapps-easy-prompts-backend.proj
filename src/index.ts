@@ -1,6 +1,7 @@
 import express from 'express'
-const userRoutes = require('./routes/userRoutes');
+import userRoutes from './routes/userRoutes';
 const app = express();
+
 
 // Middleware to parse JSON in request body
 app.use(express.json());
