@@ -1,5 +1,6 @@
 import express from 'express'
 import userRoutes from './routes/userRoutes';
+import filtersRoutes from './routes/filtersRoutes';
 const app = express();
 
 
@@ -8,6 +9,7 @@ app.use(express.json());
 
 // Use user routes
 app.use('/api', userRoutes);
+app.use('/api', filtersRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>

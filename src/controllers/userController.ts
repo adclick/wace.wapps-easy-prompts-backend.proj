@@ -1,10 +1,11 @@
 import { Request, Response } from "express";
 
-const userService = require('../services/userService');
+import userService from '../services/userService';
 
 const getUser = async (req: Request, res: Response) => {
+    console.log(req);
     try {
-        const auth0Id = req.params.id // Assuming the request body contains user data
+        const auth0Id = req.params.id
         console.log(req.params);
         const user = await userService.getUser(auth0Id);
 

@@ -12,6 +12,6 @@ const getUserRepositories = async (userId: string) => {
     })
 }
 
-module.exports = {
+export default {
     getUserRepositories
 }

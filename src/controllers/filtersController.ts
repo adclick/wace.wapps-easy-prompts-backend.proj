@@ -1,17 +1,15 @@
 import { Request, Response } from "express";
+import filtersService from "../services/filtersService";
 
-const userService = require('../services/userService');
-
-const getUser = async (req: Request, res: Response) => {
+const getFilters = async (req: Request, res: Response) => {
     try {
-        const auth0Id = req.params.id // Assuming the request body contains user data
-        console.log(req.params);
-        const user = await userService.getUser(auth0Id);
+        const userId = req.params.userId;
+        const filters = await filtersService.getFilters(userId);
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
-            message: 'Getting User successfully',
-            data: user,
+            message: 'Getting Filters successfully',
+            data: filters,
         });
     } catch (error) {
         console.error('Error getting user:', error);
@@ -23,5 +21,5 @@ const getUser = async (req: Request, res: Response) => {
 };
 
 export default {
-    getUser
+    getFilters
 };

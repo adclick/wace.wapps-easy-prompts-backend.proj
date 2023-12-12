@@ -10,6 +10,6 @@ const getUser = async (auth0Id: string) => {
     })
 }
 
-module.exports = {
+export default {
     getUser
 }
