@@ -82,10 +82,6 @@ insert into wace.categories (name, slug) values ('Other', 'other');
 insert into wace.modifiers (name, content, description, slug, score, created_at, technology_id, user_id, repository_id, language_id, category_id) values ('Clarification and Detail Expansion', 'Provide rich and detailed information from the given prompt: %PROMPT%', 'Provide rich and detailed information from the given prompt: %PROMPT%', 'clarification-and-detail-expansion', 50, now(), (select id from wace.technologies where slug = 'text-generation'), (select id from wace.users where email = 'nuno.saraiva@wacestudio.com'), (select id from wace.repositories where slug = 'my-repository'), (select language_id from wace.users where email = 'nuno.saraiva@wacestudio.com'), (select id from wace.categories where slug = 'copywriting'));
 -- insert into wace.modifiers (name_en, name_pt, content_en, content_pt, description_en, description_pt, slug, technology_id, user_id, repository_id, language_id) values ('Detailed and captivating image', 'Imagem cativante e detalhada', 'Provide a captivating and high-resolution image from the following prompt: %PROMPT%', 'Pode fornecer mais detalhes sobre %PROMPT%? Quanto mais informações específicas você fornecer, melhor poderei ajudar na geração de conteúdo de alta qualidade.', 'Provide a captivating and high-resolution image from the following prompt: %PROMPT%', 'Pedido de informações adicionais para melhorar a qualidade do conteúdo.', 'detailed-and-captivating-image', (select id from wace.technologies where slug = 'image-generation'), (select id from wace.users where email = 'nuno.saraiva@wacestudio.com'), (select id from wace.repositories where creator_id = (select id from wace.users where email = 'nuno.saraiva@wacestudio.com')), (select language_id from wace.users where email = 'nuno.saraiva@wacestudio.com'));
 
--- Tempaltes
-insert into wace.templates(name, content, slug, score, created_at, technology_id, provider_id, user_id, repository_id, language_id, category_id) values ('SEO Report', 'Provide me with guidelines for creating a very detailed report about SEO', 'seo-report', 50, now(), (select id from wace.technologies where slug = 'text-generation'), (select id from wace.providers where slug = 'openai'), (select id from wace.users where email = 'nuno.saraiva@wacestudio.com'), (select id from wace.repositories where slug = 'my-repository'), (select language_id from wace.users where email = 'nuno.saraiva@wacestudio.com'), (select id from wace.categories where slug = 'seo'));
-
-
 
 -- Prompts'
 INSERT INTO wace.prompts(name, content, description, slug, score, created_at, technology_id, provider_id, user_id, repository_id, language_id, category_id) VALUES ('Generate Social Media Marketing Ideas', 'Prompt to generate innovative and engaging social media marketing concepts for a product launch.', 'Generate creative and effective social media marketing ideas to boost product visibility and engagement.', 'generate-social-media-marketing-ideas', 50, NOW(), (SELECT id FROM wace.technologies WHERE slug = 'text-generation'), (SELECT id FROM wace.providers WHERE slug = 'openai'), (SELECT id FROM wace.users WHERE email = 'nuno.saraiva@wacestudio.com'), (SELECT id FROM wace.repositories WHERE slug = 'wace'), (SELECT id FROM wace.languages WHERE slug= 'en'), (SELECT id FROM wace.categories WHERE slug = 'other'));
@@ -170,5 +166,59 @@ INSERT INTO wace.prompts (
     (SELECT id FROM wace.users WHERE email = 'nuno.saraiva@wacestudio.com'), 
     (SELECT id FROM wace.repositories WHERE slug = 'wace'), 
     (SELECT id FROM wace.languages WHERE slug= 'en'), 
+    (SELECT id FROM wace.categories WHERE slug = 'other')
+);
+INSERT INTO wace.prompts (
+    name, 
+    content, 
+    description, 
+    slug, 
+    score, 
+    created_at, 
+    technology_id, 
+    provider_id, 
+    user_id, 
+    repository_id, 
+    language_id, 
+    category_id
+) VALUES (
+    'Headlines para Indústria Automóvel',
+    'Cria títulos cativantes para uma série de artigos relacionados às tendências da indústria automóvel.',
+    'Títulos cativantes para indústria automóvel.',
+    'headlines-para-industria-automovel',
+    50, 
+    NOW(), 
+    (SELECT id FROM wace.technologies WHERE slug = 'text-generation'), 
+    (SELECT id FROM wace.providers WHERE slug = 'openai'), 
+    (SELECT id FROM wace.users WHERE email = 'nuno.saraiva@wacestudio.com'), 
+    (SELECT id FROM wace.repositories WHERE slug = 'wace'), 
+    (SELECT id FROM wace.languages WHERE slug= 'pt'), 
+    (SELECT id FROM wace.categories WHERE slug = 'other')
+);
+INSERT INTO wace.prompts (
+    name, 
+    content, 
+    description, 
+    slug, 
+    score, 
+    created_at, 
+    technology_id, 
+    provider_id, 
+    user_id, 
+    repository_id, 
+    language_id, 
+    category_id
+) VALUES (
+    'Keywords de Natal',
+    'Cria uma lista abrangente de keywords relevantes e relacionadas com o Natal. Garante que as keywords abranjam um amplo espectro de aspectos e complexidades associadas ao tópico. O objetivo é capturar a essência do Natal incluindo termos amplamente reconhecidos, bem como aqueles que podem ser mais específicos ou especializados. Fornece uma variedade diversificada de keywords para atender aos diferentes níveis de familiaridade com o tema.',
+    'Lista de keywords relevantes sobre o Natal',
+    'headlines-para-industria-automovel',
+    50, 
+    NOW(), 
+    (SELECT id FROM wace.technologies WHERE slug = 'text-generation'), 
+    (SELECT id FROM wace.providers WHERE slug = 'openai'), 
+    (SELECT id FROM wace.users WHERE email = 'nuno.saraiva@wacestudio.com'), 
+    (SELECT id FROM wace.repositories WHERE slug = 'wace'), 
+    (SELECT id FROM wace.languages WHERE slug= 'pt'), 
     (SELECT id FROM wace.categories WHERE slug = 'other')
 );
