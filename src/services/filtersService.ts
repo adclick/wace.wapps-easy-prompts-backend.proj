@@ -8,7 +8,7 @@ const getFilters = async (userId: string) => {
   const technologies = await technology.getTechnologies();
 
   return {
-    text: "",
+    searchTerm: "",
     technologies,
     repositories,
     languages,
