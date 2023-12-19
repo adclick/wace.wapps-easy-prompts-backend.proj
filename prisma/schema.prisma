@@ -7,90 +7,28 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model languages {
-  id        Int         @id @default(autoincrement())
-  name      String      @db.VarChar(255)
-  slug      String      @db.VarChar(255)
-  modifiers modifiers[]
-  prompts   prompts[]
-  templates templates[]
+enum CRAFT_TYPE {
+  PROMPT
+  TEMPLATE
+  MODIFIER
 }
 
-model modifiers {
-  id                  Int                   @id @default(autoincrement())
-  name                String                @db.VarChar(255)
-  slug                String                @db.VarChar(255)
-  content             String
-  description         String?
-  score               Int
-  created_at          DateTime              @db.Timestamptz(6)
-  technology_id       Int
-  user_id             Int
-  repository_id       Int
-  language_id         Int
-  languages           languages             @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  repositories        repositories          @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies        technologies          @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users               users                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  prompts_modifiers   prompts_modifiers[]
-  templates_modifiers templates_modifiers[]
-}
-
-model parameters {
-  id                                Int                                 @id @default(autoincrement())
-  name                              String                              @db.VarChar(255)
-  slug                              String                              @db.VarChar(255)
-  prompts_parameters                prompts_parameters[]
-  technologies_providers_parameters technologies_providers_parameters[]
-}
-
-model prompts {
+model users {
   id                 Int                  @id @default(autoincrement())
-  name               String               @db.VarChar(255)
-  slug               String               @db.VarChar(255)
-  content            String
-  description        String?
-  score              Int
-  created_at         DateTime             @db.Timestamptz(6)
-  technology_id      Int
-  provider_id        Int
-  user_id            Int
-  repository_id      Int
-  language_id        Int
-  languages          languages            @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  providers          providers            @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  repositories       repositories         @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies       technologies         @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users              users                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  prompts_modifiers  prompts_modifiers[]
-  prompts_parameters prompts_parameters[]
+  email              String               @db.VarChar(255)
+  auth0_id           String?              @unique @db.VarChar(255)
+  theme              String               @db.VarChar(255) @default("dark")
+  first_login        Boolean              @default(true)
+  crafts             crafts[]
+  repositories       repositories[]
+  users_repositories users_repositories[]
 }
 
-model prompts_modifiers {
-  id          Int       @id @default(autoincrement())
-  prompt_id   Int
-  modifier_id Int
-  modifiers   modifiers @relation(fields: [modifier_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  prompts     prompts   @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model prompts_parameters {
-  id           Int        @id @default(autoincrement())
-  prompt_id    Int
-  parameter_id Int
-  value        String?
-  parameters   parameters @relation(fields: [parameter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  prompts      prompts    @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model providers {
-  id                     Int                      @id @default(autoincrement())
-  name                   String                   @db.VarChar(255)
-  slug                   String                   @db.VarChar(255)
-  default                Boolean?
-  prompts                prompts[]
-  technologies_providers technologies_providers[]
-  templates              templates[]
+model languages {
+  id     Int      @id @default(autoincrement())
+  name   String   @db.VarChar(255)
+  slug   String   @db.VarChar(255)
+  crafts crafts[]
 }
 
 model repositories {
@@ -98,10 +36,8 @@ model repositories {
   name               String               @db.VarChar(255)
   slug               String?              @db.VarChar(255)
   user_id            Int
-  modifiers          modifiers[]
-  prompts            prompts[]
+  crafts             crafts[]
   users              users                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  templates          templates[]
   users_repositories users_repositories[]
 }
 
@@ -110,77 +46,91 @@ model technologies {
   name                   String                   @db.VarChar
   slug                   String                   @db.VarChar
   default                Boolean?
-  modifiers              modifiers[]
-  prompts                prompts[]
+  crafts                 crafts[]
   technologies_providers technologies_providers[]
-  templates              templates[]
+  parameters             parameters[]
+}
+
+model providers {
+  id                     Int                      @id @default(autoincrement())
+  name                   String                   @db.VarChar(255)
+  slug                   String                   @db.VarChar(255)
+  default                Boolean?
+  crafts                 crafts[]
+  technologies_providers technologies_providers[]
+  parameters             parameters[]
+}
+
+model parameters {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(255)
+  slug              String              @db.VarChar(255)
+  content           Json                @db.Json
+  technology_id     Int
+  provider_id       Int
+  technologies      technologies        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  providers         providers           @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  crafts_parameters crafts_parameters[]
+}
+
+model crafts {
+  id                Int                 @id @default(autoincrement())
+  name              String              @db.VarChar(255)
+  slug              String              @db.VarChar(255)
+  content           String
+  description       String?
+  score             Int                 @default(50)
+  created_at        DateTime            @db.Timestamptz(6)
+  language_id       Int
+  repository_id     Int
+  technology_id     Int
+  user_id           Int
+  provider_id       Int?
+  type              CRAFT_TYPE          @default(PROMPT)
+  languages         languages           @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  repositories      repositories        @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  technologies      technologies        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users             users               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  providers         providers?          @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  crafts_parameters crafts_parameters[]
+  crafted_by        crafting[]          @relation("crafted_by")
+  crafting          crafting[]          @relation("crafting")
+}
+
+model crafting {
+  crafted_by_id Int
+  crafted_by    crafts @relation("crafted_by", fields: [crafted_by_id], references: [id])
+  crafting_id   Int
+  crafting      crafts @relation("crafting", fields: [crafting_id], references: [id])
+
+  @@id([crafted_by_id, crafting_id])
+}
+
+model crafts_parameters {
+  craft_id     Int
+  parameter_id Int
+  value        String?
+  parameters   parameters @relation(fields: [parameter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  crafts       crafts     @relation(fields: [craft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([craft_id, parameter_id])
 }
 
 model technologies_providers {
-  id                                Int                                 @id @default(autoincrement())
-  technology_id                     Int
-  provider_id                       Int
-  default                           Boolean?
-  providers                         providers                           @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies                      technologies                        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies_providers_parameters technologies_providers_parameters[]
-}
+  technology_id Int
+  provider_id   Int
+  default       Boolean?
+  providers     providers    @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  technologies  technologies @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-model technologies_providers_parameters {
-  id                     Int                    @id @default(autoincrement())
-  technology_provider_id Int
-  parameter_id           Int
-  content                Json?                  @db.Json
-  parameters             parameters             @relation(fields: [parameter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies_providers technologies_providers @relation(fields: [technology_provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model templates {
-  id                  Int                   @id @default(autoincrement())
-  name                String                @db.VarChar(255)
-  slug                String                @db.VarChar(255)
-  content             String?
-  description         String?
-  score               Int
-  created_at          DateTime              @db.Timestamptz(6)
-  technology_id       Int
-  provider_id         Int
-  user_id             Int
-  repository_id       Int
-  language_id         Int
-  languages           languages             @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  providers           providers             @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  repositories        repositories          @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies        technologies          @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users               users                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  templates_modifiers templates_modifiers[]
-}
-
-model templates_modifiers {
-  id          Int       @id @default(autoincrement())
-  template_id Int
-  modifier_id Int
-  modifiers   modifiers @relation(fields: [modifier_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  templates   templates @relation(fields: [template_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-}
-
-model users {
-  id                 Int                  @id @default(autoincrement())
-  email              String               @db.VarChar(255)
-  auth0_id           String?              @unique @db.VarChar(255)
-  theme              String?              @db.VarChar(255)
-  first_login        Boolean?
-  modifiers          modifiers[]
-  prompts            prompts[]
-  repositories       repositories[]
-  templates          templates[]
-  users_repositories users_repositories[]
+  @@id([technology_id, provider_id])
 }
 
 model users_repositories {
-  id            Int          @id @default(autoincrement())
   user_id       Int
   repository_id Int
   repositories  repositories @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users         users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+  @@id([user_id, repository_id])
 }

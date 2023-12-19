@@ -2,16 +2,16 @@ import { Request, Response } from "express";
 
 import userService from '../services/userService';
 
-const getUser = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
     console.log(req);
     try {
-        const auth0Id = req.params.id
-        console.log(req.params);
-        const user = await userService.getUser(auth0Id);
+        const auth0Id = req.params.id;
+        const email = req.params.email;
+        const user = await userService.login(auth0Id, email);
 
         res.status(201).json({
             success: true,
-            message: 'Getting User successfully',
+            message: 'User Loged in successfully',
             data: user,
         });
     } catch (error) {
@@ -24,5 +24,5 @@ const getUser = async (req: Request, res: Response) => {
 };
 
 export default {
-    getUser
+    login
 };

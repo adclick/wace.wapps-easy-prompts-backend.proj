@@ -1,9 +1,9 @@
-import userModel from '../models/user';
+import userModel from '../models/userModel';
 
-const getUser = async (auth0Id: string) => {
-  return await userModel.getUser(auth0Id);
+const login = async (auth0Id: string, email: string) => {
+  return await userModel.upsertUser(auth0Id, email);
 };
 
 export default {
-  getUser
+  login
 }

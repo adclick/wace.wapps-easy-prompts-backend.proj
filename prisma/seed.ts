@@ -20,7 +20,8 @@ async function main() {
     const userNunoSaraiva = await prisma.users.create({
         data: {
             email: "nuno.saraiva@wacestudio.com",
-            auth0_id: "123"
+            auth0_id: "123",
+            theme: "dark"
         }
     });
 
@@ -88,83 +89,71 @@ async function main() {
         data: {
             name: "Number of Images",
             slug: "number-of-images",
-            technologies_providers_parameters: {
-                createMany: {
-                    data: [
-                        {
-                            technology_provider_id: textGenerationOpenai.id,
-                            content: {"num-images": "4"}
-                        },
-                        {
-                            technology_provider_id: imageGenerationOpenai.id,
-                            content: {"num-images": "4"}
-                        }
-                    ]
+            technology_id: technologyTextGeneration.id,
+            provider_id: providerOpenai.id,
+            content: {"num-images": "4"}
+        }
+    });
+
+    const modifier1 = await prisma.crafts.create({
+        data: {
+            name: "Modifier 1",
+            slug: "modifier-1",
+            content: "",
+            description: "",
+            score: 50,
+            type: "MODIFIER",
+            created_at: new Date(),
+            technology_id: technologyTextGeneration.id,
+            user_id: userNunoSaraiva.id,
+            language_id: languageEN.id,
+            repository_id: nunoSaraivaRepository.id
+        }
+    });
+
+    const prompt1 = await prisma.crafts.create({
+        data: {
+            name: "Keywords de Natal",
+            slug: "keywords-de-natal",
+            content: "Cria uma lista abrangente de keywords relevantes e relacionadas com o Natal. Garante que as keywords abranjam um amplo espectro de aspectos e complexidades associadas ao tópico. O objetivo é capturar a essência do Natal incluindo termos amplamente reconhecidos, bem como aqueles que podem ser mais específicos ou especializados. Fornece uma variedade diversificada de keywords para atender aos diferentes níveis de familiaridade com o tema.",
+            description: "Lista de keywords relevantes sobre o Natal",
+            score: 50,
+            type: "PROMPT",
+            created_at: new Date(),
+            technology_id: technologyTextGeneration.id,
+            provider_id: providerOpenai.id,
+            user_id: userNunoSaraiva.id,
+            language_id: languagePT.id,
+            repository_id: waceRepository.id,
+            crafted_by: {
+                create: {
+                    crafting_id: modifier1.id
                 }
             }
         }
     });
 
-    const modifiers = await prisma.modifiers.createMany({
-        data: [
-            {
-                name: "Modifier 1",
-                slug: "modifier-1",
-                content: "",
-                description: "",
-                score: 50,
-                created_at: new Date(),
-                technology_id: technologyTextGeneration.id,
-                user_id: userNunoSaraiva.id,
-                language_id: languageEN.id,
-                repository_id: nunoSaraivaRepository.id
-            },
-            {
-                name: "Modifier 2",
-                slug: "modifier-2",
-                content: "",
-                description: "",
-                score: 50,
-                created_at: new Date(),
-                technology_id: technologyTextGeneration.id,
-                user_id: userNunoSaraiva.id,
-                language_id: languageEN.id,
-                repository_id: nunoSaraivaRepository.id
-            },
-        ]
-    });
-
-    const prompts = await prisma.prompts.createMany({
-        data: [
-            {
-                name: "Keywords de Natal",
-                slug: "keywords-de-natal",
-                content: "Cria uma lista abrangente de keywords relevantes e relacionadas com o Natal. Garante que as keywords abranjam um amplo espectro de aspectos e complexidades associadas ao tópico. O objetivo é capturar a essência do Natal incluindo termos amplamente reconhecidos, bem como aqueles que podem ser mais específicos ou especializados. Fornece uma variedade diversificada de keywords para atender aos diferentes níveis de familiaridade com o tema.",
-                description: "Lista de keywords relevantes sobre o Natal",
-                score: 50,
-                created_at: new Date(),
-                technology_id: technologyTextGeneration.id,
-                provider_id: providerOpenai.id,
-                user_id: userNunoSaraiva.id,
-                language_id: languagePT.id,
-                repository_id: waceRepository.id
-            },
-            {
-                name: "Headlines para Indústria Automóvel",
-                slug: "headlines-para-industria-automovel",
-                content: "Cria títulos cativantes para uma série de artigos relacionados às tendências da indústria automóvel.",
-                description: "Títulos cativantes para indústria automóvel.",
-                score: 50,
-                created_at: new Date(),
-                technology_id: technologyTextGeneration.id,
-                provider_id: providerOpenai.id,
-                user_id: userNunoSaraiva.id,
-                language_id: languagePT.id,
-                repository_id: waceRepository.id
-            },
-        ]
-    });
-
+    const prompt2 = await prisma.crafts.create({
+        data: {
+            name: "Headlines para Indústria Automóvel",
+            slug: "headlines-para-industria-automovel",
+            content: "Cria títulos cativantes para uma série de artigos relacionados às tendências da indústria automóvel.",
+            description: "Títulos cativantes para indústria automóvel.",
+            score: 50,
+            type: "PROMPT",
+            created_at: new Date(),
+            technology_id: technologyTextGeneration.id,
+            provider_id: providerOpenai.id,
+            user_id: userNunoSaraiva.id,
+            language_id: languagePT.id,
+            repository_id: waceRepository.id,
+            crafted_by: {
+                create: {
+                    crafting_id: modifier1.id
+                }
+            }
+        }
+    })
 }
 
 main()

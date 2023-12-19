@@ -1,8 +1,8 @@
 import express from 'express'
 import { auth } from 'express-oauth2-jwt-bearer';
 import userRoutes from './routes/userRoutes';
-import filtersRoutes from './routes/filtersRoutes';
-import modifiersRoutes from './routes/modifiersRoutes';
+import filterRoutes from './routes/filterRoutes';
+import craftRoutes from './routes/craftRoutes';
 
 const app = express();
 
@@ -21,9 +21,9 @@ const jwtCheck = auth({
 app.use(express.json());
 
 // Use user routes
-app.use('/api', userRoutes);
-app.use('/api', filtersRoutes);
-app.use('/api', modifiersRoutes);
+app.use('/api/users', userRoutes);
+app.use('/api/filters', filterRoutes);
+app.use('/api/crafts', craftRoutes);
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>
