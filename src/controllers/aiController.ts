@@ -51,11 +51,11 @@ const imageGeneration = async (req: Request, res: Response) => {
 
         res.status(200).json({
             success: true,
-            message: 'Text Generated successfully',
+            message: 'Image Generated successfully',
             data: imageGenerated,
         });
     } catch (error) {
-        console.error('Error generating text:', error);
+        console.error('Error generating image:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',

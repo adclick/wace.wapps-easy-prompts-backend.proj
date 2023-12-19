@@ -3,7 +3,6 @@ import { Request, Response } from "express";
 import userService from '../services/userService';
 
 const login = async (req: Request, res: Response) => {
-    console.log(req);
     try {
         const auth0Id = req.params.id;
         const email = req.params.email;

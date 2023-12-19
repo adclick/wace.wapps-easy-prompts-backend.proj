@@ -12,7 +12,7 @@ const getFilters = async (req: Request, res: Response) => {
             data: filters,
         });
     } catch (error) {
-        console.error('Error getting user:', error);
+        console.error('Error getting filters:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',

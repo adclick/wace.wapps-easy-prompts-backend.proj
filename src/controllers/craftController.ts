@@ -40,7 +40,7 @@ const getCrafts = async (req: Request, res: Response) => {
             data: crafts,
         });
     } catch (error) {
-        console.error('Error getting user:', error);
+        console.error('Error getting crafts:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',
@@ -90,11 +90,11 @@ const createModifier = async (req: Request, res: Response) => {
 
         res.status(201).json({
             success: true,
-            message: 'Getting Crafts successfully',
+            message: 'Modifier created successfully',
             data: craftCreated,
         });
     } catch (error) {
-        console.error('Error getting user:', error);
+        console.error('Error creating modifier:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',

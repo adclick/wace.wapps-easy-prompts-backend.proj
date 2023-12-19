@@ -4,7 +4,7 @@ const router = express.Router();
 
 // Define routes
 router.get('/:userId/', craftController.getCrafts);
-router.post('/prompt/:userId/', craftController.createPrompt);
-router.post('/modifier/:userId/', craftController.createModifier);
+router.post('/:userId/prompt', craftController.createPrompt);
+router.post('/:userId/modifier', craftController.createModifier);
 
 export default router;
