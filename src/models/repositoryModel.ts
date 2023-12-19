@@ -2,12 +2,21 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getUserRepositories = async (userId: string) => {
+const getUserRepositories = async (user_id: string) => {
     return await prisma.repositories.findMany({
         where: {
-            users: {
-                auth0_id: userId
-            }
+            OR: [
+                {
+                    user_id
+                },
+                {
+                    users_repositories: {
+                        some: {
+                            user_id
+                        }
+                    }
+                }
+            ]
         }
     })
 }

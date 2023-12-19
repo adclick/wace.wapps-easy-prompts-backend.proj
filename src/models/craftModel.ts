@@ -29,16 +29,24 @@ const getCrafts = async (
                 }
             },
             repositories: {
-                id: {
-                    in: repositories_ids
-                },
-                users_repositories: {
-                    some: {
-                        users: {
-                            auth0_id: user_id
+                OR: [
+                    {
+                        users_repositories: {
+                            some: {
+                                user_id,
+                                repository_id: {
+                                    in: repositories_ids
+                                }
+                            }
+                        }
+                    },
+                    {
+                        user_id,
+                        id: {
+                            in: repositories_ids
                         }
                     }
-                }
+                ]
             },
             technologies: {
                 id: {
@@ -52,7 +60,7 @@ const getCrafts = async (
         include: {
             users: {
                 select: {
-                    auth0_id: true,
+                    id: true,
                     email: true
                 }
             },
@@ -77,11 +85,74 @@ const getCrafts = async (
                     slug: true,
                 }
             },
+            crafted_by: {
+                select: {
+                    crafting: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            description: true,
+                            content: true,
+                            score: true,
+                            created_at: true,
+                            type: true,
+                            users: {
+                                select: {
+                                    id: true,
+                                    email: true,
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    });
+}
+
+const createCraft = async (
+    user_id: string,
+    name: string,
+    slug: string,
+    description: string,
+    content: string,
+    created_at: Date,
+    type: CRAFT_TYPE,
+    language_id: number,
+    repository_id: number,
+    technology_id: number,
+    crafting_ids: number[] = [],
+    provider_id: number | null = null,
+) => {
+    const data = crafting_ids.map(id => {
+        return {
+            crafting_id: id
+        }
+    })
+
+    return await prisma.crafts.create({
+        data: {
+            user_id,
+            name,
+            slug,
+            description,
+            content,
+            created_at,
+            language_id,
+            repository_id,
+            technology_id,
+            provider_id,
+            type,
+            crafted_by: {
+                createMany: { data }
+            }
         }
     })
 }
 
 export default {
     getTypes,
-    getCrafts
+    getCrafts,
+    createCraft
 }

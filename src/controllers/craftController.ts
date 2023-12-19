@@ -1,9 +1,10 @@
 import { Request, Response } from "express";
 import craftService from "../services/craftService";
+import { CRAFT_TYPE } from "@prisma/client";
 
 interface FiltersQuery {
     search_term: string
-    languages_ids : string,
+    languages_ids: string,
     repositories_ids: string,
     technologies_ids: string,
     crafts_types: string
@@ -16,14 +17,6 @@ const getCrafts = async (req: Request, res: Response) => {
         const filtersQuery: unknown = req.query.filters;
         const filters = (filtersQuery as FiltersQuery);
 
-        const {
-            search_term,
-            languages_ids,
-            repositories_ids,
-            technologies_ids,
-            crafts_types
-        } = filters;
-
         const convertToIntArray = (data: string) => {
             return data.split(",").map(d => parseInt(d));
         }
@@ -34,11 +27,11 @@ const getCrafts = async (req: Request, res: Response) => {
 
         const crafts = await craftService.getCrafts(
             userId,
-            search_term,
-            convertToIntArray(languages_ids),
-            convertToIntArray(repositories_ids),
-            convertToIntArray(technologies_ids),
-            convertToStringArray(crafts_types),
+            filters.search_term,
+            convertToIntArray(filters.languages_ids),
+            convertToIntArray(filters.repositories_ids),
+            convertToIntArray(filters.technologies_ids),
+            convertToStringArray(filters.crafts_types),
         );
 
         res.status(200).json({
@@ -55,6 +48,62 @@ const getCrafts = async (req: Request, res: Response) => {
     }
 };
 
+const createPrompt = async (req: Request, res: Response) => {
+    try {
+        const promptCreated = await craftService.createPrompt(
+            req.params.userId,
+            req.body.name,
+            req.body.description,
+            req.body.content,
+            req.body.language_id,
+            req.body.repository_id,
+            req.body.technology_id,
+            req.body.provider_id,
+            req.body.crafting_ids
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'Prompt created successfully',
+            data: promptCreated,
+        });
+    } catch (error) {
+        console.error('Error getting user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+}
+
+const createModifier = async (req: Request, res: Response) => {
+    try {
+        const craftCreated = await craftService.createModifier(
+            req.params.userId,
+            req.body.name,
+            req.body.description,
+            req.body.content,
+            req.body.language_id,
+            req.body.repository_id,
+            req.body.technology_id,
+        );
+
+        res.status(201).json({
+            success: true,
+            message: 'Getting Crafts successfully',
+            data: craftCreated,
+        });
+    } catch (error) {
+        console.error('Error getting user:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+}
+
 export default {
-    getCrafts
+    getCrafts,
+    createPrompt,
+    createModifier
 };

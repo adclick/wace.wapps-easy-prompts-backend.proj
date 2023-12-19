@@ -19,16 +19,16 @@ async function main() {
 
     const userNunoSaraiva = await prisma.users.create({
         data: {
+            id: "123",
             email: "nuno.saraiva@wacestudio.com",
-            auth0_id: "123",
             theme: "dark"
         }
     });
 
     const userTeste = await prisma.users.create({
         data: {
+            id: "456",
             email: "teste@wacestudio.com",
-            auth0_id: "456",
             theme: "dark"
         }
     });
@@ -58,7 +58,7 @@ async function main() {
                 createMany: {
                     data: [
                         {
-                            user_id: nunoSaraivaRepository.id
+                            user_id: userNunoSaraiva.id
                         },
                         {
                             user_id: userTeste.id

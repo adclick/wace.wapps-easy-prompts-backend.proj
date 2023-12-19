@@ -1,5 +1,17 @@
 import { CRAFT_TYPE } from '@prisma/client';
 import craftModel from '../models/craftModel';
+import slugify from 'slugify';
+
+const getCraftType = (type: string) => {
+  switch (type) {
+    case CRAFT_TYPE.MODIFIER:
+      return CRAFT_TYPE.MODIFIER;
+    case CRAFT_TYPE.TEMPLATE:
+      return CRAFT_TYPE.TEMPLATE;
+    default:
+      return CRAFT_TYPE.PROMPT;
+  }
+}
 
 const getCrafts = async (
   userId: string,
@@ -9,16 +21,7 @@ const getCrafts = async (
   technologies_ids: number[],
   crafts_types: string[]
 ) => {
-  const types = crafts_types.map(t => {
-    switch (t) {
-      case CRAFT_TYPE.MODIFIER:
-        return CRAFT_TYPE.MODIFIER;
-      case CRAFT_TYPE.TEMPLATE:
-        return CRAFT_TYPE.TEMPLATE;
-      default:
-        return CRAFT_TYPE.PROMPT;
-    }
-  })
+  const types = crafts_types.map(t => getCraftType(t));
 
   return await craftModel.getCrafts(
     userId,
@@ -30,6 +33,64 @@ const getCrafts = async (
   );
 };
 
+const createPrompt = async (
+  userId: string,
+  name: string,
+  description: string,
+  content: string,
+  languageId: number,
+  repositoryId: number,
+  technologyId: number,
+  providerId: number,
+  craftingIds: number[]
+) => {
+  const slug = slugify(name);
+  const createdAt = new Date();
+
+  return await craftModel.createCraft(
+    userId,
+    name,
+    slug,
+    description,
+    content,
+    createdAt,
+    CRAFT_TYPE.PROMPT,
+    languageId,
+    repositoryId,
+    technologyId,
+    craftingIds,
+    providerId
+  )
+}
+
+const createModifier = async (
+  userId: string,
+  name: string,
+  description: string,
+  content: string,
+  languageId: number,
+  repositoryId: number,
+  technologyId: number,
+) => {
+  const slug = slugify(name);
+  const createdAt = new Date();
+
+  return await craftModel.createCraft(
+    userId,
+    name,
+    slug,
+    description,
+    content,
+    createdAt,
+    CRAFT_TYPE.PROMPT,
+    languageId,
+    repositoryId,
+    technologyId
+  )
+}
+
 export default {
-  getCrafts
+  getCrafts,
+  createPrompt,
+  createModifier
 }
