@@ -20,9 +20,6 @@ const getCrafts = async (
 ) => {
     return await prisma.crafts.findMany({
         where: {
-            users: {
-                auth0_id: user_id
-            },
             content: {
                 contains: search_term
             },
@@ -34,6 +31,13 @@ const getCrafts = async (
             repositories: {
                 id: {
                     in: repositories_ids
+                },
+                users_repositories: {
+                    some: {
+                        users: {
+                            auth0_id: user_id
+                        }
+                    }
                 }
             },
             technologies: {

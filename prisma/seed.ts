@@ -25,11 +25,27 @@ async function main() {
         }
     });
 
+    const userTeste = await prisma.users.create({
+        data: {
+            email: "teste@wacestudio.com",
+            auth0_id: "456",
+            theme: "dark"
+        }
+    });
+
     const nunoSaraivaRepository = await prisma.repositories.create({
         data: {
             name: "My Repository",
             slug: "my-repository",
             user_id: userNunoSaraiva.id
+        }
+    });
+
+    const testeRepository = await prisma.repositories.create({
+        data: {
+            name: "My Repository",
+            slug: "my-repository",
+            user_id: userTeste.id
         }
     });
 
@@ -39,8 +55,15 @@ async function main() {
             slug: "wace",
             user_id: nunoSaraivaRepository.user_id,
             users_repositories: {
-                create: {
-                    user_id: nunoSaraivaRepository.id
+                createMany: {
+                    data: [
+                        {
+                            user_id: nunoSaraivaRepository.id
+                        },
+                        {
+                            user_id: userTeste.id
+                        },
+                    ]
                 }
             }
         }
