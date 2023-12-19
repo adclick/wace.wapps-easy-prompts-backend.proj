@@ -3,9 +3,12 @@ import language from '../models/language';
 import technology from '../models/technology';
 
 const getFilters = async (userId: string) => {
-  const repositories = await repository.getUserRepositories(userId);
-  const languages = await language.getLanguages();
-  const technologies = await technology.getTechnologies();
+  const repositories = repository.getUserRepositories(userId);
+  const languages = language.getLanguages();
+  const technologies = technology.getTechnologies();
+
+  Promise.all([repositories, languages, technologies]).then(values => {
+  })
 
   return {
     searchTerm: "",
