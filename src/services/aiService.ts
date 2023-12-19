@@ -20,7 +20,6 @@ const imageGeneration = async (
     console.log(url)
 
     const response = await axios.get(url, {
-        timeout: 60000
     });
 
     console.log(response);
