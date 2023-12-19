@@ -9,6 +9,7 @@ interface FiltersQuery {
     crafts_types: string
 }
 
+// http://localhost:3000/api/crafts/123/?filters[search_term]=&filters[languages_ids]=2&filters[repositories_ids]=2&filters[technologies_ids]=1&filters[crafts_types]=PROMPTS
 const getCrafts = async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;
@@ -23,13 +24,21 @@ const getCrafts = async (req: Request, res: Response) => {
             crafts_types
         } = filters;
 
+        const convertToIntArray = (data: string) => {
+            return data.split(",").map(d => parseInt(d));
+        }
+
+        const convertToStringArray = (data: string) => {
+            return data.split(",");
+        }
+
         const crafts = await craftService.getCrafts(
             userId,
             search_term,
-            languages_ids.split(",").map(l => parseInt(l)),
-            repositories_ids.split(",").map(l => parseInt(l)),
-            technologies_ids.split(",").map(l => parseInt(l)),
-            crafts_types.split(",")
+            convertToIntArray(languages_ids),
+            convertToIntArray(repositories_ids),
+            convertToIntArray(technologies_ids),
+            convertToStringArray(crafts_types),
         );
 
         res.status(200).json({

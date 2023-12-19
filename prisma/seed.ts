@@ -107,7 +107,7 @@ async function main() {
             technology_id: technologyTextGeneration.id,
             user_id: userNunoSaraiva.id,
             language_id: languageEN.id,
-            repository_id: nunoSaraivaRepository.id
+            repository_id: waceRepository.id
         }
     });
 
@@ -123,7 +123,7 @@ async function main() {
             technology_id: technologyTextGeneration.id,
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
-            language_id: languagePT.id,
+            language_id: languageEN.id,
             repository_id: waceRepository.id,
             crafted_by: {
                 create: {
@@ -145,7 +145,7 @@ async function main() {
             technology_id: technologyTextGeneration.id,
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
-            language_id: languagePT.id,
+            language_id: languageEN.id,
             repository_id: waceRepository.id,
             crafted_by: {
                 create: {

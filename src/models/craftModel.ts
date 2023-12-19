@@ -44,6 +44,35 @@ const getCrafts = async (
             type: {
                 in: crafts_types
             }
+        },
+        include: {
+            users: {
+                select: {
+                    auth0_id: true,
+                    email: true
+                }
+            },
+            languages: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            repositories: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            technologies: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
         }
     })
 }
