@@ -3,6 +3,7 @@ import { auth } from 'express-oauth2-jwt-bearer';
 import userRoutes from './routes/userRoutes';
 import filterRoutes from './routes/filterRoutes';
 import craftRoutes from './routes/craftRoutes';
+import aiRoutes from './routes/aiRoutes';
 
 const app = express();
 
@@ -20,10 +21,13 @@ const jwtCheck = auth({
 // Middleware to parse JSON in request body
 app.use(express.json());
 
+
 // Use user routes
 app.use('/api/users', userRoutes);
 app.use('/api/filters', filterRoutes);
 app.use('/api/crafts', craftRoutes);
+app.use('/api/ai', aiRoutes);
+
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () =>

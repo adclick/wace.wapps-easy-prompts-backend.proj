@@ -107,7 +107,12 @@ const getCrafts = async (
                     }
                 }
             }
-        }
+        },
+        orderBy: [
+            {
+                created_at: "desc"
+            }
+        ]
     });
 }
 
