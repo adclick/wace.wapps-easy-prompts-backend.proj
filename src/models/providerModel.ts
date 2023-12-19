@@ -1,4 +1,5 @@
 import { PrismaClient } from "@prisma/client";
+import technologyModel from "./technologyModel";
 
 const prisma = new PrismaClient();
 
@@ -19,6 +20,20 @@ const getDefaultProviderByDefaultTechnology = async () => {
     });
 }
 
+const getDefaultProviderByTechnologyId = async (technology_id: number) => {
+    return await prisma.providers.findFirst({
+        where: {
+            technologies_providers: {
+                some: {
+                    technology_id,
+                    default: true
+                }
+            }
+        }
+    })
+}
+
 export default {
-    getDefaultProviderByDefaultTechnology
+    getDefaultProviderByDefaultTechnology,
+    getDefaultProviderByTechnologyId
 }
