@@ -102,8 +102,29 @@ const createModifier = async (req: Request, res: Response) => {
     }
 }
 
+const deleteCraft = async (req: Request, res: Response) => {
+    try {
+        const id = req.params.id;
+
+        const craftDeleted = await craftService.deleteCraft(parseInt(id));
+
+        res.status(201).json({
+            success: true,
+            message: 'Deleted successfully',
+            data: craftDeleted,
+        });
+    } catch (error) {
+        console.error('Error deleting craft:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+}
+
 export default {
     getCrafts,
     createPrompt,
-    createModifier
+    createModifier,
+    deleteCraft
 };

@@ -89,8 +89,13 @@ const createModifier = async (
   )
 }
 
+const deleteCraft = async (id: number) => {
+  return await craftModel.deleteCraft(id);
+}
+
 export default {
   getCrafts,
   createPrompt,
-  createModifier
+  createModifier,
+  deleteCraft
 }

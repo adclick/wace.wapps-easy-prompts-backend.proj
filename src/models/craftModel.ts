@@ -156,8 +156,15 @@ const createCraft = async (
     })
 }
 
+const deleteCraft = async (id: number) => {
+    return await prisma.crafts.delete({
+        where: { id }
+    })
+}
+
 export default {
     getTypes,
     getCrafts,
-    createCraft
+    createCraft,
+    deleteCraft
 }
