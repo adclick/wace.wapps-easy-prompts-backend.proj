@@ -3,7 +3,7 @@ import craftController from '../controllers/craftController';
 const router = express.Router();
 
 // Define routes
-router.get('/:userId/', craftController.getCrafts);
+router.get('/', craftController.getCrafts);
 router.post('/:userId/prompt', craftController.createPrompt);
 router.post('/:userId/modifier', craftController.createModifier);
 router.delete('/:userId/prompt/:id', craftController.deleteCraft);

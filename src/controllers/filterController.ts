@@ -3,8 +3,8 @@ import filtersService from "../services/filterService";
 
 const getFilters = async (req: Request, res: Response) => {
     try {
-        const userId = req.params.userId;
-        const filters = await filtersService.getFilters(userId);
+        const userId = req.query.userId;
+        const filters = await filtersService.getFilters(userId as string);
 
         res.status(200).json({
             success: true,
