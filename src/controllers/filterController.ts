@@ -6,11 +6,7 @@ const getFilters = async (req: Request, res: Response) => {
         const userId = req.query.userId;
         const filters = await filtersService.getFilters(userId as string);
 
-        res.status(200).json({
-            success: true,
-            message: 'Getting Filters successfully',
-            data: filters,
-        });
+        res.status(200).json(filters);
     } catch (error) {
         console.error('Error getting filters:', error);
         res.status(500).json({

@@ -14,6 +14,8 @@ interface FiltersQuery {
 const getCrafts = async (req: Request, res: Response) => {
     try {
         const convertToIntArray = (data: string) => {
+            if (data === "") return [];
+
             return data.split(",").map(d => parseInt(d));
         }
 
@@ -30,11 +32,7 @@ const getCrafts = async (req: Request, res: Response) => {
             convertToStringArray(req.query.crafts_types as string),
         );
 
-        res.status(200).json({
-            success: true,
-            message: 'Getting Crafts successfully',
-            data: crafts,
-        });
+        res.status(200).json(crafts);
     } catch (error) {
         console.error('Error getting crafts:', error);
         res.status(500).json({
