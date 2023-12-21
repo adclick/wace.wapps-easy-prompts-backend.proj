@@ -21,6 +21,27 @@ const getUserRepositories = async (user_id: string) => {
     })
 }
 
+const getRepositoryBySlug = async (slug: string) => {
+    return await prisma.repositories.findFirst({
+        where: {slug}
+    });
+}
+
+const addUser = async (repository_id: number, user_id: string) => {
+    return await prisma.users_repositories.upsert({
+        where: {
+            user_id_repository_id:{
+                repository_id,
+                user_id
+            } 
+        },
+        update: {repository_id, user_id},
+        create: {repository_id, user_id}
+    });
+}
+
 export default {
-    getUserRepositories
+    getUserRepositories,
+    getRepositoryBySlug,
+    addUser
 }

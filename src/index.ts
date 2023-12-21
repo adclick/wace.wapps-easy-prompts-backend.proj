@@ -6,6 +6,8 @@ import optionRoutes from './routes/optionRoutes';
 import craftRoutes from './routes/craftRoutes';
 import aiRoutes from './routes/aiRoutes';
 
+const cors = require('cors');
+
 const app = express();
 
 // Authorization middleware. When used, the Access Token must
@@ -21,6 +23,8 @@ const jwtCheck = auth({
 
 // Middleware to parse JSON in request body
 app.use(express.json());
+
+app.use(cors());
 
 // Use user routes
 app.use('/api/users', userRoutes);

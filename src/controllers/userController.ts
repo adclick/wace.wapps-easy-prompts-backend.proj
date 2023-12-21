@@ -4,11 +4,11 @@ import userService from '../services/userService';
 
 const login = async (req: Request, res: Response) => {
     try {
-        const auth0Id = req.params.id;
-        const email = req.params.email;
+        const auth0Id = req.body.userId;
+        const email = req.body.email;
         const user = await userService.login(auth0Id, email);
 
-        res.status(201).json({
+        res.status(200).json({
             success: true,
             message: 'User Loged in successfully',
             data: user,
