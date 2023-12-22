@@ -95,11 +95,7 @@ const deleteCraft = async (req: Request, res: Response) => {
 
         const craftDeleted = await craftService.deleteCraft(parseInt(id));
 
-        res.status(201).json({
-            success: true,
-            message: 'Deleted successfully',
-            data: craftDeleted,
-        });
+        res.status(201).json(craftDeleted);
     } catch (error) {
         console.error('Error deleting craft:', error);
         res.status(500).json({

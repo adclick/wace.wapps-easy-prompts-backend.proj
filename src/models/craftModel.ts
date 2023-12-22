@@ -83,9 +83,9 @@ const getCrafts = async (
                     slug: true,
                 }
             },
-            crafted_by: {
+            composed_by: {
                 select: {
-                    crafting: {
+                    composing: {
                         select: {
                             id: true,
                             name: true,
@@ -121,12 +121,12 @@ const createCraft = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    crafting_ids: number[] = [],
+    composing_ids: number[] = [],
     provider_id: number | null = null,
 ) => {
-    const data = crafting_ids.map(id => {
+    const data = composing_ids.map(id => {
         return {
-            crafting_id: id
+            composing_id: id
         }
     })
 
@@ -143,7 +143,7 @@ const createCraft = async (
             technology_id,
             provider_id,
             type,
-            crafted_by: {
+            composed_by: {
                 createMany: { data }
             }
         }

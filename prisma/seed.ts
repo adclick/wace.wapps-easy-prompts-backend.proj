@@ -6,7 +6,7 @@ async function main() {
     const languageEN = await prisma.languages.create({
         data: {
             name: "English",
-            slug: "en"
+            slug: "en",
         }
     });
 
@@ -25,47 +25,11 @@ async function main() {
         }
     });
 
-    const userTeste = await prisma.users.create({
-        data: {
-            id: "456",
-            email: "teste@wacestudio.com",
-            theme: "dark"
-        }
-    });
-
-    const nunoSaraivaRepository = await prisma.repositories.create({
-        data: {
-            name: "My Repository",
-            slug: "my-repository",
-            user_id: userNunoSaraiva.id
-        }
-    });
-
-    const testeRepository = await prisma.repositories.create({
-        data: {
-            name: "My Repository",
-            slug: "my-repository",
-            user_id: userTeste.id
-        }
-    });
-
     const waceRepository = await prisma.repositories.create({
         data: {
             name: "Wace",
             slug: "wace",
-            user_id: nunoSaraivaRepository.user_id,
-            users_repositories: {
-                createMany: {
-                    data: [
-                        {
-                            user_id: userNunoSaraiva.id
-                        },
-                        {
-                            user_id: userTeste.id
-                        },
-                    ]
-                }
-            }
+            user_id: userNunoSaraiva.id,
         }
     });
 
@@ -85,26 +49,25 @@ async function main() {
         }
     });
 
+    // Connect Openai to Technologies
     const providerOpenai = await prisma.providers.create({
         data: {
             name: "Openai",
             slug: "openai",
-        }
-    });
-
-    const textGenerationOpenai = await prisma.technologies_providers.create({
-        data: {
-            technology_id: technologyTextGeneration.id,
-            provider_id: providerOpenai.id,
-            default: true
-        }
-    });
-
-    const imageGenerationOpenai = await prisma.technologies_providers.create({
-        data: {
-            technology_id: technologyImageGeneration.id,
-            provider_id: providerOpenai.id,
-            default: true
+            technologies_providers: {
+                createMany: {
+                    data: [
+                        {
+                            technology_id: technologyTextGeneration.id,
+                            default: true
+                        },
+                        {
+                            technology_id: technologyImageGeneration.id,
+                            default: false
+                        }
+                    ]
+                }
+            }
         }
     });
 
@@ -118,12 +81,13 @@ async function main() {
         }
     });
 
-    const modifier1 = await prisma.crafts.create({
+    // Modifiers
+    const modifierApplyRain = await prisma.crafts.create({
         data: {
-            name: "Modifier 1",
-            slug: "modifier-1",
-            content: "",
-            description: "",
+            name: "Apply rain",
+            slug: "apply-rain",
+            content: "The image must include an immersive rainfall. The rain should be depicted with fine details, such as individual raindrops",
+            description: "This modifier will apply rain to your images",
             score: 50,
             type: "MODIFIER",
             created_at: new Date(),
@@ -134,29 +98,30 @@ async function main() {
         }
     });
 
-    const prompt1 = await prisma.crafts.create({
+    // Prompts
+    const sereneBeachPrompt = await prisma.crafts.create({
         data: {
-            name: "Keywords de Natal",
-            slug: "keywords-de-natal",
-            content: "Cria uma lista abrangente de keywords relevantes e relacionadas com o Natal. Garante que as keywords abranjam um amplo espectro de aspectos e complexidades associadas ao tópico. O objetivo é capturar a essência do Natal incluindo termos amplamente reconhecidos, bem como aqueles que podem ser mais específicos ou especializados. Fornece uma variedade diversificada de keywords para atender aos diferentes níveis de familiaridade com o tema.",
-            description: "Lista de keywords relevantes sobre o Natal",
+            name: "Serene beach",
+            slug: "serene-beach",
+            content: "Generate a realistic image of a serene beach sunset with vibrant colors",
+            description: "This prompt will generate a beach image",
             score: 50,
             type: "PROMPT",
             created_at: new Date(),
-            technology_id: technologyTextGeneration.id,
+            technology_id: technologyImageGeneration.id,
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
             language_id: languageEN.id,
             repository_id: waceRepository.id,
-            crafted_by: {
+            composed_by: {
                 create: {
-                    crafting_id: modifier1.id
+                    composing_id: modifierApplyRain.id
                 }
             }
         }
     });
 
-    const prompt2 = await prisma.crafts.create({
+    const promptHeadlinesAuto = await prisma.crafts.create({
         data: {
             name: "Headlines para Indústria Automóvel",
             slug: "headlines-para-industria-automovel",
@@ -168,13 +133,8 @@ async function main() {
             technology_id: technologyTextGeneration.id,
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
-            language_id: languageEN.id,
+            language_id: languagePT.id,
             repository_id: waceRepository.id,
-            crafted_by: {
-                create: {
-                    crafting_id: modifier1.id
-                }
-            }
         }
     })
 }

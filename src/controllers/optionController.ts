@@ -1,6 +1,21 @@
 import { Request, Response } from "express";
 import optionService from "../services/optionService";
 
+const getOptions = async (req: Request, res: Response) => {
+    try {
+        const userId = req.query.userId;
+        const options = await optionService.getOptions(userId as string);
+
+        res.status(200).json(options);
+    } catch (error) {
+        console.error('Error getting options:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
 const getProvider = async (req: Request, res: Response) => {
     try {
         const userId = req.params.userId;
@@ -47,6 +62,7 @@ const getParameters = async (req: Request, res: Response) => {
 }
 
 export default {
+    getOptions,
     getProvider,
     getParameters
 };

@@ -2,6 +2,9 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const upsertRepository = async (name: string, slug: string, user_id: string) => {
+}
+
 const getUserRepositories = async (user_id: string) => {
     return await prisma.repositories.findMany({
         where: {
@@ -60,6 +63,7 @@ const addUser = async (repository_id: number, user_id: string) => {
 }
 
 export default {
+    upsertRepository,
     getUserRepositories,
     isUserInRepository,
     getRepositoryBySlug,

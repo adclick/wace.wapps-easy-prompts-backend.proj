@@ -1,5 +1,5 @@
 generator client {
-  provider = "prisma-client-js"
+  provider        = "prisma-client-js"
   previewFeatures = ["fullTextSearch"]
 }
 
@@ -22,6 +22,8 @@ model users {
   crafts             crafts[]
   repositories       repositories[]
   users_repositories users_repositories[]
+
+  @@unique([email])
 }
 
 model languages {
@@ -29,6 +31,8 @@ model languages {
   name   String   @db.VarChar(255)
   slug   String   @db.VarChar(255)
   crafts crafts[]
+
+  @@unique([slug])
 }
 
 model repositories {
@@ -39,6 +43,8 @@ model repositories {
   crafts             crafts[]
   users              users                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_repositories users_repositories[]
+
+  @@unique([user_id, slug])
 }
 
 model technologies {
@@ -49,6 +55,8 @@ model technologies {
   crafts                 crafts[]
   technologies_providers technologies_providers[]
   parameters             parameters[]
+
+  @@unique([slug])
 }
 
 model providers {
@@ -59,6 +67,8 @@ model providers {
   crafts                 crafts[]
   technologies_providers technologies_providers[]
   parameters             parameters[]
+
+  @@unique([slug])
 }
 
 model parameters {
@@ -71,6 +81,8 @@ model parameters {
   technologies      technologies        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   providers         providers           @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   crafts_parameters crafts_parameters[]
+
+  @@unique([slug])
 }
 
 model crafts {
@@ -93,19 +105,19 @@ model crafts {
   users             users               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   providers         providers?          @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   crafts_parameters crafts_parameters[]
-  crafted_by        crafting[]          @relation("crafted_by")
-  crafting          crafting[]          @relation("crafting")
+  composed_by        composing[]          @relation("composed_by")
+  composing          composing[]          @relation("composing")
 
   @@unique([slug, language_id, repository_id, technology_id])
 }
 
-model crafting {
-  crafted_by_id Int
-  crafted_by    crafts @relation("crafted_by", fields: [crafted_by_id], references: [id])
-  crafting_id   Int
-  crafting      crafts @relation("crafting", fields: [crafting_id], references: [id])
+model composing {
+  composed_by_id Int
+  composed_by    crafts @relation("composed_by", fields: [composed_by_id], references: [id])
+  composing_id   Int
+  composing      crafts @relation("composing", fields: [composing_id], references: [id])
 
-  @@id([crafted_by_id, crafting_id])
+  @@id([composed_by_id, composing_id])
 }
 
 model crafts_parameters {
