@@ -18,25 +18,18 @@ const getCrafts = async (
     technologies_ids: number[],
     crafts_types: CRAFT_TYPE[]
 ) => {
-    console.log(search_term);
     return await prisma.crafts.findMany({
         where: {
             OR: [
-                {
-                    content: {
-                        contains: search_term.toLocaleLowerCase()
-                    }
-                },
-                {
-                    name: {
-                        contains: search_term.toLocaleLowerCase()
-                    }
-                },
-                {
-                    description: {
-                        contains: search_term.toLocaleLowerCase()
-                    }
-                }
+                {name: {startsWith: search_term, mode: "insensitive" }},
+                {name: {endsWith: search_term, mode: "insensitive" }},
+                {name: {contains: search_term, mode: "insensitive" }},
+                {description: {startsWith: search_term, mode: "insensitive" }},
+                {description: {endsWith: search_term, mode: "insensitive" }},
+                {description: {contains: search_term, mode: "insensitive" }},
+                {content: {startsWith: search_term, mode: "insensitive" }},
+                {content: {endsWith: search_term, mode: "insensitive" }},
+                {content: {contains: search_term, mode: "insensitive" }},
             ],
             languages: {
                 id: {

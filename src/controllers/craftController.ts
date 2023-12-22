@@ -20,6 +20,8 @@ const getCrafts = async (req: Request, res: Response) => {
         }
 
         const convertToStringArray = (data: string) => {
+            if (data === "") return [];
+            
             return data.split(",");
         }
 
@@ -45,7 +47,7 @@ const getCrafts = async (req: Request, res: Response) => {
 const createPrompt = async (req: Request, res: Response) => {
     try {
         const promptCreated = await craftService.createPrompt(
-            req.params.userId,
+            req.body.userId,
             req.body.name,
             req.body.description,
             req.body.content,
@@ -56,11 +58,7 @@ const createPrompt = async (req: Request, res: Response) => {
             req.body.crafting_ids
         );
 
-        res.status(201).json({
-            success: true,
-            message: 'Prompt created successfully',
-            data: promptCreated,
-        });
+        res.status(201).json(promptCreated);
     } catch (error) {
         console.error('Error getting user:', error);
         res.status(500).json({
@@ -73,20 +71,16 @@ const createPrompt = async (req: Request, res: Response) => {
 const createModifier = async (req: Request, res: Response) => {
     try {
         const craftCreated = await craftService.createModifier(
-            req.params.userId,
+            req.body.userId,
             req.body.name,
             req.body.description,
             req.body.content,
-            req.body.language_id,
-            req.body.repository_id,
-            req.body.technology_id,
+            parseInt(req.body.language_id),
+            parseInt(req.body.repository_id),
+            parseInt(req.body.technology_id),
         );
 
-        res.status(201).json({
-            success: true,
-            message: 'Modifier created successfully',
-            data: craftCreated,
-        });
+        res.status(201).json(craftCreated);
     } catch (error) {
         console.error('Error creating modifier:', error);
         res.status(500).json({

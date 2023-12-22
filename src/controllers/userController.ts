@@ -8,11 +8,7 @@ const login = async (req: Request, res: Response) => {
         const email = req.body.email;
         const user = await userService.login(auth0Id, email);
 
-        res.status(200).json({
-            success: true,
-            message: 'User Loged in successfully',
-            data: user,
-        });
+        res.status(200).json(user);
     } catch (error) {
         console.error('Error getting user:', error);
         res.status(500).json({

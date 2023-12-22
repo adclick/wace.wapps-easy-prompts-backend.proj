@@ -1,6 +1,7 @@
 import { CRAFT_TYPE } from '@prisma/client';
 import craftModel from '../models/craftModel';
 import slugify from 'slugify';
+import repositoryModel from '../models/repositoryModel';
 
 const getCraftType = (type: string) => {
   switch (type) {
@@ -74,6 +75,12 @@ const createModifier = async (
 ) => {
   const slug = slugify(name);
   const createdAt = new Date();
+
+  const isUserInRepository = await repositoryModel.isUserInRepository(userId, repositoryId);
+
+  if (!isUserInRepository) {
+    throw new Error('This user does not belong to this repository');
+  }
 
   return await craftModel.createCraft(
     userId,

@@ -21,27 +21,47 @@ const getUserRepositories = async (user_id: string) => {
     })
 }
 
+const isUserInRepository = async (user_id: string, repository_id: number) => {
+    return await prisma.repositories.findFirst({
+        where: {
+            OR: [
+                {
+                    user_id
+                },
+                {
+                    users_repositories: {
+                        some: {
+                            repository_id, user_id
+                        }
+                    }
+                }
+            ]
+        }
+    })
+}
+
 const getRepositoryBySlug = async (slug: string) => {
     return await prisma.repositories.findFirst({
-        where: {slug}
+        where: { slug }
     });
 }
 
 const addUser = async (repository_id: number, user_id: string) => {
     return await prisma.users_repositories.upsert({
         where: {
-            user_id_repository_id:{
+            user_id_repository_id: {
                 repository_id,
                 user_id
-            } 
+            }
         },
-        update: {repository_id, user_id},
-        create: {repository_id, user_id}
+        update: { repository_id, user_id },
+        create: { repository_id, user_id }
     });
 }
 
 export default {
     getUserRepositories,
+    isUserInRepository,
     getRepositoryBySlug,
     addUser
 }
