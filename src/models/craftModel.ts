@@ -21,21 +21,17 @@ const getCrafts = async (
     return await prisma.crafts.findMany({
         where: {
             OR: [
-                {name: {startsWith: search_term, mode: "insensitive" }},
-                {name: {endsWith: search_term, mode: "insensitive" }},
-                {name: {contains: search_term, mode: "insensitive" }},
-                {description: {startsWith: search_term, mode: "insensitive" }},
-                {description: {endsWith: search_term, mode: "insensitive" }},
-                {description: {contains: search_term, mode: "insensitive" }},
-                {content: {startsWith: search_term, mode: "insensitive" }},
-                {content: {endsWith: search_term, mode: "insensitive" }},
-                {content: {contains: search_term, mode: "insensitive" }},
+                { name: { startsWith: search_term, mode: "insensitive" } },
+                { name: { endsWith: search_term, mode: "insensitive" } },
+                { name: { contains: search_term, mode: "insensitive" } },
+                { description: { startsWith: search_term, mode: "insensitive" } },
+                { description: { endsWith: search_term, mode: "insensitive" } },
+                { description: { contains: search_term, mode: "insensitive" } },
+                { content: { startsWith: search_term, mode: "insensitive" } },
+                { content: { endsWith: search_term, mode: "insensitive" } },
+                { content: { contains: search_term, mode: "insensitive" } },
             ],
-            languages: {
-                id: {
-                    in: languages_ids
-                }
-            },
+            languages: { id: { in: languages_ids } },
             repositories: {
                 OR: [
                     {
@@ -56,14 +52,8 @@ const getCrafts = async (
                     }
                 ]
             },
-            technologies: {
-                id: {
-                    in: technologies_ids
-                }
-            },
-            type: {
-                in: crafts_types
-            }
+            technologies: { id: { in: technologies_ids } },
+            type: { in: crafts_types }
         },
         include: {
             users: {
@@ -116,11 +106,7 @@ const getCrafts = async (
                 }
             }
         },
-        orderBy: [
-            {
-                created_at: "desc"
-            }
-        ]
+        orderBy: [{ created_at: "desc" }]
     });
 }
 

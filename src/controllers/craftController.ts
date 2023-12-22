@@ -82,7 +82,6 @@ const createModifier = async (req: Request, res: Response) => {
 
         res.status(201).json(craftCreated);
     } catch (error) {
-        console.error('Error creating modifier:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',
