@@ -15,8 +15,9 @@ enum CRAFT_TYPE {
 }
 
 model users {
-  id                 String               @id
+  id                 Int                  @id @default(autoincrement())
   email              String               @db.VarChar(255)
+  auth0_id           String               @default(cuid())
   theme              String               @default("dark") @db.VarChar(255)
   first_login        Boolean              @default(true)
   crafts             crafts[]
@@ -24,6 +25,7 @@ model users {
   users_repositories users_repositories[]
 
   @@unique([email])
+  @@unique([auth0_id])
 }
 
 model languages {
@@ -39,7 +41,7 @@ model repositories {
   id                 Int                  @id @default(autoincrement())
   name               String               @db.VarChar(255)
   slug               String?              @db.VarChar(255)
-  user_id            String
+  user_id            Int
   crafts             crafts[]
   users              users                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users_repositories users_repositories[]
@@ -96,7 +98,7 @@ model crafts {
   language_id       Int
   repository_id     Int
   technology_id     Int
-  user_id           String
+  user_id           Int
   provider_id       Int?
   type              CRAFT_TYPE          @default(PROMPT)
   languages         languages           @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -105,8 +107,8 @@ model crafts {
   users             users               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   providers         providers?          @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   crafts_parameters crafts_parameters[]
-  composed_by        composing[]          @relation("composed_by")
-  composing          composing[]          @relation("composing")
+  composed_by       composing[]         @relation("composed_by")
+  composing         composing[]         @relation("composing")
 
   @@unique([slug, language_id, repository_id, technology_id])
 }
@@ -141,7 +143,7 @@ model technologies_providers {
 }
 
 model users_repositories {
-  user_id       String
+  user_id       Int
   repository_id Int
   repositories  repositories @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   users         users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

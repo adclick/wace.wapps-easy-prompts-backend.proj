@@ -19,7 +19,6 @@ async function main() {
 
     const userNunoSaraiva = await prisma.users.create({
         data: {
-            id: "123",
             email: "nuno.saraiva@wacestudio.com",
             theme: "dark"
         }

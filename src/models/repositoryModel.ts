@@ -2,7 +2,7 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const upsertRepository = async (name: string, slug: string, user_id: string) => {
+const upsertRepository = async (name: string, slug: string, user_id: number) => {
 }
 
 const getUserRepositories = async (user_id: string) => {

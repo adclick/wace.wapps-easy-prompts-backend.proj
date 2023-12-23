@@ -3,12 +3,18 @@ import userModel from '../models/userModel';
 import slugify from 'slugify';
 
 const login = async (auth0Id: string, email: string) => {
-  const user = await userModel.upsertUser(auth0Id, email);
+  let user = await userModel.getUser(auth0Id);
+
+  if (!user) {
+    throw new Error('User not found');
+  }
+
+  user = await userModel.upsertUser(user.id, email, auth0Id);
 
   const repoName = "My Repository";
   const repoSlug = slugify(repoName);
-  
-  
+  await repositoryModel.upsertRepository(repoName, repoSlug, user.id);
+
 
   // Add user to wace repo (temp)
   const repo = await repositoryModel.getRepositoryBySlug("wace");
