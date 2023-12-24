@@ -1,14 +1,5 @@
 import { Request, Response } from "express";
 import craftService from "../services/craftService";
-import { CRAFT_TYPE } from "@prisma/client";
-
-interface FiltersQuery {
-    search_term: string
-    languages_ids: string,
-    repositories_ids: string,
-    technologies_ids: string,
-    crafts_types: string
-}
 
 // http://localhost:3000/api/crafts/123/?filters[search_term]=&filters[languages_ids]=2&filters[repositories_ids]=2&filters[technologies_ids]=1&filters[crafts_types]=PROMPTS
 const getCrafts = async (req: Request, res: Response) => {

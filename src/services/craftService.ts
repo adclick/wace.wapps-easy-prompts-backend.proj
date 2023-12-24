@@ -15,7 +15,7 @@ const getCraftType = (type: string) => {
 }
 
 const getCrafts = async (
-  userId: string,
+  externalId: string,
   search_term: string,
   languages_ids: number[],
   repositories_ids: number[],
@@ -25,7 +25,7 @@ const getCrafts = async (
   const types = crafts_types.map(t => getCraftType(t));
 
   return await craftModel.getCrafts(
-    userId,
+    externalId,
     search_term,
     languages_ids,
     repositories_ids,
@@ -35,7 +35,7 @@ const getCrafts = async (
 };
 
 const createPrompt = async (
-  userId: string,
+  externalId: string,
   name: string,
   description: string,
   content: string,
@@ -49,7 +49,7 @@ const createPrompt = async (
   const createdAt = new Date();
 
   return await craftModel.createCraft(
-    userId,
+    externalId,
     name,
     slug,
     description,
@@ -65,7 +65,7 @@ const createPrompt = async (
 }
 
 const createModifier = async (
-  userId: string,
+  externalId: string,
   name: string,
   description: string,
   content: string,
@@ -76,14 +76,14 @@ const createModifier = async (
   const slug = slugify(name);
   const createdAt = new Date();
 
-  const isUserInRepository = await repositoryModel.isUserInRepository(userId, repositoryId);
+  const isUserInRepository = await repositoryModel.isUserInRepository(externalId, repositoryId);
 
   if (!isUserInRepository) {
     throw new Error('This user does not belong to this repository');
   }
 
   return await craftModel.createCraft(
-    userId,
+    externalId,
     name,
     slug,
     description,

@@ -11,7 +11,7 @@ const getTypes = async () => {
 }
 
 const getCrafts = async (
-    user_id: string,
+    external_id: string,
     search_term: string,
     languages_ids: number[],
     repositories_ids: number[],
@@ -37,7 +37,7 @@ const getCrafts = async (
                     {
                         users_repositories: {
                             some: {
-                                user_id,
+                                users: { external_id },
                                 repository_id: {
                                     in: repositories_ids
                                 }
@@ -45,7 +45,7 @@ const getCrafts = async (
                         }
                     },
                     {
-                        user_id,
+                        users: { external_id },
                         id: {
                             in: repositories_ids
                         }
@@ -132,7 +132,6 @@ const createCraft = async (
 
     return await prisma.crafts.create({
         data: {
-            user_id,
             name,
             slug,
             description,
@@ -145,7 +144,8 @@ const createCraft = async (
             type,
             composed_by: {
                 createMany: { data }
-            }
+            },
+            user_id: 1
         }
     })
 }

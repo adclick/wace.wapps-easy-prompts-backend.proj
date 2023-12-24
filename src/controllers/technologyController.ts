@@ -1,5 +1,4 @@
 import { Request, Response } from "express";
-import optionService from "../services/optionService";
 import technologyService from "../services/technologyService";
 
 const getDefault = async (req: Request, res: Response) => {
