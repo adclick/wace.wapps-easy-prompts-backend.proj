@@ -1,8 +1,7 @@
 import { Request, Response } from "express";
+import userService from "../services/userService";
 
-import userService from '../services/userService';
-
-const login = async (req: Request, res: Response) => {
+export const login = async (req: Request, res: Response) => {
     try {
         const auth0Id = req.body.userId;
         const email = req.body.email;
@@ -16,8 +15,4 @@ const login = async (req: Request, res: Response) => {
             message: 'Internal server error',
         });
     }
-};
-
-export default {
-    login
 };

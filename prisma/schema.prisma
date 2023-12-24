@@ -17,15 +17,17 @@ enum CRAFT_TYPE {
 model users {
   id                 Int                  @id @default(autoincrement())
   email              String               @db.VarChar(255)
-  auth0_id           String               @default(cuid())
   theme              String               @default("dark") @db.VarChar(255)
   first_login        Boolean              @default(true)
+  external_id        String               
   crafts             crafts[]
   repositories       repositories[]
   users_repositories users_repositories[]
 
+  @@index([email])
   @@unique([email])
-  @@unique([auth0_id])
+  @@index([external_id])
+  @@unique([external_id])
 }
 
 model languages {

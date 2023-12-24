@@ -1,10 +1,10 @@
 import { Request, Response } from "express";
-import filtersService from "../services/filterService";
+import filterService from "../services/filterService";
 
 const getFilters = async (req: Request, res: Response) => {
     try {
         const userId = req.query.userId;
-        const filters = await filtersService.getFilters(userId as string);
+        const filters = await filterService.getFilters(userId as string);
 
         res.status(200).json(filters);
     } catch (error) {
@@ -18,4 +18,4 @@ const getFilters = async (req: Request, res: Response) => {
 
 export default {
     getFilters
-};
+}

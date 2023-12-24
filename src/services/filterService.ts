@@ -1,11 +1,11 @@
-import repositoryModel from '../models/repositoryModel';
 import languageModel from '../models/languageModel';
+import userModel from '../models/userModel';
 import technologyModel from '../models/technologyModel';
 import craftModel from '../models/craftModel';
 
-const getFilters = async (userId: string) => {
+const getFilters = async (externalId: string) => {
   const languages = languageModel.getLanguages();
-  const repositories = repositoryModel.getUserRepositories(userId);
+  const repositories = userModel.getRepositories(externalId);
   const technologies = technologyModel.getTechnologies();
   const crafts = craftModel.getTypes();
 

@@ -2,23 +2,34 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient();
 
-const getUser = async (auth0_id: string) {
-    return await prisma.users.findUnique({
+export const upsertUser = async (email: string, external_id: string) => {
+    return await prisma.users.upsert({
+        where: { email },
+        update: { external_id },
+        create: { email, external_id }
+    })
+}
+
+export const getRepositories = async (external_id: string) => {
+    return await prisma.repositories.findMany({
         where: {
-            auth0_id
+            OR: [
+                {
+                    users: { external_id }
+                },
+                {
+                    users_repositories: {
+                        some: {
+                            users: { external_id }
+                        }
+                    }
+                }
+            ]
         }
     })
 }
 
-const upsertUser = async (id: number, email: string, auth0_id: string) => {
-    return await prisma.users.upsert({
-        where: { id },
-        update: { email },
-        create: { email, auth0_id }
-    })
-}
-
 export default {
-    getUser,
-    upsertUser
+    upsertUser,
+    getRepositories
 }
