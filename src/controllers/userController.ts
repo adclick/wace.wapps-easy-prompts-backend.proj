@@ -1,7 +1,7 @@
 import { Request, Response } from "express";
 import userService from "../services/userService";
 
-export const login = async (req: Request, res: Response) => {
+const login = async (req: Request, res: Response) => {
     try {
         const auth0Id = req.body.userId;
         const email = req.body.email;
@@ -16,3 +16,7 @@ export const login = async (req: Request, res: Response) => {
         });
     }
 };
+
+export default {
+    login
+}
