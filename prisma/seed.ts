@@ -5,21 +5,21 @@ import slugify from 'slugify';
 const prisma = new PrismaClient();
 
 async function main() {
-    const languageEN = await prisma.languages.create({
+    const languageEN = await prisma.language.create({
         data: {
             name: "English",
             slug: "en",
         }
     });
 
-    const languagePT = await prisma.languages.create({
+    const languagePT = await prisma.language.create({
         data: {
             name: "Portuguese",
             slug: "pt"
         }
     });
 
-    const userNunoSaraiva = await prisma.users.create({
+    const userNunoSaraiva = await prisma.user.create({
         data: {
             email: "nuno.saraiva@wacestudio.com",
             username: "nuno.saraiva",
@@ -28,7 +28,7 @@ async function main() {
         }
     });
 
-    const myRepository = await prisma.repositories.create({
+    const myRepository = await prisma.repository.create({
         data: {
             name: "My Repository",
             slug: slugify("My Repository", { lower: true }),
@@ -36,7 +36,7 @@ async function main() {
         },
     });
 
-    const waceRepository = await prisma.repositories.create({
+    const waceRepository = await prisma.repository.create({
         data: {
             name: "Wace",
             slug: "wace",
@@ -44,7 +44,7 @@ async function main() {
         }
     });
 
-    const technologyTextGeneration = await prisma.technologies.create({
+    const technologyTextGeneration = await prisma.technology.create({
         data: {
             name: "Text Generation",
             slug: "text-generation",
@@ -52,7 +52,7 @@ async function main() {
         }
     });
 
-    const technologyImageGeneration = await prisma.technologies.create({
+    const technologyImageGeneration = await prisma.technology.create({
         data: {
             name: "Image Generation",
             slug: "image-generation",
@@ -61,7 +61,7 @@ async function main() {
     });
 
     // Connect Openai to Technologies
-    const providerOpenai = await prisma.providers.create({
+    const providerOpenai = await prisma.provider.create({
         data: {
             name: "Openai",
             slug: "openai",
@@ -82,7 +82,7 @@ async function main() {
         }
     });
 
-    const parameterNumberOfImages = await prisma.parameters.create({
+    const parameterNumberOfImages = await prisma.parameter.create({
         data: {
             name: "Number of Images",
             slug: "number-of-images",
@@ -93,7 +93,7 @@ async function main() {
     });
 
     // Modifiers
-    const modifierApplyRain = await prisma.crafts.create({
+    const modifierApplyRain = await prisma.craft.create({
         data: {
             name: "Apply rain",
             slug: "apply-rain",
@@ -109,7 +109,7 @@ async function main() {
     });
 
     // Prompts
-    const sereneBeachPrompt = await prisma.crafts.create({
+    const sereneBeachPrompt = await prisma.craft.create({
         data: {
             name: "Serene beach",
             slug: "serene-beach",
@@ -125,7 +125,7 @@ async function main() {
         }
     });
 
-    const promptHeadlinesAuto = await prisma.crafts.create({
+    const promptHeadlinesAuto = await prisma.craft.create({
         data: {
             name: "Headlines para Indústria Automóvel",
             slug: "headlines-para-industria-automovel",

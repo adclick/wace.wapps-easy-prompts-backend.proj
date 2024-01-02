@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { PrismaClient, crafts } from "@prisma/client";
 import { CRAFT_TYPE } from "@prisma/client";
 
 const prisma = new PrismaClient();
@@ -84,6 +84,13 @@ const getCrafts = async (
                     slug: true,
                 }
             },
+            providers: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true
+                }
+            }
         },
         orderBy: [{ created_at: "desc" }]
     });

@@ -14,134 +14,144 @@ enum CRAFT_TYPE {
   MODIFIER
 }
 
-model users {
-  id                 Int                  @id @default(autoincrement())
-  email              String               @db.VarChar(255)
-  username           String               @db.VarChar(255)
-  theme              String               @default("dark") @db.VarChar(255)
-  first_login        Boolean              @default(true)
+model User {
+  id                 Int              @id @default(autoincrement())
+  email              String           @db.VarChar(255)
+  username           String           @db.VarChar(255)
+  theme              String           @default("dark") @db.VarChar(255)
+  first_login        Boolean          @default(true)
   external_id        String
-  crafts             crafts[]
-  repositories       repositories[]
-  users_repositories users_repositories[]
+  crafts             Craft[]
+  repositories       Repository[]
+  users_repositories UserRepository[]
 
   @@unique([email])
   @@unique([external_id])
   @@index([email])
   @@index([external_id])
+  @@map("users")
 }
 
-model languages {
-  id     Int      @id @default(autoincrement())
-  name   String   @db.VarChar(255)
-  slug   String   @db.VarChar(255)
-  crafts crafts[]
+model Language {
+  id     Int     @id @default(autoincrement())
+  name   String  @db.VarChar(255)
+  slug   String  @db.VarChar(255)
+  crafts Craft[]
 
   @@unique([slug])
+  @@map("languages")
 }
 
-model repositories {
-  id                 Int                  @id @default(autoincrement())
-  name               String               @db.VarChar(255)
-  slug               String?              @db.VarChar(255)
+model Repository {
+  id                 Int              @id @default(autoincrement())
+  name               String           @db.VarChar(255)
+  slug               String?          @db.VarChar(255)
   user_id            Int
-  crafts             crafts[]
-  users              users                @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_repositories users_repositories[]
+  crafts             Craft[]
+  user               User             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  users_repositories UserRepository[]
 
   @@unique([user_id, slug])
+  @@map("repositories")
 }
 
-model technologies {
-  id                     Int                      @id @default(autoincrement())
-  name                   String                   @db.VarChar
-  slug                   String                   @db.VarChar
+model Technology {
+  id                     Int                  @id @default(autoincrement())
+  name                   String               @db.VarChar
+  slug                   String               @db.VarChar
   default                Boolean?
-  crafts                 crafts[]
-  technologies_providers technologies_providers[]
-  parameters             parameters[]
+  crafts                 Craft[]
+  technologies_providers TechnologyProvider[]
+  parameters             Parameter[]
 
   @@unique([slug])
+  @@map("technologies")
 }
 
-model providers {
-  id                     Int                      @id @default(autoincrement())
-  name                   String                   @db.VarChar(255)
-  slug                   String                   @db.VarChar(255)
+model Provider {
+  id                     Int                  @id @default(autoincrement())
+  name                   String               @db.VarChar(255)
+  slug                   String               @db.VarChar(255)
   default                Boolean?
-  crafts                 crafts[]
-  technologies_providers technologies_providers[]
-  parameters             parameters[]
+  crafts                 Craft[]
+  technologies_providers TechnologyProvider[]
+  parameters             Parameter[]
 
   @@unique([slug])
+  @@map("providers")
 }
 
-model parameters {
-  id                Int                 @id @default(autoincrement())
-  name              String              @db.VarChar(255)
-  slug              String              @db.VarChar(255)
-  content           Json                @db.Json
+model Parameter {
+  id                Int              @id @default(autoincrement())
+  name              String           @db.VarChar(255)
+  slug              String           @db.VarChar(255)
+  content           Json             @db.Json
   technology_id     Int
   provider_id       Int
-  technologies      technologies        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  providers         providers           @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  crafts_parameters crafts_parameters[]
+  technology        Technology       @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provider          Provider         @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  crafts_parameters CraftParameter[]
 
   @@unique([slug])
+  @@map("parameters")
 }
 
-model crafts {
-  id                Int                 @id @default(autoincrement())
-  name              String              @db.VarChar(255)
-  slug              String              @db.VarChar(255)
+model Craft {
+  id                Int              @id @default(autoincrement())
+  name              String           @db.VarChar(255)
+  slug              String           @db.VarChar(255)
   content           String
   description       String?
-  stars             Int                 @default(0)
-  plays             Int                 @default(0)
-  created_at        DateTime            @db.Timestamptz(6)
+  stars             Int              @default(0)
+  plays             Int              @default(0)
+  created_at        DateTime         @db.Timestamptz(6)
   language_id       Int
   repository_id     Int
   technology_id     Int
   user_id           Int
   provider_id       Int?
   metadata          Json?
-  public            Boolean             @default(false)
-  type              CRAFT_TYPE          @default(PROMPT)
-  languages         languages           @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  repositories      repositories        @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies      technologies        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users             users               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  providers         providers?          @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  crafts_parameters crafts_parameters[]
+  public            Boolean          @default(false)
+  type              CRAFT_TYPE       @default(PROMPT)
+  language          Language         @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  repository        Repository       @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  technology        Technology       @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user              User             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provider          Provider?        @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  crafts_parameters CraftParameter[]
 
   @@unique([slug, language_id, repository_id, technology_id])
+  @@map("crafts")
 }
 
-model crafts_parameters {
+model CraftParameter {
   craft_id     Int
   parameter_id Int
   value        String?
-  parameters   parameters @relation(fields: [parameter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  crafts       crafts     @relation(fields: [craft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  parameter    Parameter @relation(fields: [parameter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  craft        Craft     @relation(fields: [craft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([craft_id, parameter_id])
+  @@map("crafts_parameters")
 }
 
-model technologies_providers {
+model TechnologyProvider {
   technology_id Int
   provider_id   Int
   default       Boolean?
-  providers     providers    @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technologies  technologies @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  provider      Provider   @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  technology    Technology @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([technology_id, provider_id])
+  @@map("technologies_providers")
 }
 
-model users_repositories {
+model UserRepository {
   user_id       Int
   repository_id Int
-  repositories  repositories @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users         users        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  repository    Repository @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  user          User       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
   @@id([user_id, repository_id])
+  @@map("users_repositories")
 }
