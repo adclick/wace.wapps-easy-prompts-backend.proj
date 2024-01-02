@@ -22,6 +22,7 @@ async function main() {
     const userNunoSaraiva = await prisma.users.create({
         data: {
             email: "nuno.saraiva@wacestudio.com",
+            username: "nuno.saraiva",
             theme: "dark",
             external_id: randomUUID()
         }
@@ -30,7 +31,7 @@ async function main() {
     const myRepository = await prisma.repositories.create({
         data: {
             name: "My Repository",
-            slug: "my-repository",
+            slug: slugify("My Repository", { lower: true }),
             user_id: userNunoSaraiva.id,
         },
     });
@@ -87,7 +88,7 @@ async function main() {
             slug: "number-of-images",
             technology_id: technologyTextGeneration.id,
             provider_id: providerOpenai.id,
-            content: {"num-images": "4"}
+            content: { "num-images": "4" }
         }
     });
 
@@ -98,7 +99,6 @@ async function main() {
             slug: "apply-rain",
             content: "The image must include an immersive rainfall. The rain should be depicted with fine details, such as individual raindrops",
             description: "This modifier will apply rain to your images",
-            score: 50,
             type: "MODIFIER",
             created_at: new Date(),
             technology_id: technologyTextGeneration.id,
@@ -115,7 +115,6 @@ async function main() {
             slug: "serene-beach",
             content: "Generate a realistic image of a serene beach sunset with vibrant colors",
             description: "This prompt will generate a beach image",
-            score: 50,
             type: "PROMPT",
             created_at: new Date(),
             technology_id: technologyImageGeneration.id,
@@ -132,7 +131,6 @@ async function main() {
             slug: "headlines-para-industria-automovel",
             content: "Cria títulos cativantes para uma série de artigos relacionados às tendências da indústria automóvel.",
             description: "Títulos cativantes para indústria automóvel.",
-            score: 50,
             type: "PROMPT",
             created_at: new Date(),
             technology_id: technologyTextGeneration.id,

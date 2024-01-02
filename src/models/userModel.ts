@@ -10,11 +10,11 @@ const getUser = async (external_id: string) => {
     })
 }
 
-const upsertUser = async (email: string, external_id: string) => {
+const upsertUser = async (email: string, username: string, external_id: string) => {
     return await prisma.users.upsert({
         where: { email },
-        update: { external_id },
-        create: { email, external_id }
+        update: { username, external_id },
+        create: { email, username, external_id }
     })
 }
 

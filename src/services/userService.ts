@@ -2,9 +2,9 @@ import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import slugify from 'slugify';
 
-const login = async (email: string, externalId: string) => {
+const login = async (email: string, username: string, externalId: string) => {
     // Create or update user
-    const user = await userModel.upsertUser(email, externalId);
+    const user = await userModel.upsertUser(email, username, externalId);
 
     // Create or update main personal repo
     const repoName = "My Repository";

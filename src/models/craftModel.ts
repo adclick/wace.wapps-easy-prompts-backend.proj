@@ -59,7 +59,8 @@ const getCrafts = async (
             users: {
                 select: {
                     id: true,
-                    email: true
+                    email: true,
+                    username: true,
                 }
             },
             languages: {
