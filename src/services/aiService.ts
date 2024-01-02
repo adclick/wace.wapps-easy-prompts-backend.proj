@@ -2,13 +2,18 @@ import axios from 'axios';
 
 const textGeneration = async (
     text: string,
-    prompt_id: number | null,
-    modifiers_ids: number[] = []
 ) => {
-    return text;
+    const url = "https://easyprompts.wacestudio.pt/ai/text/generate-text?" + new URLSearchParams({
+        text,
+        provider: "openai",
+        sandbox: "true"
+    });
+
+    const { data } = await axios.get(url);
+
+    return data;
 };
 
-// http://localhost:3000/api/ai/image-generation/?text=planes&provider=openai&resolution=512x512&num_images=1
 const imageGeneration = async (
     text: string,
     provider: string,
@@ -19,12 +24,9 @@ const imageGeneration = async (
         text,
         provider,
         resolution,
-        num_images
+        num_images,
+        sandbox: "true"
     });
-
-    // const url = "https://easyprompts.wacestudio.pt/ai/image/generate-image?text=planes&provider=openai&resolution=512x512&num_images=1";
-    // const url = "https://easyprompts.wacestudio.pt/api/filters/123";
-    // const url = "https://api.apis.guru/v2/providers.json";
 
     const { data } = await axios.get(url);
 

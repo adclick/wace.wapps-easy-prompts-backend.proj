@@ -46,7 +46,6 @@ const createPrompt = async (req: Request, res: Response) => {
             req.body.repository_id,
             req.body.technology_id,
             req.body.provider_id,
-            req.body.crafting_ids
         );
 
         res.status(201).json(promptCreated);

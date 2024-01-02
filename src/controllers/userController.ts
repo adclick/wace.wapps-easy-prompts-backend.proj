@@ -3,9 +3,9 @@ import userService from "../services/userService";
 
 const login = async (req: Request, res: Response) => {
     try {
-        const auth0Id = req.body.userId;
         const email = req.body.email;
-        const user = await userService.login(auth0Id, email);
+        const auth0Id = req.body.userId;
+        const user = await userService.login(email, auth0Id);
 
         res.status(200).json(user);
     } catch (error) {

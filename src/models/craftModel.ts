@@ -83,35 +83,13 @@ const getCrafts = async (
                     slug: true,
                 }
             },
-            composed_by: {
-                select: {
-                    composing: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                            description: true,
-                            content: true,
-                            score: true,
-                            created_at: true,
-                            type: true,
-                            users: {
-                                select: {
-                                    id: true,
-                                    email: true,
-                                }
-                            }
-                        }
-                    }
-                }
-            }
         },
         orderBy: [{ created_at: "desc" }]
     });
 }
 
 const createCraft = async (
-    user_id: string,
+    user_id: number,
     name: string,
     slug: string,
     description: string,
@@ -121,15 +99,8 @@ const createCraft = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    composing_ids: number[] = [],
     provider_id: number | null = null,
 ) => {
-    const data = composing_ids.map(id => {
-        return {
-            composing_id: id
-        }
-    })
-
     return await prisma.crafts.create({
         data: {
             name,
@@ -142,11 +113,8 @@ const createCraft = async (
             technology_id,
             provider_id,
             type,
-            composed_by: {
-                createMany: { data }
-            },
-            user_id: 1
-        }
+            user_id
+        },
     })
 }
 

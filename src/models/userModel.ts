@@ -2,7 +2,15 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient();
 
-export const upsertUser = async (email: string, external_id: string) => {
+const getUser = async (external_id: string) => {
+    return await prisma.users.findUnique({
+        where: {
+            external_id
+        }
+    })
+}
+
+const upsertUser = async (email: string, external_id: string) => {
     return await prisma.users.upsert({
         where: { email },
         update: { external_id },
@@ -10,7 +18,7 @@ export const upsertUser = async (email: string, external_id: string) => {
     })
 }
 
-export const getRepositories = async (external_id: string) => {
+const getRepositories = async (external_id: string) => {
     return await prisma.repositories.findMany({
         where: {
             OR: [
@@ -30,6 +38,7 @@ export const getRepositories = async (external_id: string) => {
 }
 
 export default {
+    getUser,
     upsertUser,
     getRepositories
 }

@@ -19,15 +19,15 @@ model users {
   email              String               @db.VarChar(255)
   theme              String               @default("dark") @db.VarChar(255)
   first_login        Boolean              @default(true)
-  external_id        String               
+  external_id        String
   crafts             crafts[]
   repositories       repositories[]
   users_repositories users_repositories[]
 
-  @@index([email])
   @@unique([email])
-  @@index([external_id])
   @@unique([external_id])
+  @@index([email])
+  @@index([external_id])
 }
 
 model languages {
@@ -102,6 +102,7 @@ model crafts {
   technology_id     Int
   user_id           Int
   provider_id       Int?
+  metadata          Json?
   type              CRAFT_TYPE          @default(PROMPT)
   languages         languages           @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   repositories      repositories        @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
@@ -109,19 +110,8 @@ model crafts {
   users             users               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   providers         providers?          @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
   crafts_parameters crafts_parameters[]
-  composed_by       composing[]         @relation("composed_by")
-  composing         composing[]         @relation("composing")
 
   @@unique([slug, language_id, repository_id, technology_id])
-}
-
-model composing {
-  composed_by_id Int
-  composed_by    crafts @relation("composed_by", fields: [composed_by_id], references: [id])
-  composing_id   Int
-  composing      crafts @relation("composing", fields: [composing_id], references: [id])
-
-  @@id([composed_by_id, composing_id])
 }
 
 model crafts_parameters {

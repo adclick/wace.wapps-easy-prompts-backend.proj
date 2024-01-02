@@ -1,5 +1,4 @@
 import { PrismaClient } from "@prisma/client";
-import technologyModel from "./technologyModel";
 
 const prisma = new PrismaClient();
 

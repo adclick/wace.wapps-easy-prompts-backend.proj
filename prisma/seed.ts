@@ -1,5 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
+import slugify from 'slugify';
 
 const prisma = new PrismaClient();
 
@@ -24,6 +25,14 @@ async function main() {
             theme: "dark",
             external_id: randomUUID()
         }
+    });
+
+    const myRepository = await prisma.repositories.create({
+        data: {
+            name: "My Repository",
+            slug: "my-repository",
+            user_id: userNunoSaraiva.id,
+        },
     });
 
     const waceRepository = await prisma.repositories.create({
@@ -113,12 +122,7 @@ async function main() {
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
             language_id: languageEN.id,
-            repository_id: waceRepository.id,
-            composed_by: {
-                create: {
-                    composing_id: modifierApplyRain.id
-                }
-            }
+            repository_id: waceRepository.id
         }
     });
 
