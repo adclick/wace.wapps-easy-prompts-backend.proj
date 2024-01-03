@@ -2,24 +2,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getDefaultProviderByDefaultTechnology = async () => {
-    return await prisma.provider.findFirst({
-        where: {
-            technologies_providers: {
-                some: {
-                    technology: {
-                        is: {
-                            default: true
-                        }
-                    }
-                }
-            },
-            default: true
-        }
-    });
+const getById = async (id: number) => {
+    return await prisma.provider.findUnique({where: {id}});
 }
 
-const getDefaultProviderByTechnologyId = async (technology_id: number) => {
+const getDefault = async (technology_id: number) => {
     return await prisma.provider.findFirst({
         where: {
             technologies_providers: {
@@ -32,22 +19,18 @@ const getDefaultProviderByTechnologyId = async (technology_id: number) => {
     })
 }
 
-const getProvidersByTechnologyId = async (technology_id: number) => {
-    return await prisma.provider.findFirst({
+const getProviders = async (technology_id: number) => {
+    return await prisma.provider.findMany({
         where: {
             technologies_providers: {
-                some: {
-                    technology_id,
-                }
+                some: { technology_id }
             }
         }
     })
 }
 
-
-
 export default {
-    getDefaultProviderByDefaultTechnology,
-    getDefaultProviderByTechnologyId,
-    getProvidersByTechnologyId
+    getById,
+    getDefault,
+    getProviders
 }

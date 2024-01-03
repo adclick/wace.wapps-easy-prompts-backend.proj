@@ -82,15 +82,25 @@ async function main() {
         }
     });
 
-    const parameterNumberOfImages = await prisma.parameter.create({
+    const providerGoogle = await prisma.provider.create({
         data: {
-            name: "Number of Images",
-            slug: "number-of-images",
-            technology_id: technologyTextGeneration.id,
-            provider_id: providerOpenai.id,
-            content: { "num-images": "4" }
+            name: "Google",
+            slug: "google",
+            technologies_providers: {
+                createMany: {
+                    data: [
+                        {
+                            technology_id: technologyTextGeneration.id,
+                            default: true
+                        },
+                    ]
+                }
+            }
         }
     });
+
+
+
 
     // Modifiers
     const modifierApplyRain = await prisma.craft.create({
@@ -138,6 +148,24 @@ async function main() {
             user_id: userNunoSaraiva.id,
             language_id: languagePT.id,
             repository_id: waceRepository.id,
+        }
+    })
+
+    const parameterNumberOfImages = await prisma.parameter.create({
+        data: {
+            name: "Number of Images",
+            slug: "num_images",
+            technology_id: technologyTextGeneration.id,
+            provider_id: providerOpenai.id,
+            content: { "num_images": "4" },
+        }
+    });
+
+    await prisma.craftParameter.create({
+        data: {
+            craft_id: sereneBeachPrompt.id,
+            parameter_id: parameterNumberOfImages.id,
+            value: "1"
         }
     })
 }

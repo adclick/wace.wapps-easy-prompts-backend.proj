@@ -90,6 +90,20 @@ const getCrafts = async (
                     name: true,
                     slug: true
                 }
+            },
+            crafts_parameters: {
+                select: {
+                    value: true,
+                    parameter: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            content: true,
+                            
+                        }
+                    }
+                }
             }
         },
         orderBy: [{ created_at: "desc" }]

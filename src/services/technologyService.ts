@@ -1,15 +1,14 @@
-import providerModel from "../models/providerModel";
 import technologyModel from "../models/technologyModel";
 
-const getDefault = async () => {
-    return await technologyModel.getDefaultTechnology();
+const getTechnologies = async () => {
+    return await technologyModel.getTechnologies();
 };
 
-const getProvidersByTechnologyId = async (technologyId: number) => {
-    return await providerModel.getProvidersByTechnologyId(technologyId);
-}
+const getDefault = async () => {
+    return await technologyModel.getDefault();
+};
 
 export default {
+    getTechnologies,
     getDefault,
-    getProvidersByTechnologyId
 }

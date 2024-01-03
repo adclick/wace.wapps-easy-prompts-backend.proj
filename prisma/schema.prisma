@@ -72,7 +72,6 @@ model Provider {
   id                     Int                  @id @default(autoincrement())
   name                   String               @db.VarChar(255)
   slug                   String               @db.VarChar(255)
-  default                Boolean?
   crafts                 Craft[]
   technologies_providers TechnologyProvider[]
   parameters             Parameter[]
