@@ -7,11 +7,7 @@ const textGeneration = async (req: Request, res: Response) => {
 
         const textGenerated = await aiService.textGeneration(text);
 
-        res.status(200).json({
-            success: true,
-            message: 'Text Generated successfully',
-            data: textGenerated,
-        });
+        res.status(200).json(textGenerated);
     } catch (error) {
         console.error('Error generating text:', error);
         res.status(500).json({
