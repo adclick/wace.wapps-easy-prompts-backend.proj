@@ -1,10 +1,10 @@
-import { PrismaClient, crafts } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { CRAFT_TYPE } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const getTypes = async () => {
-    return await prisma.crafts.findMany({
+    return await prisma.craft.findMany({
         distinct: ["type"],
         select: { type: true }
     });
@@ -18,7 +18,7 @@ const getCrafts = async (
     technologies_ids: number[],
     crafts_types: CRAFT_TYPE[]
 ) => {
-    return await prisma.crafts.findMany({
+    return await prisma.craft.findMany({
         where: {
             OR: [
                 { name: { startsWith: search_term, mode: "insensitive" } },
@@ -31,13 +31,13 @@ const getCrafts = async (
                 { content: { endsWith: search_term, mode: "insensitive" } },
                 { content: { contains: search_term, mode: "insensitive" } },
             ],
-            languages: { id: { in: languages_ids } },
-            repositories: {
+            language: { id: { in: languages_ids } },
+            repository: {
                 OR: [
                     {
                         users_repositories: {
                             some: {
-                                users: { external_id },
+                                user: { external_id },
                                 repository_id: {
                                     in: repositories_ids
                                 }
@@ -45,46 +45,46 @@ const getCrafts = async (
                         }
                     },
                     {
-                        users: { external_id },
+                        user: { external_id },
                         id: {
                             in: repositories_ids
                         }
                     }
                 ]
             },
-            technologies: { id: { in: technologies_ids } },
+            technology: { id: { in: technologies_ids } },
             type: { in: crafts_types }
         },
         include: {
-            users: {
+            user: {
                 select: {
                     id: true,
                     email: true,
                     username: true,
                 }
             },
-            languages: {
+            language: {
                 select: {
                     id: true,
                     name: true,
                     slug: true,
                 }
             },
-            repositories: {
+            repository: {
                 select: {
                     id: true,
                     name: true,
                     slug: true,
                 }
             },
-            technologies: {
+            technology: {
                 select: {
                     id: true,
                     name: true,
                     slug: true,
                 }
             },
-            providers: {
+            provider: {
                 select: {
                     id: true,
                     name: true,
@@ -109,7 +109,7 @@ const createCraft = async (
     technology_id: number,
     provider_id: number | null = null,
 ) => {
-    return await prisma.crafts.create({
+    return await prisma.craft.create({
         data: {
             name,
             slug,
@@ -127,7 +127,7 @@ const createCraft = async (
 }
 
 const deleteCraft = async (id: number) => {
-    return await prisma.crafts.delete({
+    return await prisma.craft.delete({
         where: { id }
     })
 }

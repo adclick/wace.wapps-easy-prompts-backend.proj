@@ -3,11 +3,11 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const getDefaultProviderByDefaultTechnology = async () => {
-    return await prisma.providers.findFirst({
+    return await prisma.provider.findFirst({
         where: {
             technologies_providers: {
                 some: {
-                    technologies: {
+                    technology: {
                         is: {
                             default: true
                         }
@@ -20,7 +20,7 @@ const getDefaultProviderByDefaultTechnology = async () => {
 }
 
 const getDefaultProviderByTechnologyId = async (technology_id: number) => {
-    return await prisma.providers.findFirst({
+    return await prisma.provider.findFirst({
         where: {
             technologies_providers: {
                 some: {

@@ -3,13 +3,13 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 
 const getRepositoryBySlug = async (slug: string) => {
-    return await prisma.repositories.findFirst({
+    return await prisma.repository.findFirst({
         where: { slug }
     });
 }
 
 const upsertRepository = async (name: string, slug: string, user_id: number) => {
-    return await prisma.repositories.upsert({
+    return await prisma.repository.upsert({
         where: {
             user_id_slug: { user_id, slug }
         },
@@ -19,7 +19,7 @@ const upsertRepository = async (name: string, slug: string, user_id: number) => 
 }
 
 const subscribeUser = async (repository_id: number, user_id: number) => {
-    return await prisma.users_repositories.upsert({
+    return await prisma.userRepository.upsert({
         where: {
             user_id_repository_id: { repository_id, user_id }
         },
@@ -29,11 +29,11 @@ const subscribeUser = async (repository_id: number, user_id: number) => {
 }
 
 const isUserInRepository = async (external_id: string, repository_id: number) => {
-    return await prisma.repositories.findFirst({
+    return await prisma.repository.findFirst({
         where: {
             OR: [
                 {
-                    users: {
+                    user: {
                         external_id
                     }
                 },
@@ -41,7 +41,7 @@ const isUserInRepository = async (external_id: string, repository_id: number) =>
                     users_repositories: {
                         some: {
                             repository_id,
-                            users: {
+                            user: {
                                 external_id
                             }
                         }
