@@ -14,6 +14,18 @@ const getDefaultTechnology = async () => {
     });
 }
 
+const getProviders = async (technology_id: number) => {
+    return await prisma.technology.findMany({
+        where: {
+            technologies_providers: {
+                every: {
+                    technology_id
+                }
+            }
+        }
+    })
+}
+
 export default {
     getTechnologies,
     getDefaultTechnology

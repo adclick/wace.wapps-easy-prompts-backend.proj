@@ -32,7 +32,22 @@ const getDefaultProviderByTechnologyId = async (technology_id: number) => {
     })
 }
 
+const getProvidersByTechnologyId = async (technology_id: number) => {
+    return await prisma.provider.findFirst({
+        where: {
+            technologies_providers: {
+                some: {
+                    technology_id,
+                }
+            }
+        }
+    })
+}
+
+
+
 export default {
     getDefaultProviderByDefaultTechnology,
-    getDefaultProviderByTechnologyId
+    getDefaultProviderByTechnologyId,
+    getProvidersByTechnologyId
 }

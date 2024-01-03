@@ -15,7 +15,22 @@ const getDefault = async (req: Request, res: Response) => {
     }
 };
 
+const getProviders = async (req: Request, res: Response) => {
+    try {
+        const providers = await technologyService.getProvidersByTechnologyId(parseInt(req.params.id));
+
+        res.status(200).json(providers);
+    } catch (error) {
+        console.error('Error getting providers:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
+
 
 export default {
     getDefault,
+    getProviders
 };
