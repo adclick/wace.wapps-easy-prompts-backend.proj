@@ -44,6 +44,14 @@ async function main() {
         }
     });
 
+    const adclickRepository = await prisma.repository.create({
+        data: {
+            name: "Adclick",
+            slug: "adclick",
+            user_id: userNunoSaraiva.id,
+        }
+    });
+
     const technologyTextGeneration = await prisma.technology.create({
         data: {
             name: "Text Generation",
@@ -98,9 +106,6 @@ async function main() {
             }
         }
     });
-
-
-
 
     // Modifiers
     const modifierApplyRain = await prisma.craft.create({

@@ -1,5 +1,23 @@
 import { Request, Response } from "express";
-import aiService from "../services/aiService";
+import aiService, { Thread } from "../services/aiService";
+
+const chat = async (req: Request, res: Response) => {
+    try {
+        const text = (req.body.text as string);
+        const providerId = (req.body.providerId as string);
+        const threads = (req.body.providerId as Thread[]);
+
+        const response = await aiService.chat(text, parseInt(providerId), threads);
+
+        res.status(200).json(response);
+    } catch (error) {
+        console.error('Error generating chat stream:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
 
 const textGeneration = async (req: Request, res: Response) => {
     try {
@@ -42,6 +60,7 @@ const imageGeneration = async (req: Request, res: Response) => {
 
 
 export default {
+    chat,
     textGeneration,
     imageGeneration
 };
