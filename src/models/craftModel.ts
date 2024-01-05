@@ -10,6 +10,10 @@ const getTypes = async () => {
     });
 }
 
+const getCraft = async (id: number) => {
+    return await prisma.craft.findUnique({where: {id}});
+}
+
 const getCrafts = async (
     external_id: string,
     search_term: string,

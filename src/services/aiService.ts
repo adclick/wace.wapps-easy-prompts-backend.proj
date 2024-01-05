@@ -11,29 +11,13 @@ interface PreviousHistory {
     message: string
 }
 
-const chat = async (text: string, providerId: number, threads: Thread[]) => {
-    const provider = await providerModel.getById(providerId);
-    if (!provider) throw new Error('Provider not found');
-
-    const previous_history: PreviousHistory[] = [];
-    threads.forEach(t => {
-        previous_history.push({ role: "user", message: t.request });
-        previous_history.push({ role: "assistant", message: t.response });
-    });
-
-    const { data } = await axios.post("https://easyprompts.wacestudio.pt/ai/chat", {
-        text,
-        providers: provider.slug,
-        previous_history
-    });
-
-    return data;
-};
-
 const textGeneration = async (
     text: string,
-    providerId: number
+    providerId: number,
+    craftId: number
 ) => {
+    
+
     const provider = await providerModel.getById(providerId);
     if (!provider) throw new Error('Provider not found');
 
@@ -71,6 +55,25 @@ const imageGeneration = async (
 
     return data;
 }
+
+const chat = async (text: string, providerId: number, threads: Thread[]) => {
+    const provider = await providerModel.getById(providerId);
+    if (!provider) throw new Error('Provider not found');
+
+    const previous_history: PreviousHistory[] = [];
+    threads.forEach(t => {
+        previous_history.push({ role: "user", message: t.request });
+        previous_history.push({ role: "assistant", message: t.response });
+    });
+
+    const { data } = await axios.post("https://easyprompts.wacestudio.pt/ai/chat", {
+        text,
+        providers: provider.slug,
+        previous_history
+    });
+
+    return data;
+};
 
 
 export default {
