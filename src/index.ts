@@ -4,7 +4,8 @@ import userRoutes from './routes/userRoutes';
 import technologyRoutes from './routes/technologyRoutes';
 import providerRoutes from './routes/providerRoutes';
 import filterRoutes from './routes/filterRoutes';
-import craftRoutes from './routes/craftRoutes';
+import promptRoutes from './routes/promptRoutes';
+import modifierRoutes from './routes/modifierRoutes';
 import aiRoutes from './routes/aiRoutes';
 
 const cors = require('cors');
@@ -32,7 +33,8 @@ app.use('/api/users', userRoutes);
 app.use('/api/technologies', technologyRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/filters', filterRoutes);
-app.use('/api/crafts', craftRoutes);
+app.use('/api/prompts', promptRoutes);
+app.use('/api/modifiers', modifierRoutes);
 app.use('/api/ai', aiRoutes);
 
 const PORT = process.env.PORT || 3000;

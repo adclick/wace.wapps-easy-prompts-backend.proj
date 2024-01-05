@@ -1,156 +1,180 @@
 generator client {
-  provider        = "prisma-client-js"
-  previewFeatures = ["fullTextSearch"]
+    provider        = "prisma-client-js"
+    previewFeatures = ["fullTextSearch"]
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+    provider = "postgresql"
+    url      = env("DATABASE_URL")
 }
 
 enum CRAFT_TYPE {
-  PROMPT
-  TEMPLATE
-  MODIFIER
+    PROMPT
+    TEMPLATE
+    MODIFIER
 }
 
 model User {
-  id                 Int              @id @default(autoincrement())
-  email              String           @db.VarChar(255)
-  username           String           @db.VarChar(255)
-  theme              String           @default("dark") @db.VarChar(255)
-  first_login        Boolean          @default(true)
-  external_id        String
-  crafts             Craft[]
-  repositories       Repository[]
-  users_repositories UserRepository[]
+    id                 Int              @id @default(autoincrement())
+    email              String           @db.VarChar(255)
+    username           String           @db.VarChar(255)
+    theme              String           @default("dark") @db.VarChar(255)
+    first_login        Boolean          @default(true)
+    external_id        String
+    prompts            Prompt[]
+    modifiers          Modifier[]
+    repositories       Repository[]
+    users_repositories UserRepository[]
 
-  @@unique([email])
-  @@unique([external_id])
-  @@index([email])
-  @@index([external_id])
-  @@map("users")
+    @@unique([email])
+    @@unique([external_id])
+    @@index([email])
+    @@index([external_id])
+    @@map("users")
 }
 
 model Language {
-  id     Int     @id @default(autoincrement())
-  name   String  @db.VarChar(255)
-  slug   String  @db.VarChar(255)
-  crafts Craft[]
+    id        Int        @id @default(autoincrement())
+    name      String     @db.VarChar(255)
+    slug      String     @db.VarChar(255)
+    prompts   Prompt[]
+    modifiers Modifier[]
 
-  @@unique([slug])
-  @@map("languages")
+    @@unique([slug])
+    @@map("languages")
 }
 
 model Repository {
-  id                 Int              @id @default(autoincrement())
-  name               String           @db.VarChar(255)
-  slug               String?          @db.VarChar(255)
-  user_id            Int
-  crafts             Craft[]
-  user               User             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  users_repositories UserRepository[]
+    id                 Int              @id @default(autoincrement())
+    name               String           @db.VarChar(255)
+    slug               String?          @db.VarChar(255)
+    user_id            Int
+    prompts            Prompt[]
+    modifiers          Modifier[]
+    user               User             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    users_repositories UserRepository[]
 
-  @@unique([user_id, slug])
-  @@map("repositories")
+    @@unique([user_id, slug])
+    @@map("repositories")
 }
 
 model Technology {
-  id                     Int                  @id @default(autoincrement())
-  name                   String               @db.VarChar
-  slug                   String               @db.VarChar
-  default                Boolean?
-  crafts                 Craft[]
-  technologies_providers TechnologyProvider[]
-  parameters             Parameter[]
+    id                     Int                  @id @default(autoincrement())
+    name                   String               @db.VarChar
+    slug                   String               @db.VarChar
+    default                Boolean?
+    prompts                Prompt[]
+    technologies_providers TechnologyProvider[]
+    parameters             Parameter[]
 
-  @@unique([slug])
-  @@map("technologies")
+    @@unique([slug])
+    @@map("technologies")
 }
 
 model Provider {
-  id                     Int                  @id @default(autoincrement())
-  name                   String               @db.VarChar(255)
-  slug                   String               @db.VarChar(255)
-  crafts                 Craft[]
-  technologies_providers TechnologyProvider[]
-  parameters             Parameter[]
+    id                     Int                  @id @default(autoincrement())
+    name                   String               @db.VarChar(255)
+    slug                   String               @db.VarChar(255)
+    prompts                Prompt[]
+    technologies_providers TechnologyProvider[]
+    parameters             Parameter[]
 
-  @@unique([slug])
-  @@map("providers")
+    @@unique([slug])
+    @@map("providers")
 }
 
 model Parameter {
-  id                Int              @id @default(autoincrement())
-  name              String           @db.VarChar(255)
-  slug              String           @db.VarChar(255)
-  content           Json             @db.Json
-  technology_id     Int
-  provider_id       Int
-  technology        Technology       @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  provider          Provider         @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  crafts_parameters CraftParameter[]
+    id                 Int               @id @default(autoincrement())
+    name               String            @db.VarChar(255)
+    slug               String            @db.VarChar(255)
+    content            Json              @db.Json
+    technology_id      Int
+    provider_id        Int
+    technology         Technology        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    provider           Provider          @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts_parameters PromptParameter[]
 
-  @@unique([slug])
-  @@map("parameters")
+    @@unique([slug])
+    @@map("parameters")
 }
 
-model Craft {
-  id                Int              @id @default(autoincrement())
-  name              String           @db.VarChar(255)
-  slug              String           @db.VarChar(255)
-  content           String
-  description       String?
-  stars             Int              @default(0)
-  plays             Int              @default(0)
-  created_at        DateTime         @db.Timestamptz(6)
-  language_id       Int
-  repository_id     Int
-  technology_id     Int
-  user_id           Int
-  provider_id       Int?
-  metadata          Json?
-  public            Boolean          @default(false)
-  type              CRAFT_TYPE       @default(PROMPT)
-  language          Language         @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  repository        Repository       @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technology        Technology       @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user              User             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  provider          Provider?        @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  crafts_parameters CraftParameter[]
+model Prompt {
+    id                 Int               @id @default(autoincrement())
+    name               String            @db.VarChar(255)
+    slug               String            @db.VarChar(255)
+    content            String
+    description        String
+    stars              Int               @default(0)
+    plays              Int               @default(0)
+    created_at         DateTime          @default(now()) @db.Timestamptz(6)
+    language_id        Int
+    repository_id      Int
+    technology_id      Int
+    provider_id        Int
+    user_id            Int
+    metadata           Json?
+    public             Boolean           @default(false)
+    language           Language          @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    repository         Repository        @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology         Technology        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    provider           Provider          @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user               User              @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts_parameters PromptParameter[]
 
-  @@unique([slug, language_id, repository_id, technology_id])
-  @@map("crafts")
+    @@unique([slug, language_id, repository_id, technology_id])
+    @@map("prompts")
 }
 
-model CraftParameter {
-  craft_id     Int
-  parameter_id Int
-  value        String?
-  parameter    Parameter @relation(fields: [parameter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  craft        Craft     @relation(fields: [craft_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+model Modifier {
+    id            Int        @id @default(autoincrement())
+    name          String     @db.VarChar(255)
+    slug          String     @db.VarChar(255)
+    content       String
+    description   String
+    stars         Int        @default(0)
+    plays         Int        @default(0)
+    created_at    DateTime   @default(now()) @db.Timestamptz(6)
+    language_id   Int
+    repository_id Int
+    user_id       Int
+    metadata      Json?
+    public        Boolean    @default(false)
+    language      Language   @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    repository    Repository @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user          User       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([craft_id, parameter_id])
-  @@map("crafts_parameters")
+    @@unique([slug, language_id, repository_id])
+    @@map("modifiers")
+}
+
+model PromptParameter {
+    prompt_id    Int
+    parameter_id Int
+    value        String?
+    parameter    Parameter @relation(fields: [parameter_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompt       Prompt    @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+
+    @@id([prompt_id, parameter_id])
+    @@map("prompts_parameters")
 }
 
 model TechnologyProvider {
-  technology_id Int
-  provider_id   Int
-  default       Boolean?
-  provider      Provider   @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  technology    Technology @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology_id Int
+    provider_id   Int
+    default       Boolean?
+    provider      Provider   @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology    Technology @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([technology_id, provider_id])
-  @@map("technologies_providers")
+    @@id([technology_id, provider_id])
+    @@map("technologies_providers")
 }
 
 model UserRepository {
-  user_id       Int
-  repository_id Int
-  repository    Repository @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  user          User       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user_id       Int
+    repository_id Int
+    repository    Repository @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user          User       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
-  @@id([user_id, repository_id])
-  @@map("users_repositories")
+    @@id([user_id, repository_id])
+    @@map("users_repositories")
 }

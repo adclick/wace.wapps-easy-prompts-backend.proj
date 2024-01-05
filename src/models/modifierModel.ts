@@ -1,28 +1,20 @@
 import { PrismaClient } from "@prisma/client";
-import { CRAFT_TYPE } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getTypes = async () => {
-    return await prisma.craft.findMany({
-        distinct: ["type"],
-        select: { type: true }
+const getModifier = async (id: number) => {
+    return await prisma.modifier.findUnique({
+        where: {id},
     });
 }
 
-const getCraft = async (id: number) => {
-    return await prisma.craft.findUnique({where: {id}});
-}
-
-const getCrafts = async (
+const getModifiers = async (
     external_id: string,
     search_term: string,
     languages_ids: number[],
     repositories_ids: number[],
-    technologies_ids: number[],
-    crafts_types: CRAFT_TYPE[]
 ) => {
-    return await prisma.craft.findMany({
+    return await prisma.modifier.findMany({
         where: {
             OR: [
                 { name: { startsWith: search_term, mode: "insensitive" } },
@@ -56,8 +48,6 @@ const getCrafts = async (
                     }
                 ]
             },
-            technology: { id: { in: technologies_ids } },
-            type: { in: crafts_types }
         },
         include: {
             user: {
@@ -81,78 +71,42 @@ const getCrafts = async (
                     slug: true,
                 }
             },
-            technology: {
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                }
-            },
-            provider: {
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true
-                }
-            },
-            crafts_parameters: {
-                select: {
-                    value: true,
-                    parameter: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                            content: true,
-                            
-                        }
-                    }
-                }
-            }
         },
         orderBy: [{ created_at: "desc" }]
     });
 }
 
-const createCraft = async (
+const createModifier = async (
     user_id: number,
     name: string,
     slug: string,
     description: string,
     content: string,
-    created_at: Date,
-    type: CRAFT_TYPE,
     language_id: number,
     repository_id: number,
-    technology_id: number,
-    provider_id: number | null = null,
 ) => {
-    return await prisma.craft.create({
+    return await prisma.modifier.create({
         data: {
             name,
             slug,
             description,
             content,
-            created_at,
             language_id,
             repository_id,
-            technology_id,
-            provider_id,
-            type,
             user_id
         },
     })
 }
 
-const deleteCraft = async (id: number) => {
-    return await prisma.craft.delete({
+const deleteModifier = async (id: number) => {
+    return await prisma.prompt.delete({
         where: { id }
     })
 }
 
 export default {
-    getTypes,
-    getCrafts,
-    createCraft,
-    deleteCraft
+    getModifier,
+    getModifiers,
+    createModifier,
+    deleteModifier,
 }

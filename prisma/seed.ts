@@ -107,31 +107,14 @@ async function main() {
         }
     });
 
-    // Modifiers
-    const modifierApplyRain = await prisma.craft.create({
-        data: {
-            name: "Apply rain",
-            slug: "apply-rain",
-            content: "The image must include an immersive rainfall. The rain should be depicted with fine details, such as individual raindrops",
-            description: "This modifier will apply rain to your images",
-            type: "MODIFIER",
-            created_at: new Date(),
-            technology_id: technologyTextGeneration.id,
-            user_id: userNunoSaraiva.id,
-            language_id: languageEN.id,
-            repository_id: waceRepository.id
-        }
-    });
 
     // Prompts
-    const sereneBeachPrompt = await prisma.craft.create({
+    const sereneBeachPrompt = await prisma.prompt.create({
         data: {
             name: "Serene beach",
             slug: "serene-beach",
             content: "Generate a realistic image of a serene beach sunset with vibrant colors",
             description: "This prompt will generate a beach image",
-            type: "PROMPT",
-            created_at: new Date(),
             technology_id: technologyImageGeneration.id,
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
@@ -140,21 +123,32 @@ async function main() {
         }
     });
 
-    const promptHeadlinesAuto = await prisma.craft.create({
+    const promptHeadlinesAuto = await prisma.prompt.create({
         data: {
             name: "Headlines para Indústria Automóvel",
             slug: "headlines-para-industria-automovel",
             content: "Cria títulos cativantes para uma série de artigos relacionados às tendências da indústria automóvel.",
             description: "Títulos cativantes para indústria automóvel.",
-            type: "PROMPT",
-            created_at: new Date(),
             technology_id: technologyTextGeneration.id,
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
             language_id: languagePT.id,
             repository_id: waceRepository.id,
         }
-    })
+    });
+
+    // Modifiers
+    const modifierApplyRain = await prisma.modifier.create({
+        data: {
+            name: "Apply rain",
+            slug: "apply-rain",
+            content: "The image must include an immersive rainfall. The rain should be depicted with fine details, such as individual raindrops",
+            description: "This modifier will apply rain to your images",
+            user_id: userNunoSaraiva.id,
+            language_id: languageEN.id,
+            repository_id: waceRepository.id
+        }
+    });
 
     const parameterNumberOfImages = await prisma.parameter.create({
         data: {
@@ -166,9 +160,9 @@ async function main() {
         }
     });
 
-    await prisma.craftParameter.create({
+    await prisma.promptParameter.create({
         data: {
-            craft_id: sereneBeachPrompt.id,
+            prompt_id: sereneBeachPrompt.id,
             parameter_id: parameterNumberOfImages.id,
             value: "1"
         }

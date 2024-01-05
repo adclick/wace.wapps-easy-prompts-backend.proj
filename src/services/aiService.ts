@@ -1,5 +1,6 @@
 import axios from 'axios';
 import providerModel from '../models/providerModel';
+import craftModel from '../models/promptModel';
 
 export interface Thread {
     request: string,
@@ -16,8 +17,6 @@ const textGeneration = async (
     providerId: number,
     craftId: number
 ) => {
-    
-
     const provider = await providerModel.getById(providerId);
     if (!provider) throw new Error('Provider not found');
 

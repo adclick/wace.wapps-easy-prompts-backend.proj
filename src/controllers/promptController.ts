@@ -1,8 +1,23 @@
 import { Request, Response } from "express";
-import craftService from "../services/craftService";
+import promptService from "../services/promptService";
+
+const getFilters = async (req: Request, res: Response) => {
+    try {
+        const externalId = req.query.userId;
+        const filters = await promptService.getFilters(externalId as string);
+
+        res.status(200).json(filters);
+    } catch (error) {
+        console.error('Error getting filters:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Internal server error',
+        });
+    }
+};
 
 // http://localhost:3000/api/crafts/123/?filters[search_term]=&filters[languages_ids]=2&filters[repositories_ids]=2&filters[technologies_ids]=1&filters[crafts_types]=PROMPTS
-const getCrafts = async (req: Request, res: Response) => {
+const getPrompts = async (req: Request, res: Response) => {
     try {
         const convertToIntArray = (data: string) => {
             if (data === "") return [];
@@ -16,18 +31,17 @@ const getCrafts = async (req: Request, res: Response) => {
             return data.split(",");
         }
 
-        const crafts = await craftService.getCrafts(
+        const prompts = await promptService.getPrompts(
             req.query.userId as string,
             req.query.search_term as string,
             convertToIntArray(req.query.languages_ids as string),
             convertToIntArray(req.query.repositories_ids as string),
             convertToIntArray(req.query.technologies_ids as string),
-            convertToStringArray(req.query.crafts_types as string),
         );
 
-        res.status(200).json(crafts);
+        res.status(200).json(prompts);
     } catch (error) {
-        console.error('Error getting crafts:', error);
+        console.error('Error getting prompts:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',
@@ -37,7 +51,7 @@ const getCrafts = async (req: Request, res: Response) => {
 
 const createPrompt = async (req: Request, res: Response) => {
     try {
-        const promptCreated = await craftService.createPrompt(
+        const promptCreated = await promptService.createPrompt(
             req.body.userId,
             req.body.name,
             req.body.description,
@@ -58,36 +72,15 @@ const createPrompt = async (req: Request, res: Response) => {
     }
 }
 
-const createModifier = async (req: Request, res: Response) => {
-    try {
-        const craftCreated = await craftService.createModifier(
-            req.body.userId,
-            req.body.name,
-            req.body.description,
-            req.body.content,
-            parseInt(req.body.language_id),
-            parseInt(req.body.repository_id),
-            parseInt(req.body.technology_id),
-        );
-
-        res.status(201).json(craftCreated);
-    } catch (error) {
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
-    }
-}
-
-const deleteCraft = async (req: Request, res: Response) => {
+const deletePrompt = async (req: Request, res: Response) => {
     try {
         const id = req.params.id;
 
-        const craftDeleted = await craftService.deleteCraft(parseInt(id));
+        const promptDeleted = await promptService.deletePrompt(parseInt(id));
 
-        res.status(201).json(craftDeleted);
+        res.status(201).json(promptDeleted);
     } catch (error) {
-        console.error('Error deleting craft:', error);
+        console.error('Error deleting prompt:', error);
         res.status(500).json({
             success: false,
             message: 'Internal server error',
@@ -96,8 +89,8 @@ const deleteCraft = async (req: Request, res: Response) => {
 }
 
 export default {
-    getCrafts,
+    getFilters,
+    getPrompts,
     createPrompt,
-    createModifier,
-    deleteCraft
+    deletePrompt
 };
