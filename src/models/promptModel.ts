@@ -25,9 +25,9 @@ const getPrompts = async (
     return await prisma.prompt.findMany({
         where: {
             OR: [
-                { name: { startsWith: search_term, mode: "insensitive" } },
-                { name: { endsWith: search_term, mode: "insensitive" } },
-                { name: { contains: search_term, mode: "insensitive" } },
+                { title: { startsWith: search_term, mode: "insensitive" } },
+                { title: { endsWith: search_term, mode: "insensitive" } },
+                { title: { contains: search_term, mode: "insensitive" } },
                 { description: { startsWith: search_term, mode: "insensitive" } },
                 { description: { endsWith: search_term, mode: "insensitive" } },
                 { description: { contains: search_term, mode: "insensitive" } },
@@ -115,7 +115,7 @@ const getPrompts = async (
 
 const createPrompt = async (
     user_id: number,
-    name: string,
+    title: string,
     slug: string,
     description: string,
     content: string,
@@ -126,7 +126,7 @@ const createPrompt = async (
 ) => {
     return await prisma.prompt.create({
         data: {
-            name,
+            title,
             slug,
             description,
             content,

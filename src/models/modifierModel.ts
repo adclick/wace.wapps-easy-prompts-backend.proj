@@ -17,9 +17,9 @@ const getModifiers = async (
     return await prisma.modifier.findMany({
         where: {
             OR: [
-                { name: { startsWith: search_term, mode: "insensitive" } },
-                { name: { endsWith: search_term, mode: "insensitive" } },
-                { name: { contains: search_term, mode: "insensitive" } },
+                { title: { startsWith: search_term, mode: "insensitive" } },
+                { title: { endsWith: search_term, mode: "insensitive" } },
+                { title: { contains: search_term, mode: "insensitive" } },
                 { description: { startsWith: search_term, mode: "insensitive" } },
                 { description: { endsWith: search_term, mode: "insensitive" } },
                 { description: { contains: search_term, mode: "insensitive" } },
@@ -78,7 +78,7 @@ const getModifiers = async (
 
 const createModifier = async (
     user_id: number,
-    name: string,
+    title: string,
     slug: string,
     description: string,
     content: string,
@@ -87,7 +87,7 @@ const createModifier = async (
 ) => {
     return await prisma.modifier.create({
         data: {
-            name,
+            title,
             slug,
             description,
             content,

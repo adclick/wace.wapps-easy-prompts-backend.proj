@@ -111,7 +111,7 @@ async function main() {
     // Prompts
     const sereneBeachPrompt = await prisma.prompt.create({
         data: {
-            name: "Serene beach",
+            title: "Serene beach",
             slug: "serene-beach",
             content: "Generate a realistic image of a serene beach sunset with vibrant colors",
             description: "This prompt will generate a beach image",
@@ -125,7 +125,7 @@ async function main() {
 
     const promptHeadlinesAuto = await prisma.prompt.create({
         data: {
-            name: "Headlines para Indústria Automóvel",
+            title: "Headlines para Indústria Automóvel",
             slug: "headlines-para-industria-automovel",
             content: "Cria títulos cativantes para uma série de artigos relacionados às tendências da indústria automóvel.",
             description: "Títulos cativantes para indústria automóvel.",
@@ -140,7 +140,7 @@ async function main() {
     // Modifiers
     const modifierApplyRain = await prisma.modifier.create({
         data: {
-            name: "Apply rain",
+            title: "Apply rain",
             slug: "apply-rain",
             content: "The image must include an immersive rainfall. The rain should be depicted with fine details, such as individual raindrops",
             description: "This modifier will apply rain to your images",
