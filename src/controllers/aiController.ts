@@ -45,9 +45,9 @@ const chat = async (req: Request, res: Response) => {
     try {
         const text = (req.body.text as string);
         const providerId = (req.body.providerId as string);
-        const threads = (req.body.providerId as Thread[]);
+        const requests = (req.body.requests as Thread[]);
 
-        const response = await aiService.chat(text, parseInt(providerId), threads);
+        const response = await aiService.chat(text, parseInt(providerId), requests);
 
         res.status(200).json(response);
     } catch (error) {

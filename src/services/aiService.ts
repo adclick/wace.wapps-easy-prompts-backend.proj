@@ -65,9 +65,9 @@ const chat = async (text: string, providerId: number, threads: Thread[]) => {
         previous_history.push({ role: "assistant", message: t.response });
     });
 
-    const { data } = await axios.post("https://easyprompts.wacestudio.pt/ai/chat", {
+    const { data } = await axios.post("https://easyprompts.wacestudio.pt/ai/text/chat", {
         text,
-        providers: provider.slug,
+        provider: provider.slug,
         previous_history
     });
 
