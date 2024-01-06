@@ -1,11 +1,11 @@
 import express from 'express';
-import promptController from '../controllers/promptController';
+import modifierController from '../controllers/modifierController';
 const router = express.Router();
 
 // Define routes
-router.get('/', promptController.getPrompts);
-router.get('/filters', promptController.getFilters);
-router.post('/:userId/modifier', promptController.createPrompt);
-router.delete('/:id', promptController.deletePrompt);
+router.get('/', modifierController.getModifiers);
+router.get('/filters', modifierController.getFilters);
+router.post('/:userId/modifier', modifierController.createModifier);
+router.delete('/:id', modifierController.deleteModifier);
 
 export default router;
