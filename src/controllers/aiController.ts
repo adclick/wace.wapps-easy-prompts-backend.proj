@@ -43,11 +43,12 @@ const imageGeneration = async (req: Request, res: Response) => {
 
 const chat = async (req: Request, res: Response) => {
     try {
+        const promptId = (req.body.promptId as string);
         const text = (req.body.text as string);
         const providerId = (req.body.providerId as string);
         const requests = (req.body.requests as Thread[]);
 
-        const response = await aiService.chat(text, parseInt(providerId), requests);
+        const response = await aiService.chat(text, parseInt(providerId), requests, parseInt(promptId));
 
         res.status(200).json(response);
     } catch (error) {

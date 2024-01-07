@@ -55,7 +55,11 @@ const imageGeneration = async (
     return data;
 }
 
-const chat = async (text: string, providerId: number, threads: Thread[]) => {
+const chat = async (text: string, providerId: number, threads: Thread[], promptId: number) => {
+    if (promptId > 0) {
+        
+    }
+
     const provider = await providerModel.getById(providerId);
     if (!provider) throw new Error('Provider not found');
 
