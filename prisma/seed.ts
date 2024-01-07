@@ -52,11 +52,19 @@ async function main() {
         }
     });
 
+    const technologyChat = await prisma.technology.create({
+        data: {
+            name: "Chat",
+            slug: "chat",
+            default: true
+        }
+    });
+
     const technologyTextGeneration = await prisma.technology.create({
         data: {
             name: "Text Generation",
             slug: "text-generation",
-            default: true
+            default: false
         }
     });
 
@@ -77,8 +85,12 @@ async function main() {
                 createMany: {
                     data: [
                         {
-                            technology_id: technologyTextGeneration.id,
+                            technology_id: technologyChat.id,
                             default: true
+                        },
+                        {
+                            technology_id: technologyTextGeneration.id,
+                            default: false
                         },
                         {
                             technology_id: technologyImageGeneration.id,
@@ -101,12 +113,15 @@ async function main() {
                             technology_id: technologyTextGeneration.id,
                             default: true
                         },
+                        {
+                            technology_id: technologyChat.id,
+                            default: false
+                        },
                     ]
                 }
             }
         }
     });
-
 
     // Prompts
     const sereneBeachPrompt = await prisma.prompt.create({

@@ -1,6 +1,8 @@
 import axios from 'axios';
 import providerModel from '../models/providerModel';
 import craftModel from '../models/promptModel';
+import promptModel from '../models/promptModel';
+import { JsonArray, JsonObject } from '@prisma/client/runtime/library';
 
 export interface Thread {
     request: string,
@@ -57,7 +59,13 @@ const imageGeneration = async (
 
 const chat = async (text: string, providerId: number, threads: Thread[], promptId: number) => {
     if (promptId > 0) {
-        
+        const prompt = await promptModel.getPrompt(promptId);
+        if (prompt) {
+            text = prompt.content;
+            const provider = prompt.provider.slug;
+            const metadata = prompt.metadata;
+            console.log(metadata);
+        }
     }
 
     const provider = await providerModel.getById(providerId);
