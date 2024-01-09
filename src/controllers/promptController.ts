@@ -3,7 +3,7 @@ import promptService from "../services/promptService";
 
 const getFilters = async (req: Request, res: Response) => {
     try {
-        const externalId = req.query.userId;
+        const externalId = req.body.userId;
         const filters = await promptService.getFilters(externalId as string);
 
         res.status(200).json(filters);
@@ -27,7 +27,7 @@ const getPrompts = async (req: Request, res: Response) => {
 
         const convertToStringArray = (data: string) => {
             if (data === "") return [];
-            
+
             return data.split(",");
         }
 
@@ -52,14 +52,14 @@ const getPrompts = async (req: Request, res: Response) => {
 const createPrompt = async (req: Request, res: Response) => {
     try {
         const promptCreated = await promptService.createPrompt(
-            req.body.userId,
-            req.body.name,
-            req.body.description,
-            req.body.content,
-            req.body.language_id,
-            req.body.repository_id,
-            req.body.technology_id,
-            req.body.provider_id,
+            req.body.userId as string,
+            req.body.name as string,
+            req.body.description as string,
+            req.body.content as string,
+            parseInt(req.body.language_id as string),
+            parseInt(req.body.repository_id as string),
+            parseInt(req.body.technology_id as string),
+            parseInt(req.body.provider_id as string),
         );
 
         res.status(201).json(promptCreated);
