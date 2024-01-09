@@ -124,6 +124,26 @@ async function main() {
     });
 
     // Prompts
+    const helloChat = await prisma.prompt.create({
+        data: {
+            title: "Hello Chat",
+            slug: "hello-chat",
+            description: "Sample chat prompt",
+            content: "Tell me a story",
+            metadata: {
+                requests: [
+                    {role: "user", message: "From now on, you will talk like Yoda"},
+                    {role: "assistant", message: "Ok, got it"},
+                ]
+            },
+            technology_id: technologyChat.id,
+            provider_id: providerOpenai.id,
+            user_id: userNunoSaraiva.id,
+            language_id: languageEN.id,
+            repository_id: waceRepository.id
+        }
+    });
+
     const sereneBeachPrompt = await prisma.prompt.create({
         data: {
             title: "Serene beach",

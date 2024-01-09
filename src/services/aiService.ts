@@ -1,8 +1,6 @@
 import axios from 'axios';
 import providerModel from '../models/providerModel';
-import craftModel from '../models/promptModel';
 import promptModel from '../models/promptModel';
-import { JsonArray, JsonObject } from '@prisma/client/runtime/library';
 
 export interface Thread {
     request: string,
@@ -58,28 +56,34 @@ const imageGeneration = async (
 }
 
 const chat = async (text: string, providerId: number, threads: Thread[], promptId: number) => {
+    let previous_history: PreviousHistory[] = [];
+    let provider = "";
+
     if (promptId > 0) {
         const prompt = await promptModel.getPrompt(promptId);
         if (prompt) {
             text = prompt.content;
-            const provider = prompt.provider.slug;
-            const metadata = prompt.metadata;
-            console.log(metadata);
+            provider = prompt.provider.slug;
+            previous_history = JSON.parse(JSON.stringify(prompt.metadata)).requests
         }
+    } else {
+        threads.forEach(t => {
+            previous_history.push({ role: "user", message: t.request });
+            previous_history.push({ role: "assistant", message: t.response });
+        });
+
+        const providerObject = await providerModel.getById(providerId);
+        if (!providerObject) throw new Error('Provider not found');
+        provider = providerObject.slug;
     }
 
-    const provider = await providerModel.getById(providerId);
-    if (!provider) throw new Error('Provider not found');
-
-    const previous_history: PreviousHistory[] = [];
-    threads.forEach(t => {
-        previous_history.push({ role: "user", message: t.request });
-        previous_history.push({ role: "assistant", message: t.response });
-    });
+    console.log(text);
+    console.log(provider);
+    console.log(previous_history);
 
     const { data } = await axios.post("https://easyprompts.wacestudio.pt/ai/text/chat", {
         text,
-        provider: provider.slug,
+        provider,
         previous_history
     });
 
