@@ -3,7 +3,7 @@ import promptService from "../services/promptService";
 
 const getFilters = async (req: Request, res: Response) => {
     try {
-        const externalId = req.body.userId;
+        const externalId = req.query.userId;
         const filters = await promptService.getFilters(externalId as string);
 
         res.status(200).json(filters);

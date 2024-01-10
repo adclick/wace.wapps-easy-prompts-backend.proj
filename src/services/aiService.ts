@@ -1,6 +1,7 @@
 import axios from 'axios';
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
+import modifierModel from '../models/modifierModel';
 
 export interface Thread {
     request: string,
@@ -12,21 +13,46 @@ interface PreviousHistory {
     message: string
 }
 
+const modifyText = async (text: string, modifiersIds: string[]) => {
+    let prompt = text;
+
+    for (const modifierId of modifiersIds) {
+        const modifier = await modifierModel.getModifier(parseInt(modifierId));
+
+        if (!modifier) continue;
+
+        const {data} = await axios.get("https://easyprompts.wacestudio.pt/ai/prompt/modify?" + new URLSearchParams({
+            text: prompt,
+            modifier: modifier.content,
+            type: modifier.type.toLowerCase()
+        }));
+
+        if (data) {
+            prompt = data;
+        }
+    }
+
+    return prompt;
+}
+
 const textGeneration = async (
     text: string,
     providerId: number,
-    craftId: number
+    modifiersIds: string[]
 ) => {
     const provider = await providerModel.getById(providerId);
     if (!provider) throw new Error('Provider not found');
 
+    const prompt = await modifyText(text, modifiersIds);
+    
     const url = "https://easyprompts.wacestudio.pt/ai/text/generate-text?" + new URLSearchParams({
-        text,
+        text: prompt,
         provider: provider.slug,
         sandbox: "true"
     });
-
+    
     const { data } = await axios.get(url);
+    console.log(url, data);
 
     return data;
 };

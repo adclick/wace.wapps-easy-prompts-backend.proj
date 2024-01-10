@@ -184,6 +184,17 @@ async function main() {
             repository_id: waceRepository.id
         }
     });
+    const modifierTalkAsYoda = await prisma.modifier.create({
+        data: {
+            title: "Yoda Style",
+            slug: "yoda-style",
+            content: "Talk as Yoda from Starwars",
+            description: "This modifier will apply a Yoda Style talk",
+            user_id: userNunoSaraiva.id,
+            language_id: languageEN.id,
+            repository_id: waceRepository.id
+        }
+    });
 
     const parameterNumberOfImages = await prisma.parameter.create({
         data: {

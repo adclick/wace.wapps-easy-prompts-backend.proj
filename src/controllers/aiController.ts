@@ -5,9 +5,9 @@ const textGeneration = async (req: Request, res: Response) => {
     try {
         const text = (req.query.text as string);
         const providerId = (req.query.providerId as string);
-        const craftId = (req.query.craftId as string);
+        const modifiersIds = (req.query.modifiersIds as string);
 
-        const textGenerated = await aiService.textGeneration(text, parseInt(providerId), parseInt(craftId));
+        const textGenerated = await aiService.textGeneration(text, parseInt(providerId), JSON.parse(modifiersIds));
 
         res.status(200).json(textGenerated);
     } catch (error) {
