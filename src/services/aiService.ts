@@ -34,19 +34,15 @@ const textGeneration = async (
 const imageGeneration = async (
     text: string,
     providerId: number,
-    parameters: { slug: string, value: string }[],
 ) => {
     const provider = await providerModel.getById(providerId);
     if (!provider) throw new Error('Provider not found');
 
-    let numImagesParameter = parameters.find(p => p.slug === 'num_images');
-    let resolutionParameter = parameters.find(p => p.slug === 'resolution');
-
     const url = "https://easyprompts.wacestudio.pt/ai/image/generate-image?" + new URLSearchParams({
         text,
         provider: provider.slug,
-        num_images: numImagesParameter !== undefined ? numImagesParameter.value : "1",
-        resolution: resolutionParameter !== undefined ? resolutionParameter.value : "256x256",
+        num_images: "1",
+        resolution: "256x256",
         sandbox: "true"
     });
 
@@ -76,10 +72,6 @@ const chat = async (text: string, providerId: number, threads: Thread[], promptI
         if (!providerObject) throw new Error('Provider not found');
         provider = providerObject.slug;
     }
-
-    console.log(text);
-    console.log(provider);
-    console.log(previous_history);
 
     const { data } = await axios.post("https://easyprompts.wacestudio.pt/ai/text/chat", {
         text,

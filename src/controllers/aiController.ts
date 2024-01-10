@@ -23,13 +23,8 @@ const imageGeneration = async (req: Request, res: Response) => {
     try {
         const text = (req.query.text as string);
         const providerId = (req.query.providerId as string);
-        const parameters = JSON.parse(req.query.parameters as string);
 
-        const imageGenerated = await aiService.imageGeneration(
-            text,
-            parseInt(providerId),
-            parameters,
-        );
+        const imageGenerated = await aiService.imageGeneration(text, parseInt(providerId));
 
         res.status(200).json(imageGenerated);
     } catch (error) {
