@@ -1,6 +1,6 @@
 import { PrismaClient } from '@prisma/client';
 import { randomUUID } from 'crypto';
-import slugify from 'slugify';
+import textUtils from '../src/utils/textUtils';
 
 const prisma = new PrismaClient();
 
@@ -31,7 +31,7 @@ async function main() {
     const myRepository = await prisma.repository.create({
         data: {
             name: "My Repository",
-            slug: slugify("My Repository", { lower: true }),
+            slug: textUtils.toSlug("My Repository"),
             user_id: userNunoSaraiva.id,
         },
     });

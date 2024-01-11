@@ -1,10 +1,10 @@
-import slugify from 'slugify';
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import promptModel from '../models/promptModel';
 import languageModel from '../models/languageModel';
 import technologyModel from '../models/technologyModel';
 import modifierModel from '../models/modifierModel';
+import textUtils from '../utils/textUtils';
 
 const getFilters = async (externalId: string) => {
     const languages = languageModel.getAll();
@@ -58,7 +58,7 @@ const createModifier = async (
     return await modifierModel.createOne(
         user.id,
         name,
-        slugify(name),
+        textUtils.toSlug(name),
         description,
         content,
         languageId,

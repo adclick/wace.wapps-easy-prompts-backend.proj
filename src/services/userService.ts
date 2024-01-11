@@ -1,7 +1,7 @@
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
-import slugify from 'slugify';
 import userRepositoryModel from '../models/userRepositoryModel';
+import textUtils from '../utils/textUtils';
 
 const login = async (email: string, username: string, externalId: string) => {
     // Create or update user
@@ -9,7 +9,7 @@ const login = async (email: string, username: string, externalId: string) => {
 
     // Create or update main personal repo
     const repoName = "My Repository";
-    const repoSlug = slugify(repoName, {lower: true});
+    const repoSlug = textUtils.toSlug(repoName);
     await repositoryModel.upsertOne(repoName, repoSlug, user.id);
 
     // Subscribe user to wace repo (temp)
