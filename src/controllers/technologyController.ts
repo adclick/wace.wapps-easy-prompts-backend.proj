@@ -3,29 +3,21 @@ import technologyService from "../services/technologyService";
 
 const getTechnologies = async (req: Request, res: Response) => {
     try {
-        const technologies = await technologyService.getTechnologies();
+        const response = await technologyService.getTechnologies();
 
-        res.status(200).json(technologies);
-    } catch (error) {
-        console.error('Error getting options:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 };
 
 const getDefault = async (req: Request, res: Response) => {
     try {
-        const technology = await technologyService.getDefault();
+        const response = await technologyService.getDefault();
 
-        res.status(200).json(technology);
-    } catch (error) {
-        console.error('Error getting options:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 };
 

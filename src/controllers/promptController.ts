@@ -1,93 +1,65 @@
 import { Request, Response } from "express";
 import promptService from "../services/promptService";
+import controllerUtils from "../utils/controllerUtils";
 
 const getFilters = async (req: Request, res: Response) => {
     try {
-        const externalId = req.query.userId;
-        const filters = await promptService.getFilters(externalId as string);
+        const response = await promptService.getFilters(
+            controllerUtils.getUserExternalId(req, true)
+        );
 
-        res.status(200).json(filters);
-    } catch (error) {
-        console.error('Error getting filters:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 };
 
-// http://localhost:3000/api/crafts/123/?filters[search_term]=&filters[languages_ids]=2&filters[repositories_ids]=2&filters[technologies_ids]=1&filters[crafts_types]=PROMPTS
 const getPrompts = async (req: Request, res: Response) => {
     try {
-        const convertToIntArray = (data: string) => {
-            if (data === "") return [];
-
-            return data.split(",").map(d => parseInt(d));
-        }
-
-        const convertToStringArray = (data: string) => {
-            if (data === "") return [];
-
-            return data.split(",");
-        }
-
-        const prompts = await promptService.getPrompts(
-            req.query.userId as string,
-            req.query.search_term as string,
-            convertToIntArray(req.query.languages_ids as string),
-            convertToIntArray(req.query.repositories_ids as string),
-            convertToIntArray(req.query.technologies_ids as string),
+        const response = await promptService.getPrompts(
+            controllerUtils.getUserExternalId(req, true),
+            controllerUtils.getSearchTerm(req, false),
+            controllerUtils.getLanguagesIds(req),
+            controllerUtils.getRepositoriesIds(req),
+            controllerUtils.getTechnologiesIds(req),
         );
 
-        res.status(200).json(prompts);
-    } catch (error) {
-        console.error('Error getting prompts:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 };
 
 const createPrompt = async (req: Request, res: Response) => {
     try {
-        const modifiersIds = (req.body.modifiers_ids as string);
-
-        const promptCreated = await promptService.createPrompt(
-            req.body.userId as string,
-            req.body.name as string,
-            req.body.description as string,
-            req.body.content as string,
-            parseInt(req.body.language_id as string),
-            parseInt(req.body.repository_id as string),
-            parseInt(req.body.technology_id as string),
-            parseInt(req.body.provider_id as string),
-            JSON.parse(modifiersIds)
+        const response = await promptService.createPrompt(
+            controllerUtils.getUserExternalId(req, true),
+            controllerUtils.getName(req, true, 'post'),
+            controllerUtils.getDescription(req, true, 'post'),
+            controllerUtils.getContent(req, true, 'post'),
+            controllerUtils.getLanguageId(req, true, 'post'),
+            controllerUtils.getRepositoryId(req, true, 'post'),
+            controllerUtils.getTechnologyId(req, true, 'post'),
+            controllerUtils.getProviderId(req, true, 'post'),
+            controllerUtils.getModifiersIds(req, true, 'post')
         );
 
-        res.status(201).json(promptCreated);
-    } catch (error) {
-        console.error('Error getting user:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        res.status(201).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 }
 
 const deletePrompt = async (req: Request, res: Response) => {
     try {
-        const id = req.params.id;
+        const response = await promptService.deletePrompt(
+            controllerUtils.getPromptId(req, true, 'url')
+        );
 
-        const promptDeleted = await promptService.deletePrompt(parseInt(id));
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
 
-        res.status(201).json(promptDeleted);
-    } catch (error) {
-        console.error('Error deleting prompt:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
     }
 }
 

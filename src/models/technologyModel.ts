@@ -2,11 +2,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getTechnologies = async () => {
+const getAll = async () => {
     return await prisma.technology.findMany();
 }
 
-const getDefault = async () => {
+const getOneDefault = async () => {
     return await prisma.technology.findFirst({
         where: {
             default: true
@@ -15,6 +15,6 @@ const getDefault = async () => {
 }
 
 export default {
-    getTechnologies,
-    getDefault
+    getAll,
+    getOneDefault
 }

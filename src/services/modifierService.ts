@@ -7,9 +7,9 @@ import technologyModel from '../models/technologyModel';
 import modifierModel from '../models/modifierModel';
 
 const getFilters = async (externalId: string) => {
-    const languages = languageModel.getLanguages();
-    const repositories = userModel.getRepositories(externalId);
-    const technologies = technologyModel.getTechnologies();
+    const languages = languageModel.getAll();
+    const repositories = repositoryModel.getAllByUser(externalId);
+    const technologies = technologyModel.getAll();
 
     return Promise.all([languages, repositories, technologies]).then(values => {
         const [languages, repositories, technologies] = values;
@@ -29,7 +29,7 @@ const getModifiers = async (
     languages_ids: number[],
     repositories_ids: number[],
 ) => {
-    return await modifierModel.getModifiers(
+    return await modifierModel.getAll(
         externalId,
         search_term,
         languages_ids,
@@ -45,17 +45,17 @@ const createModifier = async (
     languageId: number,
     repositoryId: number,
 ) => {
-    const user = await userModel.getUser(externalId);
+    const user = await userModel.getOneById(externalId);
     if (!user) {
         throw new Error("User not found");
     }
 
-    const isUserInRepository = await repositoryModel.isUserInRepository(externalId, repositoryId);
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(externalId, repositoryId);
     if (!isUserInRepository) {
         throw new Error('This user does not belong to this repository');
     }
 
-    return await modifierModel.createModifier(
+    return await modifierModel.createOne(
         user.id,
         name,
         slugify(name),
@@ -67,7 +67,7 @@ const createModifier = async (
 }
 
 const deleteModifier = async (id: number) => {
-    return await promptModel.deletePrompt(id);
+    return await promptModel.deleteOne(id);
 }
 
 export default {

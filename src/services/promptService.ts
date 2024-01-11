@@ -7,9 +7,9 @@ import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
 
 const getFilters = async (externalId: string) => {
-    const languages = languageModel.getLanguages();
-    const repositories = userModel.getRepositories(externalId);
-    const technologies = technologyModel.getTechnologies();
+    const languages = languageModel.getAll();
+    const repositories = repositoryModel.getAllByUser(externalId);
+    const technologies = technologyModel.getAll();
 
     return Promise.all([languages, repositories, technologies]).then(values => {
         const [languages, repositories, technologies] = values;
@@ -30,7 +30,7 @@ const getPrompts = async (
     repositories_ids: number[],
     technologies_ids: number[],
 ) => {
-    return await promptModel.getPrompts(
+    return await promptModel.getAll(
         externalId,
         search_term,
         languages_ids,
@@ -48,22 +48,22 @@ const createPrompt = async (
     repositoryId: number,
     technologyId: number,
     providerId: number,
-    modifiersIds: string[]
+    modifiersIds: number[]
 ) => {
-    const user = await userModel.getUser(externalId);
+    const user = await userModel.getOneById(externalId);
     if (!user) {
         throw new Error("User not found");
     }
 
-    const isUserInRepository = await repositoryModel.isUserInRepository(externalId, repositoryId);
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(externalId, repositoryId);
     if (!isUserInRepository) {
         throw new Error('This user does not belong to this repository');
     }
 
-    const modifiers = await modifierModel.getModifiersInIds(modifiersIds.map(id => parseInt(id)));
+    const modifiers = await modifierModel.getAllByIds(modifiersIds);
     const metadata = { modifiers };
 
-    return await promptModel.createPrompt(
+    return await promptModel.createOne(
         user.id,
         name,
         textUtils.toSlug(name),
@@ -78,7 +78,7 @@ const createPrompt = async (
 }
 
 const deletePrompt = async (id: number) => {
-    return await promptModel.deletePrompt(id);
+    return await promptModel.deleteOne(id);
 }
 
 export default {

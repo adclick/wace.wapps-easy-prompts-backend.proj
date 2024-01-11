@@ -2,7 +2,7 @@ import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getPrompt = async (id: number) => {
+const getOneById = async (id: number) => {
     return await prisma.prompt.findUnique({
         where: { id },
         include: {
@@ -15,7 +15,7 @@ const getPrompt = async (id: number) => {
     });
 }
 
-const getPrompts = async (
+const getAll = async (
     external_id: string,
     search_term: string,
     languages_ids: number[],
@@ -113,7 +113,7 @@ const getPrompts = async (
     });
 }
 
-const createPrompt = async (
+const createOne = async (
     user_id: number,
     title: string,
     slug: string,
@@ -141,15 +141,15 @@ const createPrompt = async (
     })
 }
 
-const deletePrompt = async (id: number) => {
+const deleteOne = async (id: number) => {
     return await prisma.prompt.delete({
         where: { id }
     })
 }
 
 export default {
-    getPrompt,
-    getPrompts,
-    createPrompt,
-    deletePrompt,
+    getOneById,
+    getAll,
+    createOne,
+    deleteOne,
 }

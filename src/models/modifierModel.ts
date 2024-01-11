@@ -2,13 +2,13 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getModifier = async (id: number) => {
+const getOneById = async (id: number) => {
     return await prisma.modifier.findUnique({
         where: { id },
     });
 }
 
-const getModifiersInIds = async (ids: number[]) => {
+const getAllByIds = async (ids: number[]) => {
     return await prisma.modifier.findMany({
         where: {
             id: {
@@ -18,7 +18,7 @@ const getModifiersInIds = async (ids: number[]) => {
     })
 }
 
-const getModifiers = async (
+const getAll = async (
     external_id: string,
     search_term: string,
     languages_ids: number[],
@@ -83,7 +83,7 @@ const getModifiers = async (
     });
 }
 
-const createModifier = async (
+const createOne = async (
     user_id: number,
     title: string,
     slug: string,
@@ -105,14 +105,14 @@ const createModifier = async (
     })
 }
 
-const deleteModifier = async (id: number) => {
+const deteleOne = async (id: number) => {
     return await prisma.prompt.delete({ where: { id } })
 }
 
 export default {
-    getModifier,
-    getModifiersInIds,
-    getModifiers,
-    createModifier,
-    deleteModifier,
+    getOneById,
+    getAllByIds,
+    getAll,
+    createOne,
+    deteleOne,
 }

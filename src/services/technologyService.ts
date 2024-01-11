@@ -1,11 +1,11 @@
 import technologyModel from "../models/technologyModel";
 
 const getTechnologies = async () => {
-    return await technologyModel.getTechnologies();
+    return await technologyModel.getAll();
 };
 
 const getDefault = async () => {
-    return await technologyModel.getDefault();
+    return await technologyModel.getOneDefault();
 };
 
 export default {

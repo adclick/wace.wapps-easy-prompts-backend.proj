@@ -1,65 +1,49 @@
 import { Request, Response } from "express";
 import aiService, { Thread } from "../services/aiService";
+import controllerUtils from "../utils/controllerUtils";
 
 const textGeneration = async (req: Request, res: Response) => {
     try {
-        const text = (req.query.text as string);
-        const providerId = (req.query.provider_id as string);
-        const modifiersIds = (req.query.modifiers_ids as string);
-        const promptId = (req.query.prompt_id as string);
-
-        const textGenerated = await aiService.textGeneration(
-            text,
-            parseInt(providerId),
-            JSON.parse(modifiersIds),
-            parseInt(promptId)
+        const response = await aiService.textGeneration(
+            controllerUtils.getText(req),
+            controllerUtils.getProviderId(req),
+            controllerUtils.getModifiersIds(req),
+            controllerUtils.getPromptId(req, false),
         );
 
-        res.status(200).json(textGenerated);
-    } catch (error) {
-        console.error('Error generating text:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 };
 
 const imageGeneration = async (req: Request, res: Response) => {
     try {
-        const text = (req.query.text as string);
-        const providerId = (req.query.providerId as string);
-        const modifiersIds = (req.query.modifiersIds as string);
+        const response = await aiService.imageGeneration(
+            controllerUtils.getText(req),
+            controllerUtils.getProviderId(req)
+        );
 
-        const imageGenerated = await aiService.imageGeneration(text, parseInt(providerId));
-
-        res.status(200).json(imageGenerated);
-    } catch (error) {
-        console.error('Error generating image:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 };
 
 const chat = async (req: Request, res: Response) => {
     try {
-        const promptId = (req.body.promptId as string);
-        const text = (req.body.text as string);
-        const providerId = (req.body.providerId as string);
         const requests = (req.body.requests as Thread[]);
-        const modifiersIds = (req.query.modifiersIds as string);
 
-        const response = await aiService.chat(text, parseInt(providerId), requests, parseInt(promptId));
+        const response = await aiService.chat(
+            controllerUtils.getText(req, true, 'post'),
+            controllerUtils.getProviderId(req, true, 'post'),
+            requests,
+            controllerUtils.getPromptId(req, false, 'post')
+        );
 
         res.status(200).json(response);
-    } catch (error) {
-        console.error('Error generating chat stream:', error);
-        res.status(500).json({
-            success: false,
-            message: 'Internal server error',
-        });
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
     }
 };
 

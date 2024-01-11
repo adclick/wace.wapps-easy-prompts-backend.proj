@@ -15,11 +15,11 @@ interface PreviousHistory {
     message: string
 }
 
-const modifyText = async (text: string, modifiersIds: string[]) => {
+const modifyText = async (text: string, modifiersIds: number[]) => {
     let prompt = text;
 
     for (const modifierId of modifiersIds) {
-        const modifier = await modifierModel.getModifier(parseInt(modifierId));
+        const modifier = await modifierModel.getOneById(modifierId);
 
         if (!modifier) continue;
 
@@ -40,17 +40,16 @@ const modifyText = async (text: string, modifiersIds: string[]) => {
 const textGeneration = async (
     text: string,
     providerId: number,
-    modifiersIds: string[],
+    modifiersIds: number[],
     promptId: number
 ) => {
-    console.log(promptId);
-    const prompt = await promptModel.getPrompt(promptId);
+    const prompt = await promptModel.getOneById(promptId);
     let providerSlug = "";
     if (prompt) {
         text = prompt.content;
         providerSlug = prompt.provider.slug;
     } else {
-        const provider = await providerModel.getById(providerId);
+        const provider = await providerModel.getOneById(providerId);
         if (!provider) throw new Error('Provider not found');
         providerSlug = provider.slug;
     }
@@ -70,7 +69,7 @@ const textGeneration = async (
 };
 
 const imageGeneration = async (text: string, providerId: number) => {
-    const provider = await providerModel.getById(providerId);
+    const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error('Provider not found');
 
     const url = `${BASE_URL}/ai/image/generate-image?` + new URLSearchParams({
@@ -90,13 +89,13 @@ const chat = async (text: string, providerId: number, threads: Thread[], promptI
     let previous_history: PreviousHistory[] = [];
     let provider = "";
 
-    const prompt = await promptModel.getPrompt(promptId);
+    const prompt = await promptModel.getOneById(promptId);
     if (prompt) {
         text = prompt.content;
         provider = prompt.provider.slug;
         previous_history = JSON.parse(JSON.stringify(prompt.metadata)).requests
     } else {
-        const providerObject = await providerModel.getById(providerId);
+        const providerObject = await providerModel.getOneById(providerId);
         if (!providerObject) throw new Error('Provider not found');
         provider = providerObject.slug;
 

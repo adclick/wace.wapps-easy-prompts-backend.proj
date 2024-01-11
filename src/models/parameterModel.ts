@@ -2,11 +2,11 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
-const getById = async (id: number) => {
+const getOneById = async (id: number) => {
     return await prisma.parameter.findUnique({where: {id}});
 }
 
-const getParameters = async (technology_id: number, provider_id: number) => {
+const getAll = async (technology_id: number, provider_id: number) => {
     return await prisma.parameter.findMany({
         where: {
             technology_id,
@@ -16,6 +16,6 @@ const getParameters = async (technology_id: number, provider_id: number) => {
 }
 
 export default {
-    getById,
-    getParameters
+    getOneById,
+    getAll
 }

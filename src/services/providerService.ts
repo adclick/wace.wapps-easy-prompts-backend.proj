@@ -1,11 +1,11 @@
 import providerModel from "../models/providerModel";
 
 const getDefault = async (technologyId: number) => {
-    return await providerModel.getDefault(technologyId);
+    return await providerModel.getOneDefaultByTechnologyId(technologyId);
 };
 
 const getProviders = async (technologyId: number) => {
-    return await providerModel.getProviders(technologyId);
+    return await providerModel.getAll(technologyId);
 }
 
 export default {
