@@ -51,6 +51,8 @@ const getPrompts = async (req: Request, res: Response) => {
 
 const createPrompt = async (req: Request, res: Response) => {
     try {
+        const modifiersIds = (req.body.modifiers_ids as string);
+
         const promptCreated = await promptService.createPrompt(
             req.body.userId as string,
             req.body.name as string,
@@ -60,6 +62,7 @@ const createPrompt = async (req: Request, res: Response) => {
             parseInt(req.body.repository_id as string),
             parseInt(req.body.technology_id as string),
             parseInt(req.body.provider_id as string),
+            JSON.parse(modifiersIds)
         );
 
         res.status(201).json(promptCreated);

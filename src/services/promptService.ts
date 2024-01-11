@@ -1,9 +1,10 @@
-import slugify from 'slugify';
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import promptModel from '../models/promptModel';
 import languageModel from '../models/languageModel';
 import technologyModel from '../models/technologyModel';
+import modifierModel from '../models/modifierModel';
+import textUtils from '../utils/textUtils';
 
 const getFilters = async (externalId: string) => {
     const languages = languageModel.getLanguages();
@@ -47,6 +48,7 @@ const createPrompt = async (
     repositoryId: number,
     technologyId: number,
     providerId: number,
+    modifiersIds: string[]
 ) => {
     const user = await userModel.getUser(externalId);
     if (!user) {
@@ -58,16 +60,20 @@ const createPrompt = async (
         throw new Error('This user does not belong to this repository');
     }
 
+    const modifiers = await modifierModel.getModifiersInIds(modifiersIds.map(id => parseInt(id)));
+    const metadata = { modifiers };
+
     return await promptModel.createPrompt(
         user.id,
         name,
-        slugify(name),
+        textUtils.toSlug(name),
         description,
         content,
         languageId,
         repositoryId,
         technologyId,
         providerId,
+        metadata
     )
 }
 

@@ -1,10 +1,10 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
 const getPrompt = async (id: number) => {
     return await prisma.prompt.findUnique({
-        where: {id},
+        where: { id },
         include: {
             provider: {
                 select: {
@@ -103,7 +103,7 @@ const getPrompts = async (
                             name: true,
                             slug: true,
                             content: true,
-                            
+
                         }
                     }
                 }
@@ -123,6 +123,7 @@ const createPrompt = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
+    metadata: Prisma.InputJsonValue
 ) => {
     return await prisma.prompt.create({
         data: {
@@ -134,7 +135,8 @@ const createPrompt = async (
             repository_id,
             technology_id,
             provider_id,
-            user_id
+            user_id,
+            metadata
         },
     })
 }

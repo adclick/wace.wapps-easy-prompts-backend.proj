@@ -4,8 +4,18 @@ const prisma = new PrismaClient();
 
 const getModifier = async (id: number) => {
     return await prisma.modifier.findUnique({
-        where: {id},
+        where: { id },
     });
+}
+
+const getModifiersInIds = async (ids: number[]) => {
+    return await prisma.modifier.findMany({
+        where: {
+            id: {
+                in: ids
+            }
+        }
+    })
 }
 
 const getModifiers = async (
@@ -23,9 +33,6 @@ const getModifiers = async (
                 { description: { startsWith: search_term, mode: "insensitive" } },
                 { description: { endsWith: search_term, mode: "insensitive" } },
                 { description: { contains: search_term, mode: "insensitive" } },
-                { content: { startsWith: search_term, mode: "insensitive" } },
-                { content: { endsWith: search_term, mode: "insensitive" } },
-                { content: { contains: search_term, mode: "insensitive" } },
             ],
             language: { id: { in: languages_ids } },
             repository: {
@@ -99,13 +106,12 @@ const createModifier = async (
 }
 
 const deleteModifier = async (id: number) => {
-    return await prisma.prompt.delete({
-        where: { id }
-    })
+    return await prisma.prompt.delete({ where: { id } })
 }
 
 export default {
     getModifier,
+    getModifiersInIds,
     getModifiers,
     createModifier,
     deleteModifier,
