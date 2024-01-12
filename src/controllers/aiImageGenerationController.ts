@@ -1,13 +1,13 @@
 import { Request, Response } from "express";
-import aiService, { Thread } from "../services/aiService";
 import controllerUtils from "../utils/controllerUtils";
-
+import aiImageGenerationService from "../services/aiImageGenerationService";
 
 const imageGeneration = async (req: Request, res: Response) => {
     try {
-        const response = await aiService.imageGeneration(
+        const response = await aiImageGenerationService.imageGeneration(
             controllerUtils.getText(req),
-            controllerUtils.getProviderId(req)
+            controllerUtils.getProviderId(req),
+            controllerUtils.getModifiersIds(req),
         );
 
         res.status(200).json(response);
@@ -16,15 +16,10 @@ const imageGeneration = async (req: Request, res: Response) => {
     }
 };
 
-const chat = async (req: Request, res: Response) => {
+const imageGenerationById = async (req: Request, res: Response) => {
     try {
-        const requests = (req.body.requests as Thread[]);
-
-        const response = await aiService.chat(
-            controllerUtils.getText(req, true, 'post'),
-            controllerUtils.getProviderId(req, true, 'post'),
-            requests,
-            controllerUtils.getPromptId(req, false, 'post')
+        const response = await aiImageGenerationService.imageGenerationById(
+            controllerUtils.getPromptId(req, true, 'url'),
         );
 
         res.status(200).json(response);
@@ -35,5 +30,5 @@ const chat = async (req: Request, res: Response) => {
 
 export default {
     imageGeneration,
-    chat,
+    imageGenerationById,
 };

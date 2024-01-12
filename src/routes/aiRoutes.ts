@@ -1,11 +1,19 @@
 import express from 'express';
 import aiController from '../controllers/aiController';
+import aiTextGenerationController from '../controllers/aiTextGenerationController';
+import aiImageGenerationController from '../controllers/aiImageGenerationController';
 
 const router = express.Router();
 
-// Define routes
+// Text Generation
+router.get('/text-generation/', aiTextGenerationController.textGeneration);
+router.get('/text-generation/:prompt_id', aiTextGenerationController.textGenerationById);
+
+// Image Generation
+router.get('/image-generation/', aiImageGenerationController.imageGeneration);
+router.get('/image-generation/:prompt_id', aiImageGenerationController.imageGenerationById);
+
+// Chat
 router.post('/chat/', aiController.chat);
-router.get('/text-generation/', aiController.textGeneration);
-router.get('/image-generation/', aiController.imageGeneration);
 
 export default router;

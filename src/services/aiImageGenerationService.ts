@@ -6,9 +6,9 @@ import { JsonValue } from '@prisma/client/runtime/library';
 import modifierModel from '../models/modifierModel';
 
 const BASE_URL = process.env.BASE_URL;
-const API_URL = BASE_URL + '/ai/text/generate-text';
+const API_URL = BASE_URL + '/ai/image/generate-image';
 
-const textGeneration = async (text: string, providerId: number, modifiersIds: number[]) => {
+const imageGeneration = async (text: string, providerId: number, modifiersIds: number[]) => {
     const provider = await providerModel.getOneById(providerId);
 
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
@@ -19,11 +19,13 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
 
     return await httpUtils.get(API_URL, {
         text: textModified,
-        provider: provider.slug
+        provider: provider.slug,
+        resolution: "256x256",
+        num_images: 1
     })
 };
 
-const textGenerationById = async (promptId: number) => {
+const imageGenerationById = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
 
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
@@ -38,11 +40,13 @@ const textGenerationById = async (promptId: number) => {
 
     return await httpUtils.get(API_URL, {
         text,
-        provider: prompt.provider.slug
+        provider: prompt.provider.slug,
+        resolution: "256x256",
+        num_images: 1
     })
 };
 
 export default {
-    textGeneration,
-    textGenerationById
+    imageGeneration,
+    imageGenerationById
 }

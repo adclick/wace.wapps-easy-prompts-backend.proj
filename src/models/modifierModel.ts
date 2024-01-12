@@ -2,6 +2,12 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export interface Modifier {
+    id: number,
+    content: string,
+    type: string
+}
+
 const getOneById = async (id: number) => {
     return await prisma.modifier.findUnique({
         where: { id },

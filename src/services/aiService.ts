@@ -32,30 +32,6 @@ const modifyText = async (text: string, modifiersIds: number[]) => {
     return textOptimized;
 }
 
-const textGeneration = async (
-    text: string,
-    providerId: number,
-    modifiersIds: number[],
-    promptId: number
-) => {
-    const prompt = await promptModel.getOneById(promptId);
-    let providerSlug = "";
-    if (prompt) {
-        text = prompt.content;
-        providerSlug = prompt.provider.slug;
-    } else {
-        const provider = await providerModel.getOneById(providerId);
-        if (!provider) throw new Error('Provider not found');
-        providerSlug = provider.slug;
-    }
-
-    const modifiedText = await modifyText(text, modifiersIds);
-
-    return await httpUtils.get(`${BASE_URL}/ai/text/generate-text`, {
-        text: modifiedText,
-        provider: providerSlug
-    })
-};
 
 const imageGeneration = async (text: string, providerId: number) => {
     const provider = await providerModel.getOneById(providerId);
@@ -102,6 +78,5 @@ const chat = async (text: string, providerId: number, threads: Thread[], promptI
 
 export default {
     chat,
-    textGeneration,
     imageGeneration
 }
