@@ -2,38 +2,33 @@ import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import promptModel from '../models/promptModel';
 import languageModel from '../models/languageModel';
-import technologyModel from '../models/technologyModel';
 import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
 
 const getFilters = async (externalId: string) => {
-    const languages = languageModel.getAll();
-    const repositories = repositoryModel.getAllByUser(externalId);
-    const technologies = technologyModel.getAll();
+    const [languages, repositories] = await Promise.all([
+        languageModel.getAll(),
+        repositoryModel.getAllByUser(externalId),
+    ]);
 
-    return Promise.all([languages, repositories, technologies]).then(values => {
-        const [languages, repositories, technologies] = values;
-
-        return {
-            searchTerm: "",
-            languages,
-            repositories,
-            technologies,
-        }
-    })
+    return {
+        searchTerm: "",
+        languages,
+        repositories,
+    }
 };
 
 const getModifiers = async (
     externalId: string,
-    search_term: string,
-    languages_ids: number[],
-    repositories_ids: number[],
+    searchTerm: string,
+    languagesIds: number[],
+    repositoriesIds: number[],
 ) => {
     return await modifierModel.getAll(
         externalId,
-        search_term,
-        languages_ids,
-        repositories_ids,
+        searchTerm,
+        languagesIds,
+        repositoriesIds,
     );
 };
 
@@ -46,14 +41,14 @@ const createModifier = async (
     repositoryId: number,
 ) => {
     const user = await userModel.getOneById(externalId);
-    if (!user) {
-        throw new Error("User not found");
-    }
+    if (!user) throw new Error("User not found");
 
-    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(externalId, repositoryId);
-    if (!isUserInRepository) {
-        throw new Error('This user does not belong to this repository');
-    }
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
+        externalId,
+        repositoryId
+    );
+
+    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
     return await modifierModel.createOne(
         user.id,

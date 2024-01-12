@@ -14,9 +14,9 @@ const login = async (email: string, username: string, externalId: string) => {
 
     // Subscribe user to wace repo (temp)
     const repo = await repositoryModel.getOneBySlug("wace");
-    if (!repo) {
-        throw new Error(`Repository 'wace' not found`);
-    }
+    
+    if (!repo) throw new Error(`Repository 'wace' not found`);
+
     await userRepositoryModel.upsertOne(repo.id, user.id);
 
     return user;

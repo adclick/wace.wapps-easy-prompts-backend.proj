@@ -2,6 +2,7 @@ import axios from 'axios';
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import modifierModel from '../models/modifierModel';
+import httpUtils from '../utils/httpUtils';
 
 const BASE_URL = process.env.BASE_URL;
 
@@ -16,25 +17,19 @@ interface PreviousHistory {
 }
 
 const modifyText = async (text: string, modifiersIds: number[]) => {
-    let prompt = text;
+    let textOptimized = text;
 
-    for (const modifierId of modifiersIds) {
-        const modifier = await modifierModel.getOneById(modifierId);
+    const modifiers = await modifierModel.getAllByIds(modifiersIds);
 
-        if (!modifier) continue;
-
-        const { data } = await axios.get(`${BASE_URL}/ai/prompt/modify?` + new URLSearchParams({
-            text: prompt,
+    for (const modifier of modifiers) {
+        textOptimized = await httpUtils.get(`${BASE_URL}/ai/prompt/modify?`, {
+            text: textOptimized,
             modifier: modifier.content,
             type: modifier.type.toLowerCase()
-        }));
-
-        if (data) {
-            prompt = data;
-        }
+        })
     }
 
-    return prompt;
+    return textOptimized;
 }
 
 const textGeneration = async (
@@ -56,16 +51,10 @@ const textGeneration = async (
 
     const modifiedText = await modifyText(text, modifiersIds);
 
-    const url = `${BASE_URL}/ai/text/generate-text?` + new URLSearchParams({
+    return await httpUtils.get(`${BASE_URL}/ai/text/generate-text`, {
         text: modifiedText,
         provider: providerSlug
-    });
-
-    console.log(url);
-
-    const { data } = await axios.get(url);
-
-    return data;
+    })
 };
 
 const imageGeneration = async (text: string, providerId: number) => {

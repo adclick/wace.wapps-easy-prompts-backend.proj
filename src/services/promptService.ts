@@ -7,20 +7,18 @@ import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
 
 const getFilters = async (externalId: string) => {
-    const languages = languageModel.getAll();
-    const repositories = repositoryModel.getAllByUser(externalId);
-    const technologies = technologyModel.getAll();
+    const [languages, repositories, technologies] = await Promise.all([
+        languageModel.getAll(),
+        repositoryModel.getAllByUser(externalId),
+        technologyModel.getAll(),
+    ]);
 
-    return Promise.all([languages, repositories, technologies]).then(values => {
-        const [languages, repositories, technologies] = values;
-
-        return {
-            searchTerm: "",
-            languages,
-            repositories,
-            technologies,
-        }
-    })
+    return {
+        searchTerm: "",
+        languages,
+        repositories,
+        technologies,
+    }
 };
 
 const getPrompts = async (
@@ -51,14 +49,14 @@ const createPrompt = async (
     modifiersIds: number[]
 ) => {
     const user = await userModel.getOneById(externalId);
-    if (!user) {
-        throw new Error("User not found");
-    }
+    if (!user) throw new Error("User not found");
 
-    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(externalId, repositoryId);
-    if (!isUserInRepository) {
-        throw new Error('This user does not belong to this repository');
-    }
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
+        externalId,
+        repositoryId
+    );
+    
+    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
     const modifiers = await modifierModel.getAllByIds(modifiersIds);
     const metadata = { modifiers };
