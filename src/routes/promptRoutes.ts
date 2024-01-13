@@ -6,6 +6,6 @@ const router = express.Router();
 router.get('/', promptController.getPrompts);
 router.post('/', promptController.createPrompt);
 router.get('/filters', promptController.getFilters);
-router.delete('/:id', promptController.deletePrompt);
+router.delete('/:prompt_id', promptController.deletePrompt);
 
 export default router;

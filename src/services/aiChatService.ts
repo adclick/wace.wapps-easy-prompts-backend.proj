@@ -12,15 +12,12 @@ export interface History {
 }
 
 const chat = async (text: string, providerId: number, history: History[]) => {
-    let provider = "";
-
-    const providerObject = await providerModel.getOneById(providerId);
-    if (!providerObject) throw new Error('Provider not found');
-    provider = providerObject.slug;
+    const provider = await providerModel.getOneById(providerId);
+    if (!provider) throw new Error('Provider not found');
 
     return await httpUtils.post(API_URL, {
         text,
-        provider,
+        provider: provider.slug,
         previous_history: history
     });
 };
@@ -29,8 +26,6 @@ const chatById = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
 
-    const text = prompt.content;
-    const provider = prompt.provider.slug;
     let previous_history = [];
 
     const metadata = JSON.parse(JSON.stringify(prompt.metadata as JsonValue));
@@ -39,8 +34,8 @@ const chatById = async (promptId: number) => {
     }
 
     return await httpUtils.post(API_URL, {
-        text,
-        provider,
+        text: prompt.content,
+        provider: prompt.provider.slug,
         previous_history
     });
 };

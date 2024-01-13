@@ -39,7 +39,7 @@ const getPrompts = async (
 
 const createPrompt = async (
     externalId: string,
-    name: string,
+    title: string,
     description: string,
     content: string,
     languageId: number,
@@ -63,8 +63,8 @@ const createPrompt = async (
 
     return await promptModel.createOne(
         user.id,
-        name,
-        textUtils.toSlug(name),
+        title,
+        textUtils.toSlug(title),
         description,
         content,
         languageId,

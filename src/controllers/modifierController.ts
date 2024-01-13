@@ -32,8 +32,8 @@ const getModifiers = async (req: Request, res: Response) => {
 const createModifier = async (req: Request, res: Response) => {
     try {
         const response = await modifierService.createModifier(
-            controllerUtils.getUserId(req),
-            controllerUtils.getName(req, true, 'post'),
+            controllerUtils.getUserExternalId(req, true, 'post'),
+            controllerUtils.getTitle(req, true, 'post'),
             controllerUtils.getDescription(req, true, 'post'),
             controllerUtils.getContent(req, true, 'post'),
             controllerUtils.getLanguageId(req, true, 'post'),

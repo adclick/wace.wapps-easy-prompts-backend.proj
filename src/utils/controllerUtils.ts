@@ -8,7 +8,7 @@ const getLanguageId = (req: Request, required: boolean = false, method: string =
 const getRepositoryId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'repository_id', required, method)
 const getTechnologyId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'technology_id', required, method)
 const getProviderId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'provider_id', required, method)
-const getName = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'name', required, method)
+const getTitle = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'title', required, method)
 const getDescription = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'description', required, method)
 const getContent = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'content', required, method)
 const getPromptId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'prompt_id', required, method)
@@ -91,7 +91,7 @@ export default {
     getLanguageId,
     getRepositoryId,
     getTechnologyId,
-    getName,
+    getTitle,
     getDescription,
     getContent,
     getEmail,
