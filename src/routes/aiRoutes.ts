@@ -1,5 +1,5 @@
 import express from 'express';
-import aiController from '../controllers/aiController';
+import aiController from '../controllers/aiChatController';
 import aiTextGenerationController from '../controllers/aiTextGenerationController';
 import aiImageGenerationController from '../controllers/aiImageGenerationController';
 
@@ -15,5 +15,6 @@ router.get('/image-generation/:prompt_id', aiImageGenerationController.imageGene
 
 // Chat
 router.post('/chat/', aiController.chat);
+router.post('/chat/:prompt_id', aiController.chatById);
 
 export default router;

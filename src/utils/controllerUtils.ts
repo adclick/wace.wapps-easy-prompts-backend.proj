@@ -19,6 +19,7 @@ const getUserExternalId = (req: Request, required: boolean = false, method: stri
 const getLanguagesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'languages_ids', required, method)
 const getRepositoriesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'repositories_ids', required, method)
 const getText = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'text', required, method)
+const getChatHistory = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_history', required, method)
 
 const missingParameterMessage = (parameter: string): string => `Missing parameter ${parameter}`;
 
@@ -46,6 +47,19 @@ const getNumber = (req: Request, parameter: string, required: boolean = false, m
     return number;
 }
 
+const getArray = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): any[] => {
+    const array = getParameter(req, parameter, method);
+
+    // Check if exists
+    if (required && array === "") throw new Error(missingParameterMessage(parameter));
+
+    // Check if its an array
+    const json = JSON.parse(array);
+    if (!Array.isArray(json)) throw new Error(`Incorrect format for parameter ${parameter}`);
+
+    return json;
+}
+
 const getIds = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): number[] => {
     const ids = getParameter(req, parameter, method);
 
@@ -55,7 +69,7 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
     // Check if its an array
     const json = JSON.parse(ids);
     if (!Array.isArray(json)) throw new Error(`Incorrect format for parameter ${parameter}`);
-    
+
     // Check if it contains numeric values
     const invalidIds = json.find(id => isNaN(parseInt(id)));
     if (invalidIds !== undefined) throw new Error(`All elements of parameter ${parameter} need to be numeric`);
@@ -83,4 +97,5 @@ export default {
     getEmail,
     getUsername,
     getUserExternalId,
+    getChatHistory,
 }
