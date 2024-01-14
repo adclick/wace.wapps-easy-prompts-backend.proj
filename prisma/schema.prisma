@@ -92,7 +92,8 @@ model Mode {
     technology_slug String   @db.VarChar(255)
     provider_name   String   @db.VarChar(255)
     provider_slug   String   @db.VarChar(255)
-    options         Json     @db.Json
+    model_name      String   @db.VarChar(255)
+    model_slug      String   @db.VarChar(255)
     prompts         Prompt[]
 
     @@unique([slug])

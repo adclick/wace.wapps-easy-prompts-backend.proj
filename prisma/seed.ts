@@ -52,37 +52,79 @@ async function main() {
         }
     });
 
-    let name = "Text Generation (ChatGPT 3.5)";
-    const modeTextGenerationChatGPT35 = await prisma.mode.create({
-        data: {
-            name: name,
-            slug: textUtils.toSlug(name),
-            provider: "openai",
-            technology: "text-generation",
-            options: {},
-        }
-    });
-
-    name = "Image Generation (DALLE-2)";
-    const modeImageGenerationDALLE2 = await prisma.mode.create({
-        data: {
-            name: name,
-            slug: textUtils.toSlug(name),
-            provider: "openai",
-            technology: "image-generation",
-            options: {},
-        }
-    });
-
-    name = "Chat (ChatGPT 3.5)";
-    const modeChatChatGPT35 = await prisma.mode.create({
-        data: {
-            name: name,
-            slug: textUtils.toSlug(name),
-            provider: "openai",
-            technology: "chat",
-            options: {},
-        }
+    await prisma.mode.createMany({
+        data: [
+            {
+                name: "Text Generation (ChatGPT 3.5)",
+                slug: "text-generation-(chatgpt-3.5)",
+                technology_name: "Text Generation",
+                technology_slug: "text-generation",
+                provider_name: "Openai",
+                provider_slug: "openai",
+                model_name: "ChatGPT 3.5 Turbo",
+                model_slug: "gpt-3.5-turbo-instruct"
+            },
+            {
+                name: "Text Generation (Google Gemini)",
+                slug: "text-generation-(google-gemini)",
+                technology_name: "Text Generation",
+                technology_slug: "text-generation",
+                provider_name: "Google",
+                provider_slug: "google",
+                model_name: "Gemini pro",
+                model_slug: "gemini-pro"
+            },
+            {
+                name: "Image Generation (Dall-E 2)",
+                slug: "image-generation-(dall-e-2)",
+                technology_name: "Image Generation",
+                technology_slug: "image-generation",
+                provider_name: "Openai",
+                provider_slug: "ppenai",
+                model_name: "Dall-E 2",
+                model_slug: "dall-e-2"
+            },
+            {
+                name: "Image Generation (Dall-E 3)",
+                slug: "image-generation-(dall-e-3)",
+                technology_name: "Image Generation",
+                technology_slug: "image-generation",
+                provider_name: "Openai",
+                provider_slug: "openai",
+                model_name: "Dall-E 3",
+                model_slug: "dall-e-3"
+            },
+            {
+                name: "Image Generation (Stability AI)",
+                slug: "image-generation-(stability-ai)",
+                technology_name: "Image Generation",
+                technology_slug: "image-generation",
+                provider_name: "Stability AI",
+                provider_slug: "stability-ai",
+                model_name: "Stable Diffusion V1 6",
+                model_slug: "stable-diffusion-v1-6"
+            },
+            {
+                name: "Chat (ChatGPT 3.5)",
+                slug: "chat-(chatgpt-3.5)",
+                technology_name: "Chat",
+                technology_slug: "chat",
+                provider_name: "Openai",
+                provider_slug: "openai",
+                model_name: "ChatGPT 3.5 Turbo",
+                model_slug: "gpt-3.5-turbo"
+            },
+            {
+                name: "Chat (ChatGPT 4)",
+                slug: "chat-(chatgpt-4)",
+                technology_name: "Chat",
+                technology_slug: "chat",
+                provider_name: "Openai",
+                provider_slug: "openai",
+                model_name: "ChatGPT 4",
+                model_slug: "gpt-4"
+            }
+        ]
     });
 
     const technologyChat = await prisma.technology.create({
@@ -155,100 +197,6 @@ async function main() {
             }
         }
     });
-
-    // Prompts
-    const helloChat = await prisma.prompt.create({
-        data: {
-            title: "Hello Chat",
-            slug: "hello-chat",
-            description: "Sample chat prompt",
-            content: "Tell me a story",
-            metadata: {
-                requests: [
-                    {role: "user", message: "From now on, you will talk like Yoda"},
-                    {role: "assistant", message: "Ok, got it"},
-                ]
-            },
-            technology_id: technologyChat.id,
-            provider_id: providerOpenai.id,
-            user_id: userNunoSaraiva.id,
-            language_id: languageEN.id,
-            repository_id: waceRepository.id,
-            mode_id: modeChatChatGPT35.id
-        }
-    });
-
-    const sereneBeachPrompt = await prisma.prompt.create({
-        data: {
-            title: "Serene beach",
-            slug: "serene-beach",
-            content: "Generate a realistic image of a serene beach sunset with vibrant colors",
-            description: "This prompt will generate a beach image",
-            technology_id: technologyImageGeneration.id,
-            provider_id: providerOpenai.id,
-            user_id: userNunoSaraiva.id,
-            language_id: languageEN.id,
-            repository_id: waceRepository.id,
-            mode_id: modeImageGenerationDALLE2.id
-        }
-    });
-
-    const promptHeadlinesAuto = await prisma.prompt.create({
-        data: {
-            title: "Headlines para Indústria Automóvel",
-            slug: "headlines-para-industria-automovel",
-            content: "Cria títulos cativantes para uma série de artigos relacionados às tendências da indústria automóvel.",
-            description: "Títulos cativantes para indústria automóvel.",
-            technology_id: technologyTextGeneration.id,
-            provider_id: providerOpenai.id,
-            user_id: userNunoSaraiva.id,
-            language_id: languagePT.id,
-            repository_id: waceRepository.id,
-            mode_id: modeTextGenerationChatGPT35.id
-        }
-    });
-
-    // Modifiers
-    const modifierApplyRain = await prisma.modifier.create({
-        data: {
-            title: "Apply rain",
-            slug: "apply-rain",
-            content: "The image must include an immersive rainfall. The rain should be depicted with fine details, such as individual raindrops",
-            description: "This modifier will apply rain to your images",
-            user_id: userNunoSaraiva.id,
-            language_id: languageEN.id,
-            repository_id: waceRepository.id
-        }
-    });
-    const modifierTalkAsYoda = await prisma.modifier.create({
-        data: {
-            title: "Yoda Style",
-            slug: "yoda-style",
-            content: "Talk as Yoda from Starwars",
-            description: "This modifier will apply a Yoda Style talk",
-            user_id: userNunoSaraiva.id,
-            language_id: languageEN.id,
-            repository_id: waceRepository.id
-        }
-    });
-
-    const parameterNumberOfImages = await prisma.parameter.create({
-        data: {
-            name: "Number of Images",
-            slug: "num_images",
-            technology_id: technologyTextGeneration.id,
-            provider_id: providerOpenai.id,
-            content: { "num_images": "4" },
-        }
-    });
-
-    await prisma.promptParameter.create({
-        data: {
-            prompt_id: sereneBeachPrompt.id,
-            parameter_id: parameterNumberOfImages.id,
-            value: "1"
-        }
-    })
 }
 
 main()
