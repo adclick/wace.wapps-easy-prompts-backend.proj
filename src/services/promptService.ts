@@ -5,12 +5,14 @@ import languageModel from '../models/languageModel';
 import technologyModel from '../models/technologyModel';
 import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
+import modeModel from '../models/modeModel';
 
 const getFilters = async (externalId: string) => {
-    const [languages, repositories, technologies] = await Promise.all([
+    const [languages, repositories, technologies, modes] = await Promise.all([
         languageModel.getAll(),
         repositoryModel.getAllByUser(externalId),
         technologyModel.getAll(),
+        modeModel.getAll(),
     ]);
 
     return {
@@ -18,6 +20,7 @@ const getFilters = async (externalId: string) => {
         languages,
         repositories,
         technologies,
+        modes,
     }
 };
 
@@ -27,6 +30,7 @@ const getPrompts = async (
     languages_ids: number[],
     repositories_ids: number[],
     technologies_ids: number[],
+    modes_ids: number[],
 ) => {
     return await promptModel.getAll(
         externalId,
@@ -34,6 +38,7 @@ const getPrompts = async (
         languages_ids,
         repositories_ids,
         technologies_ids,
+        modes_ids,
     );
 };
 
@@ -45,6 +50,7 @@ const createPrompt = async (
     languageId: number,
     repositoryId: number,
     technologyId: number,
+    modeId: number,
     providerId: number,
     modifiersIds: number[]
 ) => {
@@ -70,6 +76,7 @@ const createPrompt = async (
         languageId,
         repositoryId,
         technologyId,
+        modeId,
         providerId,
         metadata
     )

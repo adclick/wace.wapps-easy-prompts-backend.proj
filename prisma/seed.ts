@@ -52,6 +52,39 @@ async function main() {
         }
     });
 
+    let name = "Text Generation (ChatGPT 3.5)";
+    const modeTextGenerationChatGPT35 = await prisma.mode.create({
+        data: {
+            name: name,
+            slug: textUtils.toSlug(name),
+            provider: "openai",
+            technology: "text-generation",
+            options: {},
+        }
+    });
+
+    name = "Image Generation (DALLE-2)";
+    const modeImageGenerationDALLE2 = await prisma.mode.create({
+        data: {
+            name: name,
+            slug: textUtils.toSlug(name),
+            provider: "openai",
+            technology: "image-generation",
+            options: {},
+        }
+    });
+
+    name = "Chat (ChatGPT 3.5)";
+    const modeChatChatGPT35 = await prisma.mode.create({
+        data: {
+            name: name,
+            slug: textUtils.toSlug(name),
+            provider: "openai",
+            technology: "chat",
+            options: {},
+        }
+    });
+
     const technologyChat = await prisma.technology.create({
         data: {
             name: "Chat",
@@ -140,7 +173,8 @@ async function main() {
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
             language_id: languageEN.id,
-            repository_id: waceRepository.id
+            repository_id: waceRepository.id,
+            mode_id: modeChatChatGPT35.id
         }
     });
 
@@ -154,7 +188,8 @@ async function main() {
             provider_id: providerOpenai.id,
             user_id: userNunoSaraiva.id,
             language_id: languageEN.id,
-            repository_id: waceRepository.id
+            repository_id: waceRepository.id,
+            mode_id: modeImageGenerationDALLE2.id
         }
     });
 
@@ -169,6 +204,7 @@ async function main() {
             user_id: userNunoSaraiva.id,
             language_id: languagePT.id,
             repository_id: waceRepository.id,
+            mode_id: modeTextGenerationChatGPT35.id
         }
     });
 

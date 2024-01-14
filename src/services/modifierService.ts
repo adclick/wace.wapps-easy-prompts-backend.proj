@@ -62,7 +62,7 @@ const createModifier = async (
 }
 
 const deleteModifier = async (id: number) => {
-    return await promptModel.deleteOne(id);
+    return await modifierModel.deleteOne(id);
 }
 
 export default {

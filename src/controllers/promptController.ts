@@ -22,6 +22,7 @@ const getPrompts = async (req: Request, res: Response) => {
             controllerUtils.getLanguagesIds(req),
             controllerUtils.getRepositoriesIds(req),
             controllerUtils.getTechnologiesIds(req),
+            controllerUtils.getModesIds(req),
         );
 
         res.status(200).json(response);
@@ -40,6 +41,7 @@ const createPrompt = async (req: Request, res: Response) => {
             controllerUtils.getLanguageId(req, true, 'post'),
             controllerUtils.getRepositoryId(req, true, 'post'),
             controllerUtils.getTechnologyId(req, true, 'post'),
+            controllerUtils.getModeId(req, true, 'post'),
             controllerUtils.getProviderId(req, true, 'post'),
             controllerUtils.getModifiersIds(req, true, 'post')
         );

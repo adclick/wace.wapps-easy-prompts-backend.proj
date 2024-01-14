@@ -111,8 +111,8 @@ const createOne = async (
     })
 }
 
-const deteleOne = async (id: number) => {
-    return await prisma.prompt.delete({ where: { id } })
+const deleteOne = async (id: number) => {
+    return await prisma.modifier.delete({ where: { id } })
 }
 
 export default {
@@ -120,5 +120,5 @@ export default {
     getAllByIds,
     getAll,
     createOne,
-    deteleOne,
+    deleteOne,
 }

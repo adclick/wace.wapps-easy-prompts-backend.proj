@@ -4,8 +4,8 @@ const router = express.Router();
 
 // Define routes
 router.get('/', modifierController.getModifiers);
+router.post('/', modifierController.createModifier);
 router.get('/filters', modifierController.getFilters);
-router.post('/:userId/modifier', modifierController.createModifier);
-router.delete('/:id', modifierController.deleteModifier);
+router.delete('/:modifier_id', modifierController.deleteModifier);
 
 export default router;
