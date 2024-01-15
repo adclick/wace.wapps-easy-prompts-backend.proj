@@ -52,81 +52,6 @@ async function main() {
         }
     });
 
-    await prisma.mode.createMany({
-        data: [
-            {
-                name: "Text Generation (ChatGPT 3.5)",
-                slug: "text-generation-(chatgpt-3.5)",
-                technology_name: "Text Generation",
-                technology_slug: "text-generation",
-                provider_name: "Openai",
-                provider_slug: "openai",
-                model_name: "ChatGPT 3.5 Turbo",
-                model_slug: "gpt-3.5-turbo-instruct"
-            },
-            {
-                name: "Text Generation (Google Gemini)",
-                slug: "text-generation-(google-gemini)",
-                technology_name: "Text Generation",
-                technology_slug: "text-generation",
-                provider_name: "Google",
-                provider_slug: "google",
-                model_name: "Gemini pro",
-                model_slug: "gemini-pro"
-            },
-            {
-                name: "Image Generation (Dall-E 2)",
-                slug: "image-generation-(dall-e-2)",
-                technology_name: "Image Generation",
-                technology_slug: "image-generation",
-                provider_name: "Openai",
-                provider_slug: "ppenai",
-                model_name: "Dall-E 2",
-                model_slug: "dall-e-2"
-            },
-            {
-                name: "Image Generation (Dall-E 3)",
-                slug: "image-generation-(dall-e-3)",
-                technology_name: "Image Generation",
-                technology_slug: "image-generation",
-                provider_name: "Openai",
-                provider_slug: "openai",
-                model_name: "Dall-E 3",
-                model_slug: "dall-e-3"
-            },
-            {
-                name: "Image Generation (Stability AI)",
-                slug: "image-generation-(stability-ai)",
-                technology_name: "Image Generation",
-                technology_slug: "image-generation",
-                provider_name: "Stability AI",
-                provider_slug: "stability-ai",
-                model_name: "Stable Diffusion V1 6",
-                model_slug: "stable-diffusion-v1-6"
-            },
-            {
-                name: "Chat (ChatGPT 3.5)",
-                slug: "chat-(chatgpt-3.5)",
-                technology_name: "Chat",
-                technology_slug: "chat",
-                provider_name: "Openai",
-                provider_slug: "openai",
-                model_name: "ChatGPT 3.5 Turbo",
-                model_slug: "gpt-3.5-turbo"
-            },
-            {
-                name: "Chat (ChatGPT 4)",
-                slug: "chat-(chatgpt-4)",
-                technology_name: "Chat",
-                technology_slug: "chat",
-                provider_name: "Openai",
-                provider_slug: "openai",
-                model_name: "ChatGPT 4",
-                model_slug: "gpt-4"
-            }
-        ]
-    });
-
     const technologyChat = await prisma.technology.create({
         data: {
             name: "Chat",
@@ -152,21 +77,34 @@ async function main() {
     });
 
     // Connect Openai to Technologies
-    const providerOpenai = await prisma.provider.create({
+    const providerOpenaiChatGPT35Turbo = await prisma.provider.create({
         data: {
             name: "Openai",
             slug: "openai",
+            model_name: "ChatGPT 3.5 Turbo",
+            model_slug: "gpt-3.5-turbo-instruct",
             technologies_providers: {
                 createMany: {
                     data: [
                         {
-                            technology_id: technologyChat.id,
-                            default: true
-                        },
-                        {
                             technology_id: technologyTextGeneration.id,
-                            default: false
-                        },
+                            default: true
+                        }
+                    ]
+                }
+            }
+        }
+    });
+
+    const providerOpenaiDalle2 = await prisma.provider.create({
+        data: {
+            name: "Openai",
+            slug: "openai",
+            model_name: "Dall-E 2",
+            model_slug: "dall-e-2",
+            technologies_providers: {
+                createMany: {
+                    data: [
                         {
                             technology_id: technologyImageGeneration.id,
                             default: false
@@ -177,21 +115,76 @@ async function main() {
         }
     });
 
-    const providerGoogle = await prisma.provider.create({
+    const providerOpenaiDalle3 = await prisma.provider.create({
         data: {
-            name: "Google",
-            slug: "google",
+            name: "Openai",
+            slug: "openai",
+            model_name: "Dall-E 3",
+            model_slug: "dall-e-3",
             technologies_providers: {
                 createMany: {
                     data: [
                         {
-                            technology_id: technologyTextGeneration.id,
+                            technology_id: technologyImageGeneration.id,
                             default: true
-                        },
+                        }
+                    ]
+                }
+            }
+        }
+    });
+
+    const providerStabilityAI = await prisma.provider.create({
+        data: {
+            name: "Stability AI",
+            slug: "stability-ai",
+            model_name: "Stable Diffusion v1.6",
+            model_slug: "stable-diffusion-v1-6",
+            technologies_providers: {
+                createMany: {
+                    data: [
+                        {
+                            technology_id: technologyImageGeneration.id,
+                            default: false
+                        }
+                    ]
+                }
+            }
+        }
+    });
+
+    const providerOpenAIChatGPT35 = await prisma.provider.create({
+        data: {
+            name: "Openai",
+            slug: "openai",
+            model_name: "ChatGPT 3.5 Turbo",
+            model_slug: "gpt-3.5-turbo",
+            technologies_providers: {
+                createMany: {
+                    data: [
                         {
                             technology_id: technologyChat.id,
                             default: false
-                        },
+                        }
+                    ]
+                }
+            }
+        }
+    });
+
+    const providerOpenAIChatGPT4 = await prisma.provider.create({
+        data: {
+            name: "Openai",
+            slug: "openai",
+            model_name: "ChatGPT 4",
+            model_slug: "gpt-4",
+            technologies_providers: {
+                createMany: {
+                    data: [
+                        {
+                            technology_id: technologyChat.id,
+                            default: true
+                        }
                     ]
                 }
             }

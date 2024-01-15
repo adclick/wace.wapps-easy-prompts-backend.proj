@@ -1,12 +1,9 @@
 import { Request, Response } from "express";
-import aiService, { History} from "../services/aiChatService";
 import controllerUtils from "../utils/controllerUtils";
 import aiChatService from "../services/aiChatService";
 
 const chat = async (req: Request, res: Response) => {
     try {
-        const requests = (req.body.requests as History[]);
-
         const response = await aiChatService.chat(
             controllerUtils.getText(req, true, 'post'),
             controllerUtils.getProviderId(req, true, 'post'),

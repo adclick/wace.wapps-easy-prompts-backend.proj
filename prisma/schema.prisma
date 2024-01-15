@@ -76,28 +76,14 @@ model Provider {
     id                     Int                  @id @default(autoincrement())
     name                   String               @db.VarChar(255)
     slug                   String               @db.VarChar(255)
+    model_name             String               @db.VarChar(255)
+    model_slug             String               @db.VarChar(255)
     prompts                Prompt[]
     technologies_providers TechnologyProvider[]
     parameters             Parameter[]
 
-    @@unique([slug])
+    @@unique([slug, model_slug])
     @@map("providers")
-}
-
-model Mode {
-    id              Int      @id @default(autoincrement())
-    name            String   @db.VarChar(255)
-    slug            String   @db.VarChar(255)
-    technology_name String   @db.VarChar(255)
-    technology_slug String   @db.VarChar(255)
-    provider_name   String   @db.VarChar(255)
-    provider_slug   String   @db.VarChar(255)
-    model_name      String   @db.VarChar(255)
-    model_slug      String   @db.VarChar(255)
-    prompts         Prompt[]
-
-    @@unique([slug])
-    @@map("modes")
 }
 
 model Parameter {
@@ -129,10 +115,8 @@ model Prompt {
     technology_id      Int
     provider_id        Int
     user_id            Int
-    mode_id            Int
     metadata           Json?
     public             Boolean           @default(false)
-    mode               Mode              @relation(fields: [mode_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     language           Language          @relation(fields: [language_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     repository         Repository        @relation(fields: [repository_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     technology         Technology        @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)

@@ -21,7 +21,6 @@ const getAll = async (
     languages_ids: number[],
     repositories_ids: number[],
     technologies_ids: number[],
-    modes_ids: number[],
 ) => {
     return await prisma.prompt.findMany({
         where: {
@@ -58,7 +57,6 @@ const getAll = async (
                 ]
             },
             technology: { id: { in: technologies_ids } },
-            mode: { id: { in: modes_ids } },
         },
         include: {
             user: {
@@ -83,13 +81,6 @@ const getAll = async (
                 }
             },
             technology: {
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                }
-            },
-            mode: {
                 select: {
                     id: true,
                     name: true,
@@ -131,7 +122,6 @@ const createOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    mode_id: number,
     provider_id: number,
     metadata: Prisma.InputJsonValue
 ) => {
@@ -144,7 +134,6 @@ const createOne = async (
             language_id,
             repository_id,
             technology_id,
-            mode_id,
             provider_id,
             user_id,
             metadata

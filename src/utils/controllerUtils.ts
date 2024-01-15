@@ -3,12 +3,10 @@ import { Request } from "express";
 const getUserId = (req: Request): string => getString(req, 'user_id');
 const getSearchTerm = (req: Request, required: boolean = false): string => getString(req, 'search_term', required);
 const getTechnologiesIds = (req: Request): number[] => getIds(req, 'technologies_ids');
-const getModesIds = (req: Request): number[] => getIds(req, 'modes_ids');
 const getModifiersIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'modifiers_ids', required, method)
 const getLanguageId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'language_id', required, method)
 const getRepositoryId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'repository_id', required, method)
 const getTechnologyId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'technology_id', required, method)
-const getModeId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'mode_id', required, method)
 const getProviderId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'provider_id', required, method)
 const getTitle = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'title', required, method)
 const getDescription = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'description', required, method)
@@ -85,7 +83,6 @@ export default {
     getLanguagesIds,
     getRepositoriesIds,
     getTechnologiesIds,
-    getModesIds,
     getModifiersIds,
     getText,
     getProviderId,
@@ -94,7 +91,6 @@ export default {
     getLanguageId,
     getRepositoryId,
     getTechnologyId,
-    getModeId,
     getTitle,
     getDescription,
     getContent,
