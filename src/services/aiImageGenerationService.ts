@@ -12,7 +12,9 @@ interface Settings {
     [key: string]: string
 }
 
-const imageGeneration = async (text: string, providerId: number, modifiersIds: number[]) => {
+const imageGeneration = async (text: string, providerId: number, providersIds: number[], modifiersIds: number[]) => {
+    const settings: Settings = {};
+
     const provider = await providerModel.getOneById(providerId);
 
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
@@ -21,16 +23,19 @@ const imageGeneration = async (text: string, providerId: number, modifiersIds: n
 
     const textModified = await aiPromptService.modifyByModifiers(text, modifiers);
 
-    const settings: Settings = {};
-    settings[provider.slug] = provider.model_slug; 
+    settings[provider.slug] = provider.model_slug;
 
-    return await httpUtils.get(API_URL, {
+    const response = await httpUtils.get(API_URL, {
         text: textModified,
         provider: provider.slug,
-        resolution: "256x256",
+        resolution: "512x512",
         num_images: 1,
         settings: JSON.stringify(settings)
-    })
+    });
+
+    console.log(response);
+
+    return response;
 };
 
 const imageGenerationById = async (promptId: number) => {

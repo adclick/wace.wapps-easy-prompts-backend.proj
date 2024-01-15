@@ -8,6 +8,7 @@ const getLanguageId = (req: Request, required: boolean = false, method: string =
 const getRepositoryId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'repository_id', required, method)
 const getTechnologyId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'technology_id', required, method)
 const getProviderId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'provider_id', required, method)
+const getProvidersIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'providers_ids', required, method)
 const getTitle = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'title', required, method)
 const getDescription = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'description', required, method)
 const getContent = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'content', required, method)
@@ -66,6 +67,9 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
     // Check if exists
     if (required && ids === "") throw new Error(missingParameterMessage(parameter));
 
+    // Return empty array if not exists
+    if (ids === undefined) return [];
+
     // Check if its an array
     const json = JSON.parse(ids);
     if (!Array.isArray(json)) throw new Error(`Incorrect format for parameter ${parameter}`);
@@ -86,6 +90,7 @@ export default {
     getModifiersIds,
     getText,
     getProviderId,
+    getProvidersIds,
     getPromptId,
     getModifierId,
     getLanguageId,

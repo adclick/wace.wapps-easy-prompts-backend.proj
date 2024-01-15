@@ -7,6 +7,7 @@ const textGeneration = async (req: Request, res: Response) => {
         const response = await aiTextGenerationService.textGeneration(
             controllerUtils.getText(req),
             controllerUtils.getProviderId(req),
+            controllerUtils.getProvidersIds(req),
             controllerUtils.getModifiersIds(req),
         );
 

@@ -12,7 +12,9 @@ interface Settings {
     [key: string]: string
 }
 
-const textGeneration = async (text: string, providerId: number, modifiersIds: number[]) => {
+const textGeneration = async (text: string, providerId: number, providersIds: number[], modifiersIds: number[]) => {
+    const settings: Settings = {};
+
     const provider = await providerModel.getOneById(providerId);
 
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
@@ -21,8 +23,8 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
 
     const textModified = await aiPromptService.modifyByModifiers(text, modifiers);
 
-    const settings: Settings = {};
-    settings[provider.slug] = provider.model_slug; 
+
+    settings[provider.slug] = provider.model_slug;
 
     const response = await httpUtils.get(API_URL, {
         text: textModified,

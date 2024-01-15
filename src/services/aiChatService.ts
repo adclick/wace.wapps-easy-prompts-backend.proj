@@ -15,12 +15,13 @@ interface Settings {
     [key: string]: string
 }
 
-const chat = async (text: string, providerId: number, history: History[]) => {
+const chat = async (text: string, providerId: number, providersIds: number[], history: History[]) => {
+    const settings: Settings = {};
+
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error('Provider not found');
 
-    const settings: Settings = {};
-    settings[provider.slug] = provider.model_slug; 
+    settings[provider.slug] = provider.model_slug;
 
     return await httpUtils.post(API_URL, {
         text,
@@ -44,7 +45,7 @@ const chatById = async (promptId: number) => {
     }
 
     const settings: Settings = {};
-    settings[provider.slug] = provider.model_slug; 
+    settings[provider.slug] = provider.model_slug;
 
     const response = await httpUtils.post(API_URL, {
         text: prompt.content,
