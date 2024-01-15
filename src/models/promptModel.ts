@@ -6,9 +6,19 @@ const getOneById = async (id: number) => {
     return await prisma.prompt.findUnique({
         where: { id },
         include: {
+            technology: {
+                select: {
+                    name: true,
+                    slug: true,
+                    default: true
+                }
+            },
             provider: {
                 select: {
-                    slug: true
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true
                 }
             }
         }
@@ -91,7 +101,9 @@ const getAll = async (
                 select: {
                     id: true,
                     name: true,
-                    slug: true
+                    slug: true,
+                    model_name: true,
+                    model_slug: true
                 }
             },
             prompts_parameters: {

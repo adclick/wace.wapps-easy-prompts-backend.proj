@@ -34,6 +34,8 @@ const chatById = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
 
+    const provider = prompt.provider;
+
     let previous_history = [];
 
     const metadata = JSON.parse(JSON.stringify(prompt.metadata as JsonValue));
@@ -41,11 +43,21 @@ const chatById = async (promptId: number) => {
         previous_history = metadata.history;
     }
 
-    return await httpUtils.post(API_URL, {
+    const settings: Settings = {};
+    settings[provider.slug] = provider.model_slug; 
+
+    const response = await httpUtils.post(API_URL, {
         text: prompt.content,
-        provider: prompt.provider.slug,
-        previous_history
+        provider: provider.slug,
+        previous_history,
+        settings
     });
+
+    return {
+        response,
+        provider,
+        technology: prompt.technology
+    }
 };
 
 
