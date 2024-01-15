@@ -8,6 +8,10 @@ import modifierModel from '../models/modifierModel';
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/generate-text';
 
+interface Settings {
+    [key: string]: string
+}
+
 const textGeneration = async (text: string, providerId: number, modifiersIds: number[]) => {
     const provider = await providerModel.getOneById(providerId);
 
@@ -17,10 +21,18 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
 
     const textModified = await aiPromptService.modifyByModifiers(text, modifiers);
 
-    return await httpUtils.get(API_URL, {
+    const settings: Settings = {};
+    settings[provider.slug] = provider.model_slug; 
+
+    const response = await httpUtils.get(API_URL, {
         text: textModified,
-        provider: provider.slug
-    })
+        provider: provider.slug,
+        settings: JSON.stringify(settings)
+    });
+
+    console.log(response);
+
+    return response;
 };
 
 const textGenerationById = async (promptId: number) => {

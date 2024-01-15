@@ -11,14 +11,22 @@ export interface History {
     message: string
 }
 
+interface Settings {
+    [key: string]: string
+}
+
 const chat = async (text: string, providerId: number, history: History[]) => {
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error('Provider not found');
 
+    const settings: Settings = {};
+    settings[provider.slug] = provider.model_slug; 
+
     return await httpUtils.post(API_URL, {
         text,
         provider: provider.slug,
-        previous_history: history
+        previous_history: history,
+        settings: JSON.stringify(settings)
     });
 };
 

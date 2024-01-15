@@ -8,6 +8,10 @@ import modifierModel from '../models/modifierModel';
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/image/generate-image';
 
+interface Settings {
+    [key: string]: string
+}
+
 const imageGeneration = async (text: string, providerId: number, modifiersIds: number[]) => {
     const provider = await providerModel.getOneById(providerId);
 
@@ -17,11 +21,15 @@ const imageGeneration = async (text: string, providerId: number, modifiersIds: n
 
     const textModified = await aiPromptService.modifyByModifiers(text, modifiers);
 
+    const settings: Settings = {};
+    settings[provider.slug] = provider.model_slug; 
+
     return await httpUtils.get(API_URL, {
         text: textModified,
         provider: provider.slug,
         resolution: "256x256",
-        num_images: 1
+        num_images: 1,
+        settings: JSON.stringify(settings)
     })
 };
 
