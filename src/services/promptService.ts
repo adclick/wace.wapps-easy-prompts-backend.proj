@@ -38,6 +38,10 @@ const getPrompts = async (
     );
 };
 
+const getPromptById = async (promptId: number) => {
+    return await promptModel.getOneById(promptId);
+};
+
 const createPrompt = async (
     externalId: string,
     title: string,
@@ -90,6 +94,7 @@ const deletePrompt = async (id: number) => {
 export default {
     getFilters,
     getPrompts,
+    getPromptById,
     createPrompt,
     deletePrompt
 }

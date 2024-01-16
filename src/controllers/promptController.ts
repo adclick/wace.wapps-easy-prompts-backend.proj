@@ -3,7 +3,7 @@ import promptService from "../services/promptService";
 import controllerUtils from "../utils/controllerUtils";
 
 const getFilters = async (req: Request, res: Response) => {
-    try {
+    try {k40pihym6n
         const response = await promptService.getFilters(
             controllerUtils.getUserExternalId(req, true)
         );
@@ -22,6 +22,18 @@ const getPrompts = async (req: Request, res: Response) => {
             controllerUtils.getLanguagesIds(req),
             controllerUtils.getRepositoriesIds(req),
             controllerUtils.getTechnologiesIds(req),
+        );
+
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
+    }
+};
+
+const getPromptById = async (req: Request, res: Response) => {
+    try {
+        const response = await promptService.getPromptById(
+            controllerUtils.getPromptId(req, true, 'url'),
         );
 
         res.status(200).json(response);
@@ -67,6 +79,7 @@ const deletePrompt = async (req: Request, res: Response) => {
 export default {
     getFilters,
     getPrompts,
+    getPromptById,
     createPrompt,
     deletePrompt
 };
