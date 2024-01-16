@@ -2,6 +2,8 @@ import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import httpUtils from '../utils/httpUtils';
 import { JsonValue } from '@prisma/client/runtime/library';
+import modifierModel from '../models/modifierModel';
+import aiPromptService from './aiPromptService';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -15,16 +17,19 @@ interface Settings {
     [key: string]: string
 }
 
-const chat = async (text: string, providerId: number, providersIds: number[], history: History[]) => {
+const chat = async (text: string, providerId: number, providersIds: number[], history: History[], modifiersIds: number[]) => {
     const settings: Settings = {};
 
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error('Provider not found');
 
+    const modifiers = await modifierModel.getAllByIds(modifiersIds);
+    const textModified = await aiPromptService.modifyByModifiers(text, modifiers);
+
     settings[provider.slug] = provider.model_slug;
 
     return await httpUtils.post(API_URL, {
-        text,
+        text: textModified,
         provider: provider.slug,
         previous_history: history,
         settings: JSON.stringify(settings)

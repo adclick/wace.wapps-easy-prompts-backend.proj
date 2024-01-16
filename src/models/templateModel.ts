@@ -1,28 +1,27 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+export interface Template {
+    id: number,
+    content: string,
+    type: string
+}
+
 const getOneById = async (id: number) => {
-    return await prisma.prompt.findUnique({
+    return await prisma.template.findUnique({
         where: { id },
-        include: {
-            technology: {
-                select: {
-                    name: true,
-                    slug: true,
-                    default: true
-                }
-            },
-            provider: {
-                select: {
-                    name: true,
-                    slug: true,
-                    model_name: true,
-                    model_slug: true
-                }
+    });
+}
+
+const getAllByIds = async (ids: number[]) => {
+    return await prisma.template.findMany({
+        where: {
+            id: {
+                in: ids
             }
         }
-    });
+    })
 }
 
 const getAll = async (
@@ -30,9 +29,8 @@ const getAll = async (
     search_term: string,
     languages_ids: number[],
     repositories_ids: number[],
-    technologies_ids: number[],
 ) => {
-    return await prisma.prompt.findMany({
+    return await prisma.template.findMany({
         where: {
             OR: [
                 { title: { startsWith: search_term, mode: "insensitive" } },
@@ -41,9 +39,6 @@ const getAll = async (
                 { description: { startsWith: search_term, mode: "insensitive" } },
                 { description: { endsWith: search_term, mode: "insensitive" } },
                 { description: { contains: search_term, mode: "insensitive" } },
-                { content: { startsWith: search_term, mode: "insensitive" } },
-                { content: { endsWith: search_term, mode: "insensitive" } },
-                { content: { contains: search_term, mode: "insensitive" } },
             ],
             language: { id: { in: languages_ids } },
             repository: {
@@ -66,17 +61,8 @@ const getAll = async (
                     }
                 ]
             },
-            technology: { id: { in: technologies_ids } },
         },
-        select: {
-            id: true,
-            title: true,
-            description: true,
-            slug: true,
-            plays: true,
-            stars: true,
-            created_at: true,
-            public: true,
+        include: {
             user: {
                 select: {
                     id: true,
@@ -98,36 +84,6 @@ const getAll = async (
                     slug: true,
                 }
             },
-            technology: {
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                }
-            },
-            provider: {
-                select: {
-                    id: true,
-                    name: true,
-                    slug: true,
-                    model_name: true,
-                    model_slug: true
-                }
-            },
-            prompts_parameters: {
-                select: {
-                    value: true,
-                    parameter: {
-                        select: {
-                            id: true,
-                            name: true,
-                            slug: true,
-                            content: true,
-
-                        }
-                    }
-                }
-            }
         },
         orderBy: [{ created_at: "desc" }]
     });
@@ -138,37 +94,28 @@ const createOne = async (
     title: string,
     slug: string,
     description: string,
-    content: string,
     language_id: number,
     repository_id: number,
-    technology_id: number,
-    provider_id: number,
-    metadata: Prisma.InputJsonValue
 ) => {
-    return await prisma.prompt.create({
+    return await prisma.template.create({
         data: {
             title,
             slug,
             description,
-            content,
             language_id,
             repository_id,
-            technology_id,
-            provider_id,
-            user_id,
-            metadata
+            user_id
         },
     })
 }
 
 const deleteOne = async (id: number) => {
-    return await prisma.prompt.delete({
-        where: { id }
-    })
+    return await prisma.template.delete({ where: { id } })
 }
 
 export default {
     getOneById,
+    getAllByIds,
     getAll,
     createOne,
     deleteOne,

@@ -5,6 +5,7 @@ import technologyRoutes from './routes/technologyRoutes';
 import providerRoutes from './routes/providerRoutes';
 import promptRoutes from './routes/promptRoutes';
 import modifierRoutes from './routes/modifierRoutes';
+import templateRoutes from './routes/templateRoutes';
 import aiRoutes from './routes/aiRoutes';
 
 const cors = require('cors');
@@ -33,6 +34,7 @@ app.use('/api/technologies', technologyRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/prompts', promptRoutes);
 app.use('/api/modifiers', modifierRoutes);
+app.use('/api/templates', templateRoutes);
 app.use('/api/ai', aiRoutes);
 
 const PORT = process.env.PORT || 3000;

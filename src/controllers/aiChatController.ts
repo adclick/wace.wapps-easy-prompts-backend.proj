@@ -8,7 +8,8 @@ const chat = async (req: Request, res: Response) => {
             controllerUtils.getText(req, true, 'post'),
             controllerUtils.getProviderId(req, true, 'post'),
             controllerUtils.getProvidersIds(req),
-            controllerUtils.getChatHistory(req, true, 'post')
+            controllerUtils.getChatHistory(req, true, 'post'),
+            controllerUtils.getModifiersIds(req, false, 'post'),
         );
 
         res.status(200).json(response);
