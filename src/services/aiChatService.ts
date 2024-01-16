@@ -52,8 +52,6 @@ const chatById = async (promptId: number) => {
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
-    console.log(metadata);
-
     const response = await httpUtils.post(API_URL, {
         text: prompt.content,
         provider: provider.slug,
