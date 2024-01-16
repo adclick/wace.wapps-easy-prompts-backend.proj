@@ -70,6 +70,8 @@ const createPrompt = async (
     const history: any = [];
     chatHistory.forEach(h => history.push(h));
 
+    console.log(history);
+
     return await promptModel.createOne(
         user.id,
         title,
