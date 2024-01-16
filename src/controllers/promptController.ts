@@ -3,7 +3,7 @@ import promptService from "../services/promptService";
 import controllerUtils from "../utils/controllerUtils";
 
 const getFilters = async (req: Request, res: Response) => {
-    try {k40pihym6n
+    try {
         const response = await promptService.getFilters(
             controllerUtils.getUserExternalId(req, true)
         );
