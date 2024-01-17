@@ -81,7 +81,7 @@ async function main() {
         data: {
             name: "Openai",
             slug: "openai",
-            model_name: "ChatGPT 3.5 Turbo",
+            model_name: "ChatGPT 3.5",
             model_slug: "gpt-3.5-turbo-instruct",
             technologies_providers: {
                 createMany: {
@@ -138,7 +138,7 @@ async function main() {
         data: {
             name: "Stability AI",
             slug: "stability-ai",
-            model_name: "Stable Diffusion v1.6",
+            model_name: "Stable Diffusion",
             model_slug: "stable-diffusion-v1-6",
             technologies_providers: {
                 createMany: {
@@ -157,7 +157,7 @@ async function main() {
         data: {
             name: "Openai",
             slug: "openai",
-            model_name: "ChatGPT 3.5 Turbo",
+            model_name: "ChatGPT 3.5",
             model_slug: "gpt-3.5-turbo",
             technologies_providers: {
                 createMany: {
@@ -190,6 +190,26 @@ async function main() {
             }
         }
     });
+
+    const prompts = [];
+    for (let i = 0; i < 100; i++) {
+        prompts.push({
+            title: "Prompt " + i,
+            slug: "prompt-" + i,
+            content: "test",
+            description: "test",
+            language_id: languageEN.id,
+            repository_id: myRepository.id,
+            technology_id: technologyChat.id,
+            provider_id: providerOpenAIChatGPT4.id,
+            user_id: userNunoSaraiva.id
+
+        });
+    }
+
+    await prisma.prompt.createMany({
+        data: prompts
+    })
 }
 
 main()

@@ -28,6 +28,8 @@ const getPrompts = async (
     languages_ids: number[],
     repositories_ids: number[],
     technologies_ids: number[],
+    limit: number,
+    offset: number,
 ) => {
     return await promptModel.getAll(
         externalId,
@@ -35,6 +37,8 @@ const getPrompts = async (
         languages_ids,
         repositories_ids,
         technologies_ids,
+        limit,
+        offset,
     );
 };
 

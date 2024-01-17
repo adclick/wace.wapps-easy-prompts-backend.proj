@@ -22,6 +22,8 @@ const getPrompts = async (req: Request, res: Response) => {
             controllerUtils.getLanguagesIds(req),
             controllerUtils.getRepositoriesIds(req),
             controllerUtils.getTechnologiesIds(req),
+            controllerUtils.getLimit(req, true),
+            controllerUtils.getOffset(req, true)
         );
 
         res.status(200).json(response);

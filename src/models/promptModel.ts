@@ -31,6 +31,8 @@ const getAll = async (
     languages_ids: number[],
     repositories_ids: number[],
     technologies_ids: number[],
+    limit: number,
+    offset: number
 ) => {
     return await prisma.prompt.findMany({
         where: {
@@ -129,7 +131,9 @@ const getAll = async (
                 }
             }
         },
-        orderBy: [{ created_at: "desc" }]
+        orderBy: [{ id: "desc" }],
+        take: limit,
+        skip: offset
     });
 }
 
