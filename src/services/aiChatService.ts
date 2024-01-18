@@ -62,7 +62,8 @@ const chatById = async (promptId: number) => {
     return {
         response,
         provider,
-        technology: prompt.technology
+        technology: prompt.technology,
+        user: prompt.user
     }
 };
 

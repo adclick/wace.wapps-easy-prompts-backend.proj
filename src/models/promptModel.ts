@@ -20,6 +20,13 @@ const getOneById = async (id: number) => {
                     model_name: true,
                     model_slug: true
                 }
+            },
+            user: {
+                select: {
+                    email: true,
+                    username: true,
+                    external_id: true
+                }
             }
         }
     });
@@ -81,7 +88,7 @@ const getAll = async (
             public: true,
             user: {
                 select: {
-                    id: true,
+                    external_id: true,
                     email: true,
                     username: true,
                 }
