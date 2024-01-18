@@ -32,8 +32,6 @@ const textGeneration = async (text: string, providerId: number, providersIds: nu
         settings: JSON.stringify(settings)
     });
 
-    console.log(response);
-
     return response;
 };
 
