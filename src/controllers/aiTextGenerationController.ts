@@ -12,8 +12,8 @@ const textGeneration = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
+    } catch ({ response }: any) {
+        res.status(400).json({ status: false, message: response.statusText });
     }
 };
 
@@ -24,8 +24,8 @@ const textGenerationById = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
+    } catch (error: any) {
+        res.status(400).json({ status: false, message: error.response.statusText });
     }
 };
 

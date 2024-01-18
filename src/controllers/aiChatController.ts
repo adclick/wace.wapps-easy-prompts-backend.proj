@@ -13,8 +13,8 @@ const chat = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
+    } catch ({ response }: any) {
+        res.status(400).json({ status: response.status, message: response.statusText });
     }
 };
 

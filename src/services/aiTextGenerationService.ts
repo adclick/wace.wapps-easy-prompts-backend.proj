@@ -23,16 +23,13 @@ const textGeneration = async (text: string, providerId: number, providersIds: nu
 
     const textModified = await aiPromptService.modifyByModifiers(text, modifiers);
 
-
     settings[provider.slug] = provider.model_slug;
 
-    const response = await httpUtils.get(API_URL, {
+    return await httpUtils.get(API_URL, {
         text: textModified,
         provider: provider.slug,
         settings: JSON.stringify(settings)
     });
-
-    return response;
 };
 
 const textGenerationById = async (promptId: number) => {
@@ -47,6 +44,8 @@ const textGenerationById = async (promptId: number) => {
         const modifiers = metadata.modifiers;
         text = await aiPromptService.modifyByModifiers(prompt.content, modifiers);
     }
+
+    console.log(text);  
 
     return await httpUtils.get(API_URL, {
         text,

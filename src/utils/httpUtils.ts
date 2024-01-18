@@ -5,8 +5,8 @@ const get = async (url: string, params: any) => {
         const { data } = await axios.get(url + "?" + new URLSearchParams(params));
 
         return data;
-    } catch ({ message }: any) {
-        throw new Error(message)
+    } catch (error) {
+        throw error
     }
 }
 
@@ -15,8 +15,8 @@ const post = async (url: string, params: any) => {
         const { data } = await axios.post(url, params);
 
         return data;
-    } catch ({ message }: any) {
-        throw new Error(message)
+    } catch (error) {
+        throw error;
     }
 }
 

@@ -52,14 +52,6 @@ async function main() {
         }
     });
 
-    const technologyChat = await prisma.technology.create({
-        data: {
-            name: "Chat",
-            slug: "chat",
-            default: true
-        }
-    });
-
     const technologyTextGeneration = await prisma.technology.create({
         data: {
             name: "Text Generation",
@@ -73,6 +65,14 @@ async function main() {
             name: "Image Generation",
             slug: "image-generation",
             default: false
+        }
+    });
+
+    const technologyChat = await prisma.technology.create({
+        data: {
+            name: "Chat",
+            slug: "chat",
+            default: true
         }
     });
 
@@ -191,25 +191,35 @@ async function main() {
         }
     });
 
-    const prompts = [];
-    for (let i = 0; i < 100; i++) {
-        prompts.push({
-            title: "Prompt " + i,
-            slug: "prompt-" + i,
-            content: "test",
-            description: "test",
+    const prompts = [
+        { "prompt": "Write a dialogue between two AI characters discussing the future of technology.", "name": "AI Tech Future", "slug": "ai-tech-future" },
+        { "prompt": "Describe a day in the life of a software developer working on a futuristic project.", "name": "Futuristic Dev Day", "slug": "futuristic-dev-day" },
+        { "prompt": "Share your thoughts on the impact of technology on parenthood.", "name": "Tech and Parenthood", "slug": "tech-and-parenthood" },
+        { "prompt": "Create a story where a cat becomes the hero of a virtual world.", "name": "Cat Hero Tale", "slug": "cat-hero-tale" },
+        { "prompt": "Discuss the challenges and triumphs of being a new dad while managing a career in software development.", "name": "New Dad in Tech", "slug": "new-dad-in-tech" },
+        { "prompt": "Imagine a world where multiple sclerosis is cured, and describe a day in the life of someone who was once affected.", "name": "MS Cure Utopia", "slug": "ms-cure-utopia" },
+        { "prompt": "Write a poem about the bond between a developer and their code.", "name": "Code Bond Poetry", "slug": "code-bond-poetry" },
+        { "prompt": "Explore the relationship between virtual pets and real-life companionship.", "name": "Virtual Pet Bond", "slug": "virtual-pet-bond" },
+        { "prompt": "Share your perspective on the role of cats in the world of programming.", "name": "Cats in Code", "slug": "cats-in-code" },
+        { "prompt": "Craft a story where a software developer discovers a hidden talent for solving mysteries.", "name": "Dev Mystery Solver", "slug": "dev-mystery-solver" }
+    ];
+
+    const data: any = [];
+    prompts.forEach(prompt => {
+        data.push({
+            title: prompt.name,
+            slug: prompt.slug,
+            content: prompt.prompt,
+            description: prompt.prompt,
             language_id: languageEN.id,
             repository_id: myRepository.id,
-            technology_id: technologyChat.id,
-            provider_id: providerOpenAIChatGPT4.id,
+            technology_id: technologyTextGeneration.id,
+            provider_id: providerOpenAIChatGPT35.id,
             user_id: userNunoSaraiva.id
-
         });
-    }
-
-    await prisma.prompt.createMany({
-        data: prompts
     })
+
+    await prisma.prompt.createMany({ data });
 }
 
 main()
