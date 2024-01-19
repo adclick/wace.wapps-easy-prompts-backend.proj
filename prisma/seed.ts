@@ -52,6 +52,14 @@ async function main() {
         }
     });
 
+    const technologyChat = await prisma.technology.create({
+        data: {
+            name: "Chat",
+            slug: "chat",
+            default: true
+        }
+    });
+
     const technologyTextGeneration = await prisma.technology.create({
         data: {
             name: "Text Generation",
@@ -65,14 +73,6 @@ async function main() {
             name: "Image Generation",
             slug: "image-generation",
             default: false
-        }
-    });
-
-    const technologyChat = await prisma.technology.create({
-        data: {
-            name: "Chat",
-            slug: "chat",
-            default: true
         }
     });
 
