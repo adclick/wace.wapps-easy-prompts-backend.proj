@@ -4,6 +4,7 @@ import httpUtils from '../utils/httpUtils';
 import aiPromptService from './aiPromptService';
 import { JsonValue } from '@prisma/client/runtime/library';
 import modifierModel from '../models/modifierModel';
+import templateModel from '../models/templateModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/generate-text';
@@ -32,7 +33,7 @@ const textGeneration = async (text: string, providerId: number, providersIds: nu
     });
 };
 
-const textGenerationById = async (promptId: number) => {
+const textGenerationByPromptId = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
 
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
@@ -45,15 +46,33 @@ const textGenerationById = async (promptId: number) => {
         text = await aiPromptService.modifyByModifiers(prompt.content, modifiers);
     }
 
-    console.log(text);  
-
     return await httpUtils.get(API_URL, {
         text,
         provider: prompt.provider.slug
     })
 };
 
+const textGenerationByTemplateId = async (templateId: number, content: string) => {
+    const template = await templateModel.getOneById(templateId);
+
+    if (!template) throw new Error(`Prompt (${templateId}) not found`);
+
+    let text = content;
+
+    const metadata = JSON.parse(JSON.stringify(template.metadata as JsonValue));
+    if (metadata && "modifiers" in metadata) {
+        const modifiers = metadata.modifiers;
+        text = await aiPromptService.modifyByModifiers(text, modifiers);
+    }
+
+    return await httpUtils.get(API_URL, {
+        text,
+        provider: template.provider.slug
+    })
+};
+
 export default {
     textGeneration,
-    textGenerationById
+    textGenerationByPromptId,
+    textGenerationByTemplateId
 }
