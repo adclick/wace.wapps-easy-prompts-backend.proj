@@ -9,6 +9,7 @@ const textGeneration = async (req: Request, res: Response) => {
             controllerUtils.getProviderId(req),
             controllerUtils.getProvidersIds(req),
             controllerUtils.getModifiersIds(req),
+            controllerUtils.getTemplateId(req)
         );
 
         res.status(200).json(response);

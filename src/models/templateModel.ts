@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -96,6 +96,9 @@ const createOne = async (
     description: string,
     language_id: number,
     repository_id: number,
+    technology_id: number,
+    provider_id: number,
+    metadata: Prisma.InputJsonValue
 ) => {
     return await prisma.template.create({
         data: {
@@ -104,7 +107,10 @@ const createOne = async (
             description,
             language_id,
             repository_id,
-            user_id
+            technology_id,
+            provider_id,
+            user_id,
+            metadata
         },
     })
 }

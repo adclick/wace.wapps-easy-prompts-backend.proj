@@ -5,6 +5,8 @@ import languageModel from '../models/languageModel';
 import templateModel from '../models/templateModel';
 import textUtils from '../utils/textUtils';
 import technologyModel from '../models/technologyModel';
+import { History } from './aiChatService';
+import modifierModel from '../models/modifierModel';
 
 const getFilters = async (externalId: string) => {
     const [languages, repositories, technologies] = await Promise.all([
@@ -39,9 +41,12 @@ const createTemplate = async (
     externalId: string,
     name: string,
     description: string,
-    content: string,
     languageId: number,
     repositoryId: number,
+    technologyId: number,
+    providerId: number,
+    modifiersIds: number[],
+    chatHistory: History[]
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -53,6 +58,12 @@ const createTemplate = async (
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
+    const modifiers = await modifierModel.getAllByIds(modifiersIds);
+
+    // Clone
+    const history: any = [];
+    chatHistory.forEach(h => history.push(h));
+
     return await templateModel.createOne(
         user.id,
         name,
@@ -60,6 +71,12 @@ const createTemplate = async (
         description,
         languageId,
         repositoryId,
+        technologyId,
+        providerId,
+        {
+            modifiers,
+            history
+        },
     )
 }
 

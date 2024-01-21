@@ -12,7 +12,7 @@ interface Settings {
     [key: string]: string
 }
 
-const textGeneration = async (text: string, providerId: number, providersIds: number[], modifiersIds: number[]) => {
+const textGeneration = async (text: string, providerId: number, providersIds: number[], modifiersIds: number[], templateId: number) => {
     const settings: Settings = {};
 
     const provider = await providerModel.getOneById(providerId);
