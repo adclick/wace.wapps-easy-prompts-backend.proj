@@ -108,6 +108,20 @@ const getAll = async (
                     slug: true,
                 }
             },
+            technology: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            provider: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
         },
         orderBy: [{ created_at: "desc" }]
     });

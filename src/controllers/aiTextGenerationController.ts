@@ -5,11 +5,9 @@ import aiTextGenerationService from "../services/aiTextGenerationService";
 const textGeneration = async (req: Request, res: Response) => {
     try {
         const response = await aiTextGenerationService.textGeneration(
-            controllerUtils.getText(req),
-            controllerUtils.getProviderId(req),
-            controllerUtils.getProvidersIds(req),
-            controllerUtils.getModifiersIds(req),
-            controllerUtils.getTemplateId(req)
+            controllerUtils.getText(req, true, 'post'),
+            controllerUtils.getProviderId(req, true, 'post'),
+            controllerUtils.getModifiersIds(req, true, 'post'),
         );
 
         res.status(200).json(response);
