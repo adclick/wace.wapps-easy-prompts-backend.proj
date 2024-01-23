@@ -14,7 +14,12 @@ const chat = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch ({ response }: any) {
-        res.status(400).json({ status: response.status, message: response.statusText });
+        if ("status" in response && "statusText" in response) {
+            res.status(400).json({ status: response.status, message: response.statusText });
+        }
+        
+        console.error(response);
+        res.status(500).json({ status: false, message: "Internal server error" });
     }
 };
 
