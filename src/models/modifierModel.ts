@@ -97,6 +97,8 @@ const createOne = async (
     content: string,
     language_id: number,
     repository_id: number,
+    technology_id: number,
+    provider_id: number
 ) => {
     return await prisma.modifier.create({
         data: {
@@ -106,6 +108,8 @@ const createOne = async (
             content,
             language_id,
             repository_id,
+            technology_id,
+            provider_id,
             user_id
         },
     })

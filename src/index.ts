@@ -1,6 +1,7 @@
 import express from 'express'
 import { auth } from 'express-oauth2-jwt-bearer';
 import userRoutes from './routes/userRoutes';
+import filterRoutes from './routes/filterRoutes';
 import technologyRoutes from './routes/technologyRoutes';
 import providerRoutes from './routes/providerRoutes';
 import promptRoutes from './routes/promptRoutes';
@@ -30,6 +31,7 @@ app.use(cors());
 
 // Use user routes
 app.use('/api/users', userRoutes);
+app.use('/api/filters', filterRoutes);
 app.use('/api/technologies', technologyRoutes);
 app.use('/api/providers', providerRoutes);
 app.use('/api/prompts', promptRoutes);

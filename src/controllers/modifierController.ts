@@ -38,6 +38,8 @@ const createModifier = async (req: Request, res: Response) => {
             controllerUtils.getContent(req, true, 'post'),
             controllerUtils.getLanguageId(req, true, 'post'),
             controllerUtils.getRepositoryId(req, true, 'post'),
+            controllerUtils.getTechnologyId(req, true, 'post'),
+            controllerUtils.getProviderId(req, true, 'post')
         );
 
         res.status(201).json(response);

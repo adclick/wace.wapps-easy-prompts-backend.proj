@@ -1,6 +1,5 @@
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
-import promptModel from '../models/promptModel';
 import languageModel from '../models/languageModel';
 import templateModel from '../models/templateModel';
 import textUtils from '../utils/textUtils';

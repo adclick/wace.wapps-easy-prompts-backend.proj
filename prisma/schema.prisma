@@ -69,6 +69,7 @@ model Technology {
     default                Boolean?
     prompts                Prompt[]
     templates              Template[]
+    modifier               Modifier[]
     technologies_providers TechnologyProvider[]
     parameters             Parameter[]
 
@@ -84,6 +85,7 @@ model Provider {
     model_slug             String               @db.VarChar(255)
     prompts                Prompt[]
     templates              Template[]
+    modifier               Modifier[]
     technologies_providers TechnologyProvider[]
     parameters             Parameter[]
 
@@ -144,12 +146,16 @@ model Modifier {
     created_at    DateTime      @default(now()) @db.Timestamptz(6)
     language_id   Int
     repository_id Int
+    technology_id Int
+    provider_id   Int
     user_id       Int
     type          MODIFIER_TYPE @default(SUFFIX)
     metadata      Json?
     public        Boolean       @default(false)
     language      Language      @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     repository    Repository    @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology    Technology    @relation(fields: [technology_id], references: [id])
+    provider      Provider      @relation(fields: [provider_id], references: [id])
     user          User          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@unique([slug, language_id, repository_id])

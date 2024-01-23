@@ -54,7 +54,7 @@ const imageGenerationByPromptId = async (promptId: number) => {
     return await httpUtils.get(API_URL, {
         text,
         provider: prompt.provider.slug,
-        resolution: "256x256",
+        resolution: "512x512",
         num_images: 1
     })
 };
@@ -75,7 +75,7 @@ const imageGenerationByTemplateId = async (templateId: number, content: string) 
     return await httpUtils.get(API_URL, {
         text,
         provider: prompt.provider.slug,
-        resolution: "256x256",
+        resolution: "512x512",
         num_images: 1
     })
 };

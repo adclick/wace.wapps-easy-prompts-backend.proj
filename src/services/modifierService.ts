@@ -1,6 +1,5 @@
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
-import promptModel from '../models/promptModel';
 import languageModel from '../models/languageModel';
 import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
@@ -39,6 +38,8 @@ const createModifier = async (
     content: string,
     languageId: number,
     repositoryId: number,
+    technologyId: number,
+    providerId: number
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -58,6 +59,8 @@ const createModifier = async (
         content,
         languageId,
         repositoryId,
+        technologyId,
+        providerId,
     )
 }
 
