@@ -7,7 +7,8 @@ const modifyByModifiers = async (prompt: string, modifiers: string[]) => {
 
     promptOptimized = await httpUtils.get(`${BASE_URL}/ai/prompt/modify`, {
         text: promptOptimized,
-        modifiers: JSON.stringify(modifiers)
+        modifiers: JSON.stringify(modifiers),
+        language: "en"
     });
 
     return promptOptimized;

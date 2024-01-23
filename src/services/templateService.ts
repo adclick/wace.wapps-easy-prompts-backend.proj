@@ -27,12 +27,16 @@ const getTemplates = async (
     searchTerm: string,
     languagesIds: number[],
     repositoriesIds: number[],
+    limit: number,
+    offset: number
 ) => {
     return await templateModel.getAll(
         externalId,
         searchTerm,
         languagesIds,
         repositoriesIds,
+        limit,
+        offset
     );
 };
 

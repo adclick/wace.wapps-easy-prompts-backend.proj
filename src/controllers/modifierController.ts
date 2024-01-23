@@ -20,7 +20,9 @@ const getModifiers = async (req: Request, res: Response) => {
             controllerUtils.getUserExternalId(req, true),
             controllerUtils.getSearchTerm(req),
             controllerUtils.getLanguagesIds(req, true),
-            controllerUtils.getRepositoriesIds(req, true)
+            controllerUtils.getRepositoriesIds(req, true),
+            controllerUtils.getLimit(req, true),
+            controllerUtils.getOffset(req, true)
         );
 
         res.status(200).json(prompts);

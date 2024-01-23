@@ -27,6 +27,8 @@ const getAll = async (
     search_term: string,
     languages_ids: number[],
     repositories_ids: number[],
+    limit: number,
+    offset: number
 ) => {
     return await prisma.modifier.findMany({
         where: {
@@ -63,7 +65,7 @@ const getAll = async (
         include: {
             user: {
                 select: {
-                    id: true,
+                    external_id: true,
                     email: true,
                     username: true,
                 }
@@ -82,8 +84,26 @@ const getAll = async (
                     slug: true,
                 }
             },
+            technology: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            provider: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true
+                }
+            },
         },
-        orderBy: [{ created_at: "desc" }]
+        orderBy: [{ created_at: "desc" }],
+        take: limit,
+        skip: offset
     });
 }
 

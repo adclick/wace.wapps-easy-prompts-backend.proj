@@ -2,9 +2,9 @@ import axios from 'axios';
 
 const get = async (url: string, params: any) => {
     try {
-        const { data } = await axios.get(url + "?" + new URLSearchParams(params));
+        const response = await axios.get(url + "?" + new URLSearchParams(params));
 
-        return data;
+        return response.data;
     } catch (error) {
         throw error
     }
@@ -19,7 +19,6 @@ const post = async (url: string, params: any) => {
         throw error;
     }
 }
-
 
 export default {
     get,
