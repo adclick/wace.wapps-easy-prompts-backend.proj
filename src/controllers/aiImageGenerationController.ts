@@ -17,10 +17,23 @@ const imageGeneration = async (req: Request, res: Response) => {
     }
 };
 
-const imageGenerationById = async (req: Request, res: Response) => {
+const imageGenerationByPromptId = async (req: Request, res: Response) => {
     try {
-        const response = await aiImageGenerationService.imageGenerationById(
+        const response = await aiImageGenerationService.imageGenerationByPromptId(
             controllerUtils.getPromptId(req, true, 'url'),
+        );
+
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
+    }
+};
+
+const imageGenerationByTemplateId = async (req: Request, res: Response) => {
+    try {
+        const response = await aiImageGenerationService.imageGenerationByTemplateId(
+            controllerUtils.getTemplateId(req, true, 'url'),
+            controllerUtils.getText(req, true, 'post')
         );
 
         res.status(200).json(response);
@@ -31,5 +44,6 @@ const imageGenerationById = async (req: Request, res: Response) => {
 
 export default {
     imageGeneration,
-    imageGenerationById,
+    imageGenerationByPromptId,
+    imageGenerationByTemplateId
 };

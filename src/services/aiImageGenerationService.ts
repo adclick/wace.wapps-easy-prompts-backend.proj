@@ -38,7 +38,7 @@ const imageGeneration = async (text: string, providerId: number, providersIds: n
     return response;
 };
 
-const imageGenerationById = async (promptId: number) => {
+const imageGenerationByPromptId = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
 
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
@@ -59,7 +59,29 @@ const imageGenerationById = async (promptId: number) => {
     })
 };
 
+const imageGenerationByTemplateId = async (templateId: number, content: string) => {
+    const prompt = await promptModel.getOneById(templateId);
+
+    if (!prompt) throw new Error(`Prompt (${templateId}) not found`);
+
+    let text = content;
+
+    const metadata = JSON.parse(JSON.stringify(prompt.metadata as JsonValue));
+    if (metadata && "modifiers" in metadata) {
+        const modifiers = metadata.modifiers;
+        text = await aiPromptService.modifyByModifiers(content, modifiers);
+    }
+
+    return await httpUtils.get(API_URL, {
+        text,
+        provider: prompt.provider.slug,
+        resolution: "256x256",
+        num_images: 1
+    })
+};
+
 export default {
     imageGeneration,
-    imageGenerationById
+    imageGenerationByPromptId,
+    imageGenerationByTemplateId
 }

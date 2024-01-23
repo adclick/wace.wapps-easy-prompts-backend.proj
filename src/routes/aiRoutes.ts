@@ -11,8 +11,9 @@ router.post('/text-generation/prompt/:prompt_id', aiTextGenerationController.tex
 router.post('/text-generation/template/:template_id', aiTextGenerationController.textGenerationByTemplateId);
 
 // Image Generation
-router.get('/image-generation/', aiImageGenerationController.imageGeneration);
-router.get('/image-generation/:prompt_id', aiImageGenerationController.imageGenerationById);
+router.post('/image-generation/', aiImageGenerationController.imageGeneration);
+router.post('/image-generation/prompt/:prompt_id', aiImageGenerationController.imageGenerationByPromptId);
+router.post('/image-generation/template/:template_id', aiImageGenerationController.imageGenerationByTemplateId);
 
 // Chat
 router.post('/chat/', aiController.chat);
