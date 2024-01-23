@@ -4,6 +4,7 @@ import httpUtils from '../utils/httpUtils';
 import { JsonValue } from '@prisma/client/runtime/library';
 import modifierModel from '../models/modifierModel';
 import aiPromptService from './aiPromptService';
+import templateModel from '../models/templateModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -18,14 +19,22 @@ interface Settings {
 }
 
 const chat = async (text: string, providerId: number, providersIds: number[], history: History[], modifiersIds: number[]) => {
-    const settings: Settings = {};
-
+    // Validate provider
     const provider = await providerModel.getOneById(providerId);
-    if (!provider) throw new Error('Provider not found');
+    if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
+    // Apply modifiers
     const modifiers = await modifierModel.getAllByIds(modifiersIds);
-    const textModified = await aiPromptService.modifyByModifiers(text, modifiers);
+    let textModified = text;
+    if (modifiers.length > 0) {
+        const modifiersTexts = modifiers.map(m => m.content);
+        
+        textModified = await aiPromptService.modifyByModifiers(text, modifiersTexts);
+    }
 
+
+    // Apply provider model
+    const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
     return await httpUtils.post(API_URL, {
@@ -36,39 +45,84 @@ const chat = async (text: string, providerId: number, providersIds: number[], hi
     });
 };
 
-const chatById = async (promptId: number) => {
+const chatByPromptId = async (promptId: number) => {
+    // Validate Prompt
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
 
-    const provider = prompt.provider;
-
+    // Apply modifiers and history
+    let text = prompt.content;
     let previous_history = [];
-
     const metadata = JSON.parse(JSON.stringify(prompt.metadata as JsonValue));
+    if (metadata && "modifiers" in metadata) {
+        const modifiers = metadata.modifiers;
+        const modifiersTexts = modifiers.map((m: any) => m.content);
+        text = await aiPromptService.modifyByModifiers(prompt.content, modifiersTexts);
+    }
     if (metadata && "history" in metadata) {
         previous_history = metadata.history;
     }
 
+    // Apply provider model
     const settings: Settings = {};
-    settings[provider.slug] = provider.model_slug;
+    settings[prompt.provider.slug] = prompt.provider.model_slug;
 
+    // Request
     const response = await httpUtils.post(API_URL, {
         text: prompt.content,
-        provider: provider.slug,
+        provider: prompt.provider.slug,
         previous_history,
         settings
     });
 
     return {
         response,
-        provider,
+        provider: prompt.provider,
         technology: prompt.technology,
         user: prompt.user
+    }
+};
+
+const chatByTemplateId = async (templateId: number, text: string) => {
+    // Validate Prompt
+    const template = await templateModel.getOneById(templateId);
+    if (!template) throw new Error(`Template (${templateId}) not found`);
+
+    // Apply modifiers and history
+    let previous_history = [];
+    const metadata = JSON.parse(JSON.stringify(template.metadata as JsonValue));
+    if (metadata && "modifiers" in metadata) {
+        const modifiers = metadata.modifiers;
+        const modifiersTexts = modifiers.map((m: any) => m.content);
+        text = await aiPromptService.modifyByModifiers(text, modifiersTexts);
+    }
+    if (metadata && "history" in metadata) {
+        previous_history = metadata.history;
+    }
+
+    // Apply provider model
+    const settings: Settings = {};
+    settings[template.provider.slug] = template.provider.model_slug;
+
+    // Request
+    const response = await httpUtils.post(API_URL, {
+        text,
+        provider: template.provider.slug,
+        previous_history,
+        settings
+    });
+
+    return {
+        response,
+        provider: template.provider,
+        technology: template.technology,
+        user: template.user
     }
 };
 
 
 export default {
     chat,
-    chatById
+    chatByPromptId,
+    chatByTemplateId
 }

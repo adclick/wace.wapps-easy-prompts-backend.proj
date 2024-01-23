@@ -23,10 +23,23 @@ const chat = async (req: Request, res: Response) => {
     }
 };
 
-const chatById = async (req: Request, res: Response) => {
+const chatByPromptId = async (req: Request, res: Response) => {
     try {
-        const response = await aiChatService.chatById(
+        const response = await aiChatService.chatByPromptId(
             controllerUtils.getPromptId(req, true, 'url')
+        );
+
+        res.status(200).json(response);
+    } catch ({ message }: any) {
+        res.status(400).json({ success: false, message });
+    }
+};
+
+const chatByTemplateId = async (req: Request, res: Response) => {
+    try {
+        const response = await aiChatService.chatByTemplateId(
+            controllerUtils.getTemplateId(req, true, 'url'),
+            controllerUtils.getText(req, true, 'post')
         );
 
         res.status(200).json(response);
@@ -37,5 +50,6 @@ const chatById = async (req: Request, res: Response) => {
 
 export default {
     chat,
-    chatById
+    chatByPromptId,
+    chatByTemplateId
 };

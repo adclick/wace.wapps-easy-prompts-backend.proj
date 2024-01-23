@@ -17,6 +17,7 @@ router.post('/image-generation/template/:template_id', aiImageGenerationControll
 
 // Chat
 router.post('/chat/', aiController.chat);
-router.post('/chat/:prompt_id', aiController.chatById);
+router.post('/chat/prompt/:prompt_id', aiController.chatByPromptId);
+router.post('/chat/template/:template_id', aiController.chatByTemplateId);
 
 export default router;

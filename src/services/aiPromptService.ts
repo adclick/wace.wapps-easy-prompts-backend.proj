@@ -1,18 +1,14 @@
-import { Modifier } from "../models/modifierModel";
 import httpUtils from "../utils/httpUtils";
 
 const BASE_URL = process.env.BASE_URL;
 
-const modifyByModifiers = async (prompt: string, modifiers: Modifier[]) => {
+const modifyByModifiers = async (prompt: string, modifiers: string[]) => {
     let promptOptimized = prompt;
 
-    for (const modifier of modifiers) {
-        promptOptimized = await httpUtils.get(`${BASE_URL}/ai/prompt/modify`, {
-            text: promptOptimized,
-            modifier: modifier.content,
-            type: modifier.type.toLowerCase()
-        });
-    }
+    promptOptimized = await httpUtils.get(`${BASE_URL}/ai/prompt/modify`, {
+        text: promptOptimized,
+        modifiers: JSON.stringify(modifiers)
+    });
 
     return promptOptimized;
 }
