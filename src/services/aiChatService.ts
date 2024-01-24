@@ -65,12 +65,17 @@ const chatByPromptId = async (promptId: number) => {
 
     // Apply provider model
     const settings: Settings = {};
-    settings[prompt.provider.slug] = prompt.provider.model_slug;
+    let provider = prompt.provider;
+    if (!provider) {
+        provider = await providerModel.getOneDefaultByTechnologyId(prompt.technology_id);
+        if (!provider) throw new Error('No providers found');
+    }
+    settings[provider.slug] = provider.model_slug;
 
     // Request
     const response = await httpUtils.post(API_URL, {
         text: prompt.content,
-        provider: prompt.provider.slug,
+        provider: provider.slug,
         previous_history,
         settings
     });
