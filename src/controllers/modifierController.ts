@@ -45,11 +45,12 @@ const createModifier = async (req: Request, res: Response) => {
             controllerUtils.getLanguageId(req, true, 'post'),
             controllerUtils.getRepositoryId(req, true, 'post'),
             controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, true, 'post')
+            controllerUtils.getProviderId(req, false, 'post')
         );
 
         res.status(201).json(response);
     } catch (error: any) {
+        console.error(error);
         const {code, status, message} = controllerUtils.getErrorResponse(error);
         
         return res.status(code).json({ status, message });
