@@ -29,21 +29,7 @@ const imageGenerationByPromptId = async (req: Request, res: Response) => {
     }
 };
 
-const imageGenerationByTemplateId = async (req: Request, res: Response) => {
-    try {
-        const response = await aiImageGenerationService.imageGenerationByTemplateId(
-            controllerUtils.getTemplateId(req, true, 'url'),
-            controllerUtils.getText(req, true, 'post')
-        );
-
-        res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
-    }
-};
-
 export default {
     imageGeneration,
     imageGenerationByPromptId,
-    imageGenerationByTemplateId
 };

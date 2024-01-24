@@ -8,6 +8,10 @@ export interface Template {
     type: string
 }
 
+export interface Modifier {
+    content: string
+}
+
 const getOneById = async (id: number) => {
     return await prisma.template.findUnique({
         where: { id },
@@ -154,7 +158,6 @@ const createOne = async (
             technology_id,
             provider_id,
             user_id,
-            metadata
         },
     })
 }

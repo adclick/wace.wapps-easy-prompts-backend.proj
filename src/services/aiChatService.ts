@@ -37,7 +37,6 @@ const chat = async (text: string, providerId: number, providersIds: number[], hi
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
-    console.log(textModified);
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
@@ -84,46 +83,8 @@ const chatByPromptId = async (promptId: number) => {
     }
 };
 
-const chatByTemplateId = async (templateId: number, text: string) => {
-    // Validate Prompt
-    const template = await templateModel.getOneById(templateId);
-    if (!template) throw new Error(`Template (${templateId}) not found`);
-
-    // Apply modifiers and history
-    let previous_history = [];
-    const metadata = JSON.parse(JSON.stringify(template.metadata as JsonValue));
-    if (metadata && "modifiers" in metadata) {
-        const modifiers = metadata.modifiers;
-        const modifiersTexts = modifiers.map((m: any) => m.content);
-        text = await aiPromptService.modifyByModifiers(text, modifiersTexts);
-    }
-    if (metadata && "history" in metadata) {
-        previous_history = metadata.history;
-    }
-
-    // Apply provider model
-    const settings: Settings = {};
-    settings[template.provider.slug] = template.provider.model_slug;
-
-    // Request
-    const response = await httpUtils.post(API_URL, {
-        text,
-        provider: template.provider.slug,
-        previous_history,
-        settings
-    });
-
-    return {
-        response,
-        provider: template.provider,
-        technology: template.technology,
-        user: template.user
-    }
-};
-
 
 export default {
     chat,
     chatByPromptId,
-    chatByTemplateId
 }

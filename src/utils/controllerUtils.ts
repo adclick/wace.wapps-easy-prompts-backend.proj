@@ -92,6 +92,7 @@ export default {
     getRepositoriesIds,
     getTechnologiesIds,
     getModifiersIds,
+    getTemplatesIds,
     getText,
     getProviderId,
     getProvidersIds,

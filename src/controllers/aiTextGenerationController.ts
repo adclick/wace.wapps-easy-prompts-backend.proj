@@ -8,6 +8,8 @@ const textGeneration = async (req: Request, res: Response) => {
             controllerUtils.getText(req, true, 'post'),
             controllerUtils.getProviderId(req, true, 'post'),
             controllerUtils.getModifiersIds(req, true, 'post'),
+            controllerUtils.getTemplatesIds(req, true, 'post'),
+
         );
 
         res.status(200).json(response);
@@ -28,21 +30,7 @@ const textGenerationByPromptId = async (req: Request, res: Response) => {
     }
 };
 
-const textGenerationByTemplateId = async (req: Request, res: Response) => {
-    try {
-        const response = await aiTextGenerationService.textGenerationByTemplateId(
-            controllerUtils.getTemplateId(req, true, 'url'),
-            controllerUtils.getText(req, true, 'post')
-        );
-
-        res.status(200).json(response);
-    } catch (error: any) {
-        res.status(400).json({ status: false, message: error.response.statusText });
-    }
-};
-
 export default {
     textGeneration,
     textGenerationByPromptId,
-    textGenerationByTemplateId
 };

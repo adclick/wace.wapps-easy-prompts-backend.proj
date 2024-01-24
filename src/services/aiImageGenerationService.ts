@@ -69,34 +69,7 @@ const imageGenerationByPromptId = async (promptId: number) => {
     })
 };
 
-const imageGenerationByTemplateId = async (templateId: number, content: string) => {
-    // Validate template
-    const template = await templateModel.getOneById(templateId);
-    if (!template) throw new Error(`Prompt (${templateId}) not found`);
-
-    // Apply modifiers
-    let text = content;
-    const metadata = JSON.parse(JSON.stringify(template.metadata as JsonValue));
-    if (metadata && "modifiers" in metadata) {
-        const modifiers = metadata.modifiers;
-        text = await aiPromptService.modifyByModifiers(text, modifiers);
-    }
-
-    // Apply provider model
-    const settings: Settings = {};
-    settings[template.provider.slug] = template.provider.model_slug;
-
-    // Request
-    return await httpUtils.get(API_URL, {
-        text,
-        provider: template.provider.slug,
-        resolution: "512x512",
-        num_images: 1
-    })
-};
-
 export default {
     imageGeneration,
     imageGenerationByPromptId,
-    imageGenerationByTemplateId
 }

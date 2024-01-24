@@ -130,26 +130,26 @@ model Prompt {
 }
 
 model Modifier {
-    id            Int           @id @default(autoincrement())
-    title         String        @db.VarChar(255)
-    slug          String        @db.VarChar(255)
+    id            Int        @id @default(autoincrement())
+    title         String     @db.VarChar(255)
+    slug          String     @db.VarChar(255)
     content       String
     description   String
-    stars         Int           @default(0)
-    plays         Int           @default(0)
-    created_at    DateTime      @default(now()) @db.Timestamptz(6)
+    stars         Int        @default(0)
+    plays         Int        @default(0)
+    created_at    DateTime   @default(now()) @db.Timestamptz(6)
     language_id   Int
     repository_id Int
     technology_id Int
     provider_id   Int
     user_id       Int
     metadata      Json?
-    public        Boolean       @default(false)
-    language      Language      @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    repository    Repository    @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    technology    Technology    @relation(fields: [technology_id], references: [id])
-    provider      Provider      @relation(fields: [provider_id], references: [id])
-    user          User          @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    public        Boolean    @default(false)
+    language      Language   @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    repository    Repository @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology    Technology @relation(fields: [technology_id], references: [id])
+    provider      Provider   @relation(fields: [provider_id], references: [id])
+    user          User       @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@unique([slug, language_id, repository_id])
     @@map("modifiers")
@@ -168,7 +168,7 @@ model Template {
     technology_id Int
     provider_id   Int
     user_id       Int
-    metadata      Json?
+    modifiers     Json?
     language      Language   @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     repository    Repository @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     technology    Technology @relation(fields: [technology_id], references: [id])

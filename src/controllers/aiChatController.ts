@@ -40,26 +40,7 @@ const chatByPromptId = async (req: Request, res: Response) => {
     }
 };
 
-const chatByTemplateId = async (req: Request, res: Response) => {
-    try {
-        const response = await aiChatService.chatByTemplateId(
-            controllerUtils.getTemplateId(req, true, 'url'),
-            controllerUtils.getText(req, true, 'post')
-        );
-
-        res.status(200).json(response);
-    } catch ({ response }: any) {
-        if ("status" in response && "statusText" in response) {
-            res.status(400).json({ status: response.status, message: response.statusText });
-        }
-        
-        console.error(response);
-        res.status(500).json({ status: false, message: "Internal server error" });
-    }
-};
-
 export default {
     chat,
     chatByPromptId,
-    chatByTemplateId
 };
