@@ -37,6 +37,7 @@ const chat = async (text: string, providerId: number, providersIds: number[], hi
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
+    console.log(textModified);
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,

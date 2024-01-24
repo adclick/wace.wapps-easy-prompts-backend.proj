@@ -4,6 +4,7 @@ const getUserId = (req: Request): string => getString(req, 'user_id');
 const getSearchTerm = (req: Request, required: boolean = false): string => getString(req, 'search_term', required);
 const getTechnologiesIds = (req: Request): number[] => getIds(req, 'technologies_ids');
 const getModifiersIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'modifiers_ids', required, method)
+const getTemplatesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'templates_ids', required, method)
 const getLanguageId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'language_id', required, method)
 const getRepositoryId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'repository_id', required, method)
 const getTechnologyId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'technology_id', required, method)

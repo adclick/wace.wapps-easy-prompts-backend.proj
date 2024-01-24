@@ -23,7 +23,7 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     let textModified = text;
     if (modifiers.length > 0) {
         const modifiersTexts = modifiers.map(m => m.content);
-        
+
         textModified = await aiPromptService.modifyByModifiers(text, modifiersTexts);
     }
     
@@ -31,8 +31,9 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
+    console.log(textModified);
     // Request
-    return await httpUtils.get(API_URL, {
+    return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
         settings: JSON.stringify(settings)
