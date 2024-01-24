@@ -9,8 +9,10 @@ const getDefault = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
     }
 };
 
@@ -21,8 +23,10 @@ const getProviders = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
     }
 };
 

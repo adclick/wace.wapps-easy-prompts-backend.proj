@@ -85,6 +85,22 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
     return json;
 }
 
+const getErrorResponse = (error: any) => {
+    if ("response" in error && "status" in error.response && "statusText" in error.response) {
+        return {
+            code: 400,
+            status: error.response.status,
+            message: error.response.statusText
+        }
+    }
+    
+    return {
+        code: 500,
+        status: false,
+        message: "Internal server error"
+    }
+}
+
 export default {
     getUserId,
     getSearchTerm,
@@ -111,4 +127,5 @@ export default {
     getTemplateId,
     getLimit,
     getOffset,
+    getErrorResponse
 }

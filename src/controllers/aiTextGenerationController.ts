@@ -13,8 +13,10 @@ const textGeneration = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ response }: any) {
-        res.status(400).json({ status: false, message: response.statusText });
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
     }
 };
 
@@ -26,7 +28,9 @@ const textGenerationByPromptId = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch (error: any) {
-        res.status(400).json({ status: false, message: error.response.statusText });
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
     }
 };
 

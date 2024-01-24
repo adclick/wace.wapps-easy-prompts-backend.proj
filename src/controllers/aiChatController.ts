@@ -13,13 +13,10 @@ const chat = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ response }: any) {
-        if ("status" in response && "statusText" in response) {
-            res.status(400).json({ status: response.status, message: response.statusText });
-        }
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
         
-        console.error(response);
-        res.status(500).json({ status: false, message: "Internal server error" });
+        return res.status(code).json({ status, message });
     }
 };
 
@@ -30,13 +27,10 @@ const chatByPromptId = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ response }: any) {
-        if ("status" in response && "statusText" in response) {
-            res.status(400).json({ status: response.status, message: response.statusText });
-        }
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
         
-        console.error(response);
-        res.status(500).json({ status: false, message: "Internal server error" });
+        return res.status(code).json({ status, message });
     }
 };
 
