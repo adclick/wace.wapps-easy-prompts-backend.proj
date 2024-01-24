@@ -30,8 +30,13 @@ const chatByPromptId = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
+    } catch ({ response }: any) {
+        if ("status" in response && "statusText" in response) {
+            res.status(400).json({ status: response.status, message: response.statusText });
+        }
+        
+        console.error(response);
+        res.status(500).json({ status: false, message: "Internal server error" });
     }
 };
 
@@ -43,8 +48,13 @@ const chatByTemplateId = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(response);
-    } catch ({ message }: any) {
-        res.status(400).json({ success: false, message });
+    } catch ({ response }: any) {
+        if ("status" in response && "statusText" in response) {
+            res.status(400).json({ status: response.status, message: response.statusText });
+        }
+        
+        console.error(response);
+        res.status(500).json({ status: false, message: "Internal server error" });
     }
 };
 
