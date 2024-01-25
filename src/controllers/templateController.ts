@@ -44,7 +44,7 @@ const createTemplate = async (req: Request, res: Response) => {
             controllerUtils.getLanguageId(req, true, 'post'),
             controllerUtils.getRepositoryId(req, true, 'post'),
             controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, true, 'post'),
+            controllerUtils.getProviderId(req, false, 'post'),
             controllerUtils.getModifiersIds(req, true, 'post'),
             controllerUtils.getChatHistory(req, false, 'post')
         );

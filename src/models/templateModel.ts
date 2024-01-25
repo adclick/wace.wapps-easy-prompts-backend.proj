@@ -146,7 +146,7 @@ const createOne = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
-    metadata: Prisma.InputJsonValue
+    modifiers: Prisma.InputJsonValue
 ) => {
     return await prisma.template.create({
         data: {
@@ -158,6 +158,7 @@ const createOne = async (
             technology_id,
             provider_id,
             user_id,
+            modifiers
         },
     })
 }

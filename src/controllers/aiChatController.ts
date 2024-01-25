@@ -7,9 +7,9 @@ const chat = async (req: Request, res: Response) => {
         const response = await aiChatService.chat(
             controllerUtils.getText(req, true, 'post'),
             controllerUtils.getProviderId(req, true, 'post'),
-            controllerUtils.getProvidersIds(req),
             controllerUtils.getChatHistory(req, true, 'post'),
-            controllerUtils.getModifiersIds(req, false, 'post'),
+            controllerUtils.getModifiersIds(req, true, 'post'),
+            controllerUtils.getTemplatesIds(req, true, 'post')
         );
 
         res.status(200).json(response);

@@ -7,8 +7,8 @@ const imageGeneration = async (req: Request, res: Response) => {
         const response = await aiImageGenerationService.imageGeneration(
             controllerUtils.getText(req),
             controllerUtils.getProviderId(req),
-            controllerUtils.getProvidersIds(req),
             controllerUtils.getModifiersIds(req),
+            controllerUtils.getTemplatesIds(req)
         );
 
         res.status(200).json(response);

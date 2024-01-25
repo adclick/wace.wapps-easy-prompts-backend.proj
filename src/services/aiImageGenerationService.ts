@@ -2,9 +2,9 @@ import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import httpUtils from '../utils/httpUtils';
 import aiPromptService from './aiPromptService';
-import { JsonValue } from '@prisma/client/runtime/library';
-import modifierModel from '../models/modifierModel';
-import templateModel from '../models/templateModel';
+import templateService from './templateService';
+import modifierService from './modifierService';
+import promptService from './promptService';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/image/generate-image';
@@ -13,18 +13,23 @@ interface Settings {
     [key: string]: string
 }
 
-const imageGeneration = async (text: string, providerId: number, providersIds: number[], modifiersIds: number[]) => {
+const imageGeneration = async (text: string, providerId: number, modifiersIds: number[], templatesIds: number[]) => {
     // Validate provider
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
-
-    // Apply modifiers
-    const modifiers = await modifierModel.getAllByIds(modifiersIds);
     let textModified = text;
-    if (modifiers.length > 0) {
-        const modifiersTexts = modifiers.map(m => m.content);
-
+    let modifiersTexts: string[] = [];
+    
+    // Extract modifiers
+    if (templatesIds.length > 0) {
+        modifiersTexts = await templateService.extractModifiersTextsFromTemplatesIds(templatesIds);
+    } else if (modifiersIds.length > 0) {
+        modifiersTexts = await modifierService.extractModifiersTextsFromModifiersIds(modifiersIds);
+    }
+    
+    // Apply modifiers
+    if (modifiersTexts.length > 0) {
         textModified = await aiPromptService.modifyByModifiers(text, modifiersTexts);
     }
 
@@ -47,13 +52,14 @@ const imageGenerationByPromptId = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
 
+    let textModified = prompt.content;
+
+    // Extract modifiers
+    const modifiersTexts = await promptService.extractModifiersTextsFromPromptId(prompt.id);
+
     // Apply modifiers
-    let text = prompt.content;
-    const metadata = JSON.parse(JSON.stringify(prompt.metadata as JsonValue));
-    if (metadata && "modifiers" in metadata) {
-        const modifiers = metadata.modifiers;
-        const modifiersTexts = modifiers.map((m: any) => m.content);
-        text = await aiPromptService.modifyByModifiers(prompt.content, modifiersTexts);
+    if (modifiersTexts.length > 0) {
+        textModified = await aiPromptService.modifyByModifiers(prompt.content, modifiersTexts);
     }
 
     // Apply provider model
@@ -67,7 +73,7 @@ const imageGenerationByPromptId = async (promptId: number) => {
 
     // Request
     return await httpUtils.get(API_URL, {
-        text,
+        text: textModified,
         provider: provider.slug,
         resolution: "512x512",
         num_images: 1

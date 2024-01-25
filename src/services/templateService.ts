@@ -6,6 +6,7 @@ import textUtils from '../utils/textUtils';
 import technologyModel from '../models/technologyModel';
 import { History } from './aiChatService';
 import modifierModel from '../models/modifierModel';
+import { JsonValue } from '@prisma/client/runtime/library';
 
 const getFilters = async (externalId: string) => {
     const [languages, repositories, technologies] = await Promise.all([
@@ -64,8 +65,8 @@ const createTemplate = async (
     const modifiers = await modifierModel.getAllByIds(modifiersIds);
 
     // Clone
-    const history: any = [];
-    chatHistory.forEach(h => history.push(h));
+    // const history: any = [];
+    // chatHistory.forEach(h => history.push(h));
 
     return await templateModel.createOne(
         user.id,
@@ -76,10 +77,7 @@ const createTemplate = async (
         repositoryId,
         technologyId,
         providerId,
-        {
-            modifiers,
-            history
-        },
+        modifiers,
     )
 }
 
@@ -87,9 +85,36 @@ const deleteTemplate = async (id: number) => {
     return await templateModel.deleteOne(id);
 }
 
+const extractModifiersTextsFromTemplatesIds = async (templatesIds: number[]): Promise<string[]> => {
+    const templates = await templateModel.getAllByIds(templatesIds);
+    
+    if (templates.length <= 0) return [];
+
+    const modifiersTexts: string[] = [];
+    const modifiersIdsUsed: number[] = [];
+
+    templates.forEach(t => {
+        if (t.modifiers) {
+            const templateModifiers = JSON.parse(JSON.stringify(t.modifiers));
+            
+            templateModifiers.forEach((m: any) => {
+                if (modifiersIdsUsed.includes(m.id)) {
+                    return;
+                }
+
+                modifiersIdsUsed.push(m.id);
+                modifiersTexts.push(m.content);
+            })
+        }
+    })
+
+    return modifiersTexts;
+}
+
 export default {
     getFilters,
     getTemplates,
     createTemplate,
-    deleteTemplate
+    deleteTemplate,
+    extractModifiersTextsFromTemplatesIds
 }

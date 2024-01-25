@@ -86,6 +86,7 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
 }
 
 const getErrorResponse = (error: any) => {
+    console.error(error);
     if ("response" in error && "status" in error.response && "statusText" in error.response) {
         return {
             code: 400,

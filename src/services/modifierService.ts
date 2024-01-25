@@ -72,9 +72,18 @@ const deleteModifier = async (id: number) => {
     return await modifierModel.deleteOne(id);
 }
 
+const extractModifiersTextsFromModifiersIds = async (modifiersIds: number[]): Promise<string[]> => {
+    const modifiers = await modifierModel.getAllByIds(modifiersIds);
+    
+    if (modifiers.length <= 0) return [];
+
+    return modifiers.map(m => m.content);
+}
+
 export default {
     getFilters,
     getModifiers,
     createModifier,
-    deleteModifier
+    deleteModifier,
+    extractModifiersTextsFromModifiersIds
 }

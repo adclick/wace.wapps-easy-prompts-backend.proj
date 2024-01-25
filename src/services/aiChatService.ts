@@ -5,6 +5,9 @@ import { JsonValue } from '@prisma/client/runtime/library';
 import modifierModel from '../models/modifierModel';
 import aiPromptService from './aiPromptService';
 import templateModel from '../models/templateModel';
+import templateService from './templateService';
+import modifierService from './modifierService';
+import promptService from './promptService';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -18,24 +21,34 @@ interface Settings {
     [key: string]: string
 }
 
-const chat = async (text: string, providerId: number, providersIds: number[], history: History[], modifiersIds: number[]) => {
+const chat = async (text: string, providerId: number, history: History[], modifiersIds: number[], templatesIds: number[]) => {
     // Validate provider
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
-    // Apply modifiers
-    const modifiers = await modifierModel.getAllByIds(modifiersIds);
     let textModified = text;
-    if (modifiers.length > 0) {
-        const modifiersTexts = modifiers.map(m => m.content);
-        
-        textModified = await aiPromptService.modifyByModifiers(text, modifiersTexts);
+    let modifiersTexts: string[] = [];
+
+    // Extract modifiers
+    if (templatesIds.length > 0) {
+        modifiersTexts = await templateService.extractModifiersTextsFromTemplatesIds(templatesIds);
+    } else if (modifiersIds.length > 0) {
+        modifiersTexts = await modifierService.extractModifiersTextsFromModifiersIds(modifiersIds);
     }
 
+    // Apply modifiers
+    if (modifiersTexts.length > 0) {
+        const optimization = aiPromptService.optimizeChat(text, history, modifiersTexts);
+        history = optimization.history;
+        textModified = optimization.text;
+    }
 
     // Apply provider model
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
+
+    console.log(history);
+    console.log(textModified);
 
     return await httpUtils.post(API_URL, {
         text: textModified,
@@ -50,17 +63,9 @@ const chatByPromptId = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
 
-    // Apply modifiers and history
-    let text = prompt.content;
     let previous_history = [];
-    const metadata = JSON.parse(JSON.stringify(prompt.metadata as JsonValue));
-    if (metadata && "modifiers" in metadata) {
-        const modifiers = metadata.modifiers;
-        const modifiersTexts = modifiers.map((m: any) => m.content);
-        text = await aiPromptService.modifyByModifiers(prompt.content, modifiersTexts);
-    }
-    if (metadata && "history" in metadata) {
-        previous_history = metadata.history;
+    if (prompt.history) {
+        previous_history = JSON.parse(JSON.stringify(prompt.history));
     }
 
     // Apply provider model
