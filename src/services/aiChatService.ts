@@ -1,13 +1,9 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import httpUtils from '../utils/httpUtils';
-import { JsonValue } from '@prisma/client/runtime/library';
-import modifierModel from '../models/modifierModel';
 import aiPromptService from './aiPromptService';
-import templateModel from '../models/templateModel';
 import templateService from './templateService';
 import modifierService from './modifierService';
-import promptService from './promptService';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
