@@ -2,20 +2,6 @@ import { Request, Response } from "express";
 import promptService from "../services/promptService";
 import controllerUtils from "../utils/controllerUtils";
 
-const getFilters = async (req: Request, res: Response) => {
-    try {
-        const response = await promptService.getFilters(
-            controllerUtils.getUserExternalId(req, true)
-        );
-
-        res.status(200).json(response);
-    } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
-        return res.status(code).json({ status, message });
-    }
-};
-
 const getPrompts = async (req: Request, res: Response) => {
     try {
         const response = await promptService.getPrompts(
@@ -90,7 +76,6 @@ const deletePrompt = async (req: Request, res: Response) => {
 }
 
 export default {
-    getFilters,
     getPrompts,
     getPromptById,
     createPrompt,

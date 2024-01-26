@@ -1,21 +1,7 @@
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
-import languageModel from '../models/languageModel';
 import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
-
-const getFilters = async (externalId: string) => {
-    const [languages, repositories] = await Promise.all([
-        languageModel.getAll(),
-        repositoryModel.getAllByUser(externalId),
-    ]);
-
-    return {
-        searchTerm: "",
-        languages,
-        repositories,
-    }
-};
 
 const getModifiers = async (
     externalId: string,
@@ -33,6 +19,10 @@ const getModifiers = async (
         limit,
         offset
     );
+};
+
+const getModifierById = async (modifierId: number) => {
+    return await modifierModel.getOneById(modifierId);
 };
 
 const createModifier = async (
@@ -81,8 +71,8 @@ const extractModifiersTextsFromModifiersIds = async (modifiersIds: number[]): Pr
 }
 
 export default {
-    getFilters,
     getModifiers,
+    getModifierById,
     createModifier,
     deleteModifier,
     extractModifiersTextsFromModifiersIds

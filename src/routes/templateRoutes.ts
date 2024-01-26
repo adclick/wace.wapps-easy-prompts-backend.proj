@@ -4,8 +4,8 @@ const router = express.Router();
 
 // Define routes
 router.get('/', templateController.getTemplates);
+router.get('/:template_id', templateController.getTemplateById);
 router.post('/', templateController.createTemplate);
-router.get('/filters', templateController.getFilters);
 router.delete('/:template_id', templateController.deleteTemplate);
 
 export default router;

@@ -9,6 +9,42 @@ export interface Modifier {
 const getOneById = async (id: number) => {
     return await prisma.modifier.findUnique({
         where: { id },
+        include: {
+            language: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    name: true,
+                    slug: true,
+                    default: true
+                }
+            },
+            provider: {
+                select: {
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true
+                }
+            },
+            user: {
+                select: {
+                    email: true,
+                    username: true,
+                    external_id: true
+                }
+            }
+        }
     });
 }
 

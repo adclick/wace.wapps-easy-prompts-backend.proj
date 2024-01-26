@@ -2,20 +2,6 @@ import { Request, Response } from "express";
 import modifierService from "../services/modifierService";
 import controllerUtils from "../utils/controllerUtils";
 
-const getFilters = async (req: Request, res: Response) => {
-    try {
-        const response = await modifierService.getFilters(
-            controllerUtils.getUserExternalId(req, true)
-        );
-
-        res.status(200).json(response);
-    } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
-        return res.status(code).json({ status, message });
-    }
-};
-
 const getModifiers = async (req: Request, res: Response) => {
     try {
         const prompts = await modifierService.getModifiers(
@@ -28,6 +14,20 @@ const getModifiers = async (req: Request, res: Response) => {
         );
 
         res.status(200).json(prompts);
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
+    }
+};
+
+const getModifierById = async (req: Request, res: Response) => {
+    try {
+        const response = await modifierService.getModifierById(
+            controllerUtils.getModifierId(req, true, 'url'),
+        );
+
+        res.status(200).json(response);
     } catch (error: any) {
         const {code, status, message} = controllerUtils.getErrorResponse(error);
         
@@ -72,8 +72,8 @@ const deleteModifier = async (req: Request, res: Response) => {
 }
 
 export default {
-    getFilters,
     getModifiers,
+    getModifierById,
     createModifier,
     deleteModifier
 };

@@ -1,27 +1,9 @@
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
-import languageModel from '../models/languageModel';
 import templateModel from '../models/templateModel';
 import textUtils from '../utils/textUtils';
-import technologyModel from '../models/technologyModel';
 import { History } from './aiChatService';
 import modifierModel from '../models/modifierModel';
-import { JsonValue } from '@prisma/client/runtime/library';
-
-const getFilters = async (externalId: string) => {
-    const [languages, repositories, technologies] = await Promise.all([
-        languageModel.getAll(),
-        repositoryModel.getAllByUser(externalId),
-        technologyModel.getAll()
-    ]);
-
-    return {
-        searchTerm: "",
-        languages,
-        repositories,
-        technologies
-    }
-};
 
 const getTemplates = async (
     externalId: string,
@@ -39,6 +21,10 @@ const getTemplates = async (
         limit,
         offset
     );
+};
+
+const getTemplateById = async (promptId: number) => {
+    return await templateModel.getOneById(promptId);
 };
 
 const createTemplate = async (
@@ -112,8 +98,8 @@ const extractModifiersTextsFromTemplatesIds = async (templatesIds: number[]): Pr
 }
 
 export default {
-    getFilters,
     getTemplates,
+    getTemplateById,
     createTemplate,
     deleteTemplate,
     extractModifiersTextsFromTemplatesIds

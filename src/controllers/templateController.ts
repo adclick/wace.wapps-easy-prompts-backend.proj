@@ -2,20 +2,6 @@ import { Request, Response } from "express";
 import templateService from "../services/templateService";
 import controllerUtils from "../utils/controllerUtils";
 
-const getFilters = async (req: Request, res: Response) => {
-    try {
-        const response = await templateService.getFilters(
-            controllerUtils.getUserExternalId(req, true)
-        );
-
-        res.status(200).json(response);
-    } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
-        return res.status(code).json({ status, message });
-    }
-};
-
 const getTemplates = async (req: Request, res: Response) => {
     try {
         const prompts = await templateService.getTemplates(
@@ -34,6 +20,21 @@ const getTemplates = async (req: Request, res: Response) => {
         return res.status(code).json({ status, message });
     }
 };
+
+const getTemplateById = async (req: Request, res: Response) => {
+    try {
+        const response = await templateService.getTemplateById(
+            controllerUtils.getTemplateId(req, true, 'url'),
+        );
+
+        res.status(200).json(response);
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
+    }
+};
+
 
 const createTemplate = async (req: Request, res: Response) => {
     try {
@@ -72,8 +73,8 @@ const deleteTemplate = async (req: Request, res: Response) => {
 }
 
 export default {
-    getFilters,
     getTemplates,
+    getTemplateById,
     createTemplate,
     deleteTemplate
 };
