@@ -18,21 +18,11 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     // Validate provider
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
-    
-    let textModified = text;
-    let modifiersTexts: string[] = [];
 
-    // Extract modifiers
-    if (templatesIds.length > 0) {
-        modifiersTexts = await templateService.extractModifiersTextsFromTemplatesIds(templatesIds);
-    } else if (modifiersIds.length > 0) {
-        modifiersTexts = await modifierService.extractModifiersTextsFromModifiersIds(modifiersIds);
-    }
-    
-    // Apply modifiers
-    if (modifiersTexts.length > 0) {
-        textModified = await aiPromptService.modifyByModifiers(text, modifiersTexts);
-    }
+    // Apply templates or modifiers (give priority to templates)
+    const textModified = templatesIds.length > 0
+        ? await templateService.applyTemplatesToText(text, templatesIds)
+        : await modifierService.applyModifiersToText(text, modifiersIds);
 
     // Apply provider model
     const settings: Settings = {};
@@ -53,16 +43,9 @@ const textGenerationByPromptId = async (promptId: number) => {
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
 
-    let textModified = prompt.content;
-
-    // Extract modifiers
-    const modifiersTexts = await promptService.extractModifiersTextsFromPromptId(prompt.id);
-
     // Apply modifiers
-    if (modifiersTexts.length > 0) {
-        textModified = await aiPromptService.modifyByModifiers(prompt.content, modifiersTexts);
-    }
-    
+    const textModified = await promptService.applyModifiersAndTemplatesFromPrompt(prompt.id);
+
     // Apply provider model
     const settings: Settings = {};
     let provider = prompt.provider;

@@ -4,6 +4,8 @@ import templateModel from '../models/templateModel';
 import textUtils from '../utils/textUtils';
 import { History } from './aiChatService';
 import modifierModel from '../models/modifierModel';
+import modifierService from './modifierService';
+import promptUtils from '../utils/promptUtils';
 
 const getTemplates = async (
     externalId: string,
@@ -48,8 +50,6 @@ const createTemplate = async (
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
-    const modifiers = await modifierModel.getAllByIds(modifiersIds);
-
     // Clone
     // const history: any = [];
     // chatHistory.forEach(h => history.push(h));
@@ -63,7 +63,7 @@ const createTemplate = async (
         repositoryId,
         technologyId,
         providerId,
-        modifiers,
+        modifiersIds,
     )
 }
 
@@ -71,30 +71,68 @@ const deleteTemplate = async (id: number) => {
     return await templateModel.deleteOne(id);
 }
 
-const extractModifiersTextsFromTemplatesIds = async (templatesIds: number[]): Promise<string[]> => {
+const applyTemplatesToText = async (text: string, templatesIds: number[]): Promise<string> => {
     const templates = await templateModel.getAllByIds(templatesIds);
-    
-    if (templates.length <= 0) return [];
 
+    if (templates.length <= 0) return text;
+
+    // Apply language from first selected template
+    const languageSlug = templates[0].language.slug;
+
+    const modifiersIds: number[] = [];
     const modifiersTexts: string[] = [];
-    const modifiersIdsUsed: number[] = [];
 
+    // Extract all modifiers texts
     templates.forEach(t => {
-        if (t.modifiers) {
-            const templateModifiers = JSON.parse(JSON.stringify(t.modifiers));
-            
-            templateModifiers.forEach((m: any) => {
-                if (modifiersIdsUsed.includes(m.id)) {
-                    return;
-                }
-
-                modifiersIdsUsed.push(m.id);
-                modifiersTexts.push(m.content);
-            })
+        if (!t.templates_modifiers) {
+            return;
         }
-    })
 
-    return modifiersTexts;
+        t.templates_modifiers.map(templateModifier => {
+            const modifier = templateModifier.modifier;
+
+            if (modifiersIds.includes(modifier.id)) {
+                return;
+            }
+
+            modifiersIds.push(modifier.id);
+            modifiersTexts.push(modifier.content);
+        })
+    });
+
+    return promptUtils.optimizeText(text, modifiersTexts, languageSlug);
+}
+
+const applyTemplatesToChat = async (text: string, templatesIds: number[], history: History[]): Promise<{ textModified: string, historyModified: History[] }> => {
+    const templates = await templateModel.getAllByIds(templatesIds);
+
+    if (templates.length <= 0) return {textModified: text, historyModified: history};
+
+    // Apply language from first selected template
+    const languageSlug = templates[0].language.slug;
+
+    const modifiersIds: number[] = [];
+    const modifiersTexts: string[] = [];
+
+    // Extract all modifiers texts
+    templates.forEach(t => {
+        if (!t.templates_modifiers) {
+            return;
+        }
+
+        t.templates_modifiers.map(templateModifier => {
+            const modifier = templateModifier.modifier;
+
+            if (modifiersIds.includes(modifier.id)) {
+                return;
+            }
+
+            modifiersIds.push(modifier.id);
+            modifiersTexts.push(modifier.content);
+        })
+    });
+
+    return promptUtils.optimizeChat(text, modifiersTexts, history, languageSlug);
 }
 
 export default {
@@ -102,5 +140,5 @@ export default {
     getTemplateById,
     createTemplate,
     deleteTemplate,
-    extractModifiersTextsFromTemplatesIds
+    applyTemplatesToText
 }

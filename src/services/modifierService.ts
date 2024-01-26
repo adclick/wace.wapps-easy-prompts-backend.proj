@@ -2,6 +2,9 @@ import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
+import promptService from './promptService';
+import promptUtils from '../utils/promptUtils';
+import { History } from './aiChatService';
 
 const getModifiers = async (
     externalId: string,
@@ -62,12 +65,32 @@ const deleteModifier = async (id: number) => {
     return await modifierModel.deleteOne(id);
 }
 
-const extractModifiersTextsFromModifiersIds = async (modifiersIds: number[]): Promise<string[]> => {
+const applyModifiersToText = async (text: string, modifiersIds: number[], isChat = false): Promise<string> => {
     const modifiers = await modifierModel.getAllByIds(modifiersIds);
-    
-    if (modifiers.length <= 0) return [];
 
-    return modifiers.map(m => m.content);
+    if (modifiers.length <= 0) return text;
+
+    // Apply language from first selected modifier
+    const languageSlug = modifiers[0].language.slug;
+
+    // Extract all modifiers texts
+    const texts = modifiers.map(m => m.content);
+
+    return promptUtils.optimizeText(text, texts, languageSlug);
+}
+
+const applyModifiersToChat = async (text: string, modifiersIds: number[], history: History[]): Promise<{ textModified: string, historyModified: History[] }> => {
+    const modifiers = await modifierModel.getAllByIds(modifiersIds);
+
+    if (modifiers.length <= 0) return {textModified: text, historyModified: history};
+
+    // Apply language from first selected modifier
+    const languageSlug = modifiers[0].language.slug;
+
+    // Extract all modifiers texts
+    const texts = modifiers.map(m => m.content);
+
+    return promptUtils.optimizeChat(text, texts, history, languageSlug);
 }
 
 export default {
@@ -75,5 +98,6 @@ export default {
     getModifierById,
     createModifier,
     deleteModifier,
-    extractModifiersTextsFromModifiersIds
+    applyModifiersToText,
+    applyModifiersToChat
 }

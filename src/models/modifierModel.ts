@@ -54,6 +54,42 @@ const getAllByIds = async (ids: number[]) => {
             id: {
                 in: ids
             }
+        },
+        include: {
+            language: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    name: true,
+                    slug: true,
+                    default: true
+                }
+            },
+            provider: {
+                select: {
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true
+                }
+            },
+            user: {
+                select: {
+                    email: true,
+                    username: true,
+                    external_id: true
+                }
+            }
         }
     })
 }

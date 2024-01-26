@@ -60,6 +60,47 @@ const getAllByIds = async (ids: number[]) => {
             id: {
                 in: ids
             }
+        },
+        include: {
+            language: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    name: true,
+                    slug: true,
+                    default: true
+                }
+            },
+            provider: {
+                select: {
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true
+                }
+            },
+            user: {
+                select: {
+                    email: true,
+                    username: true,
+                    external_id: true
+                }
+            },
+            templates_modifiers: {
+                include: {
+                    modifier: true
+                }
+            }
         }
     })
 }
@@ -158,8 +199,12 @@ const createOne = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
-    modifiers: Prisma.InputJsonValue
+    modifiersIds: number[]
 ) => {
+    const modifiers_ids = modifiersIds.map(m => {
+        return { modifier_id: m }
+    })
+
     return await prisma.template.create({
         data: {
             title,
@@ -170,7 +215,11 @@ const createOne = async (
             technology_id,
             provider_id,
             user_id,
-            modifiers
+            templates_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            }
         },
     })
 }

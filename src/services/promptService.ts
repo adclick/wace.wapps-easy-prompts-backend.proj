@@ -5,6 +5,7 @@ import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
 import { History } from './aiChatService';
 import templateModel from '../models/templateModel';
+import promptUtils from '../utils/promptUtils';
 
 const getPrompts = async (
     externalId: string,
@@ -53,11 +54,6 @@ const createPrompt = async (
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
-    const templates = await templateModel.getAllByIds(templatesIds);
-    const modifiers = await modifierModel.getAllByIds(modifiersIds);
-
-    console.log(templatesIds);
-    console.log(templates);
 
     // Clone
     const history: any = [];
@@ -73,46 +69,51 @@ const createPrompt = async (
         repositoryId,
         technologyId,
         providerId,
-        templates,
-        modifiers,
+        templatesIds,
+        modifiersIds,
         history
     )
 }
 
-const extractModifiersTextsFromPromptId = async (promptId: number): Promise<string[]> => {
+const applyModifiersAndTemplatesFromPrompt = async (promptId: number): Promise<string> => {
     const prompt = await promptModel.getOneById(promptId);
 
-    if (!prompt || !prompt.templates || !prompt.modifiers) return [];
+    if (!prompt) return "";
 
-    const templates = JSON.parse(JSON.stringify(prompt.templates));
-    const modifiers = JSON.parse(JSON.stringify(prompt.modifiers));
-    
-    const modifiersTexts: string[] = [];
+    // Apply language from first selected template
+    const languageSlug = prompt.language.slug;
+
+    const promptTemplates = prompt.prompts_templates;
+
+    const templates = JSON.parse(JSON.stringify(prompt.prompts_templates));
+    const modifiers = JSON.parse(JSON.stringify(prompt.prompts_modifiers));
+
     const modifiersIdsUsed: number[] = [];
+
+    let texts: string[] = [];
 
     if (templates.length > 0) {
         templates.forEach((t: any) => {
             if (t.modifiers) {
                 const templateModifiers = JSON.parse(JSON.stringify(t.modifiers));
-                
+
                 templateModifiers.forEach((m: any) => {
                     if (modifiersIdsUsed.includes(m.id)) {
                         return;
                     }
-    
+
                     modifiersIdsUsed.push(m.id);
-                    modifiersTexts.push(m.content);
+                    texts.push(m.content);
                 })
             }
         });
 
-        return modifiersTexts;
-
     } else if (modifiers.length > 0) {
-        return modifiers.map((m: any) => m.content);
+        texts = modifiers.map((m: any) => m.content);
     }
 
-    return [];
+    return await promptUtils.optimizeText(prompt.content, texts, languageSlug);
+
 }
 
 const deletePrompt = async (id: number) => {
@@ -124,5 +125,5 @@ export default {
     getPromptById,
     createPrompt,
     deletePrompt,
-    extractModifiersTextsFromPromptId
+    applyModifiersAndTemplatesFromPrompt
 }

@@ -15,6 +15,37 @@ const modifyByModifiers = async (prompt: string, modifiers: string[]) => {
     return promptOptimized;
 }
 
+const optimizeText = async (text: string, texts: string[], language: string): Promise<string> => {
+    let finalText = text;
+
+    switch (language.toLowerCase()) {
+        case "en":
+            finalText = "Consider the following prompt and apply the given criteria: \n";
+            finalText += "prompt:\n";
+            finalText += " - " + text + "\n";
+            finalText += "criteria:\n";
+
+            texts.map(t => {
+                finalText += " - " + t + "\n";
+            });
+
+            return finalText;
+        case "pt":
+            finalText = "Considera o seguinte prompt e aplica os seguintes critérios: \n";
+            finalText += "prompt:\n";
+            finalText += " - " + text + "\n";
+            finalText += "critérios:\n";
+        
+            texts.map(t => {
+                finalText += " - " + t + "\n";
+            });
+        
+            return finalText;
+        default:
+            return finalText;
+    }
+}
+
 const optimizeChat = (text: string, history: History[], modifiers: string[]) => {
     let finalText = text;
 
@@ -36,10 +67,11 @@ const optimizeChat = (text: string, history: History[], modifiers: string[]) => 
         finalText = text;
     }
 
-    return {text: finalText, history: history};
+    return { text: finalText, history: history };
 }
 
 export default {
     modifyByModifiers,
+    optimizeText,
     optimizeChat
 }

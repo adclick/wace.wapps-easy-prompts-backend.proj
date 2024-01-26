@@ -7,10 +7,16 @@ const login = async (email: string, username: string, externalId: string) => {
     // Create or update user
     const user = await userModel.upsertOne(email, username, externalId);
 
+    upsertUserToRepositories(email, user.id);
+
+    return user;
+};
+
+const upsertUserToRepositories = async (email: string, userId: number) => {
     // Create or update main personal repo
     const repoName = "My Repository";
     const repoSlug = textUtils.toSlug(repoName);
-    await repositoryModel.upsertOne(repoName, repoSlug, user.id);
+    await repositoryModel.upsertOne(repoName, repoSlug, userId);
 
     // HARDCODE
     // Subscribe user to specific repos
@@ -18,22 +24,20 @@ const login = async (email: string, username: string, externalId: string) => {
         if (email === 'nuno.saraiva@wacestudio.com' || email === 'sergio.cunha@wacestudio.com') {
             const repoWaceId = await repositoryModel.getOneBySlug("wace-it");
             if (!repoWaceId) throw new Error(`Repository 'wace-it' not found`);
-            await userRepositoryModel.upsertOne(repoWaceId.id, user.id);
+            await userRepositoryModel.upsertOne(repoWaceId.id, userId);
         }
 
         const repoWace = await repositoryModel.getOneBySlug("wace");
         if (!repoWace) throw new Error(`Repository 'wace' not found`);
-        await userRepositoryModel.upsertOne(repoWace.id, user.id);
+        await userRepositoryModel.upsertOne(repoWace.id, userId);
     }
-    
+
     if (email.endsWith('adclick.pt')) {
         const repoAdclick = await repositoryModel.getOneBySlug("wace");
         if (!repoAdclick) throw new Error(`Repository 'wace' not found`);
-        await userRepositoryModel.upsertOne(repoAdclick.id, user.id);
+        await userRepositoryModel.upsertOne(repoAdclick.id, userId);
     }
-
-    return user;
-};
+}
 
 export default {
     login

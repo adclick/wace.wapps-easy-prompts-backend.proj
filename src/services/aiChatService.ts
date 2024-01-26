@@ -22,22 +22,15 @@ const chat = async (text: string, providerId: number, history: History[], modifi
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
-    let textModified = text;
-    let modifiersTexts: string[] = [];
 
-    // Extract modifiers
-    if (templatesIds.length > 0) {
-        modifiersTexts = await templateService.extractModifiersTextsFromTemplatesIds(templatesIds);
-    } else if (modifiersIds.length > 0) {
-        modifiersTexts = await modifierService.extractModifiersTextsFromModifiersIds(modifiersIds);
-    }
 
-    // Apply modifiers
-    if (modifiersTexts.length > 0) {
-        const optimization = aiPromptService.optimizeChat(text, history, modifiersTexts);
-        history = optimization.history;
-        textModified = optimization.text;
-    }
+    
+    // Apply templates or modifiers (give priority to templates)
+    // const {textModified, historyModified} = templatesIds.length > 0
+    //     ? await templateService.applyTemplatesToText(text, templatesIds)
+    //     : await modifierService.applyModifiersToChat(text, modifiersIds, history);
+    const {textModified, historyModified} = await modifierService.applyModifiersToChat(text, modifiersIds, history);
+
 
     // Apply provider model
     const settings: Settings = {};

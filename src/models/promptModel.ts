@@ -39,6 +39,16 @@ const getOneById = async (id: number) => {
                     username: true,
                     external_id: true
                 }
+            },
+            prompts_templates: {
+                include: {
+                    template: true
+                }
+            },
+            prompts_modifiers: {
+                include: {
+                    modifier: true
+                }
             }
         }
     });
@@ -166,10 +176,18 @@ const createOne = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
-    templates: Prisma.InputJsonValue,
-    modifiers: Prisma.InputJsonValue,
+    templatesIds: number[],
+    modifiersIds: number[],
     history: Prisma.InputJsonValue
 ) => {
+    const templates_ids = templatesIds.map(t => {
+        return { template_id: t };
+    });
+
+    const modifiers_ids = modifiersIds.map(m => {
+        return { modifier_id: m };
+    })
+
     return await prisma.prompt.create({
         data: {
             title,
@@ -181,8 +199,16 @@ const createOne = async (
             technology_id,
             provider_id,
             user_id,
-            templates,
-            modifiers,
+            prompts_templates: {
+                createMany: {
+                    data: templates_ids
+                }
+            },
+            prompts_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            },
             history
         },
     })
