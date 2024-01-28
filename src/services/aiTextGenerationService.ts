@@ -56,7 +56,7 @@ const textGenerationByPromptId = async (promptId: number) => {
     settings[provider.slug] = provider.model_slug;
 
     // Request
-    return await httpUtils.get(API_URL, {
+    return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
         settings: JSON.stringify(settings)

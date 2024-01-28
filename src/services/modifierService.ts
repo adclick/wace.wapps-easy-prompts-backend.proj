@@ -5,6 +5,7 @@ import textUtils from '../utils/textUtils';
 import promptService from './promptService';
 import promptUtils from '../utils/promptUtils';
 import { History } from './aiChatService';
+import { PromptChatMessage } from '../models/promptChatMessageModel';
 
 const getModifiers = async (
     externalId: string,
@@ -79,10 +80,14 @@ const applyModifiersToText = async (text: string, modifiersIds: number[], isChat
     return promptUtils.optimizeText(text, texts, languageSlug);
 }
 
-const applyModifiersToChat = async (text: string, modifiersIds: number[], history: History[]): Promise<{ textModified: string, historyModified: History[] }> => {
+const applyModifiersToChat = async (
+    text: string,
+    modifiersIds: number[],
+    chatMessages: PromptChatMessage[]
+): Promise<{ textModified: string, chatMessagesModified: PromptChatMessage[] }> => {
     const modifiers = await modifierModel.getAllByIds(modifiersIds);
 
-    if (modifiers.length <= 0) return {textModified: text, historyModified: history};
+    if (modifiers.length <= 0) return { textModified: text, chatMessagesModified: chatMessages };
 
     // Apply language from first selected modifier
     const languageSlug = modifiers[0].language.slug;
@@ -90,7 +95,7 @@ const applyModifiersToChat = async (text: string, modifiersIds: number[], histor
     // Extract all modifiers texts
     const texts = modifiers.map(m => m.content);
 
-    return promptUtils.optimizeChat(text, texts, history, languageSlug);
+    return promptUtils.optimizeChat(text, texts, chatMessages, languageSlug);
 }
 
 export default {

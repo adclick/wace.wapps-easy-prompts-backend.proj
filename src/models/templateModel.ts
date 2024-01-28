@@ -203,7 +203,9 @@ const createOne = async (
 ) => {
     const modifiers_ids = modifiersIds.map(m => {
         return { modifier_id: m }
-    })
+    });
+
+    console.log(modifiers_ids);
 
     return await prisma.template.create({
         data: {

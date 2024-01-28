@@ -3,6 +3,7 @@ import promptModel from '../models/promptModel';
 import httpUtils from '../utils/httpUtils';
 import modifierService from './modifierService';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
+import templateService from './templateService';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -22,11 +23,9 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
     // Apply templates or modifiers (give priority to templates)
-    // const {textModified, historyModified} = templatesIds.length > 0
-    //     ? await templateService.applyTemplatesToText(text, templatesIds)
-    //     : await modifierService.applyModifiersToChat(text, modifiersIds, history);
-    const {textModified, historyModified} = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
-
+    const { textModified, chatMessagesModified } = templatesIds.length > 0
+        ? await templateService.applyTemplatesToChat(text, templatesIds, chatMessages)
+        : await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
 
     // Apply provider model
     const settings: Settings = {};
@@ -35,7 +34,7 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        previous_history: chatMessages,
+        previous_history: chatMessagesModified,
         settings: JSON.stringify(settings)
     });
 };
@@ -44,6 +43,21 @@ const chatByPromptId = async (promptId: number) => {
     // Validate Prompt
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
+
+    const text = prompt.content;
+    const chatMessages = prompt.prompts_chat_messages.map(m => {
+        return {
+            role: m.role,
+            message: m.message
+        }
+    });
+    const templatesIds = prompt.prompts_templates.map(pt => pt.template_id);
+    const modifiersIds = prompt.prompts_modifiers.map(pm => pm.modifier_id);
+
+    // Apply templates or modifiers (give priority to templates)
+    const { textModified, chatMessagesModified } = templatesIds.length > 0
+        ? await templateService.applyTemplatesToChat(text, templatesIds, chatMessages)
+        : await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
 
     // Apply provider model
     const settings: Settings = {};
@@ -56,9 +70,9 @@ const chatByPromptId = async (promptId: number) => {
 
     // Request
     const response = await httpUtils.post(API_URL, {
-        text: prompt.content,
+        text: textModified,
         provider: provider.slug,
-        previous_history: prompt.prompts_chat_messages,
+        previous_history: chatMessagesModified,
         settings
     });
 

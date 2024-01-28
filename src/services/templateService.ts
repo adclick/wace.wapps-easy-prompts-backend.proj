@@ -4,6 +4,7 @@ import templateModel from '../models/templateModel';
 import textUtils from '../utils/textUtils';
 import { History } from './aiChatService';
 import promptUtils from '../utils/promptUtils';
+import { PromptChatMessage } from '../models/promptChatMessageModel';
 
 const getTemplates = async (
     externalId: string,
@@ -101,10 +102,14 @@ const applyTemplatesToText = async (text: string, templatesIds: number[]): Promi
     return promptUtils.optimizeText(text, modifiersTexts, languageSlug);
 }
 
-const applyTemplatesToChat = async (text: string, templatesIds: number[], history: History[]): Promise<{ textModified: string, historyModified: History[] }> => {
+const applyTemplatesToChat = async (
+    text: string,
+    templatesIds: number[],
+    chatMessages: PromptChatMessage[]
+): Promise<{ textModified: string, chatMessagesModified: PromptChatMessage[] }> => {
     const templates = await templateModel.getAllByIds(templatesIds);
 
-    if (templates.length <= 0) return {textModified: text, historyModified: history};
+    if (templates.length <= 0) return { textModified: text, chatMessagesModified : chatMessages };
 
     // Apply language from first selected template
     const languageSlug = templates[0].language.slug;
@@ -130,7 +135,7 @@ const applyTemplatesToChat = async (text: string, templatesIds: number[], histor
         })
     });
 
-    return promptUtils.optimizeChat(text, modifiersTexts, history, languageSlug);
+    return promptUtils.optimizeChat(text, modifiersTexts, chatMessages, languageSlug);
 }
 
 export default {
@@ -138,5 +143,6 @@ export default {
     getTemplateById,
     createTemplate,
     deleteTemplate,
-    applyTemplatesToText
+    applyTemplatesToText,
+    applyTemplatesToChat
 }
