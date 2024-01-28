@@ -19,12 +19,7 @@ const getAllByIds = async (ids: number[]) => {
 const getOneDefaultByTechnologyId = async (technology_id: number, defaultVal: boolean = true) => {
     return await prisma.provider.findFirst({
         where: {
-            technologies_providers: {
-                some: {
-                    technology_id,
-                    default: defaultVal
-                }
-            }
+            technology_id: technology_id
         }
     })
 }
@@ -32,9 +27,7 @@ const getOneDefaultByTechnologyId = async (technology_id: number, defaultVal: bo
 const getAll = async (technology_id: number) => {
     return await prisma.provider.findMany({
         where: {
-            technologies_providers: {
-                some: { technology_id }
-            }
+            technology_id: technology_id
         }
     })
 }

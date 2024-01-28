@@ -1,11 +1,10 @@
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import promptModel from '../models/promptModel';
-import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
 import { History } from './aiChatService';
-import templateModel from '../models/templateModel';
 import promptUtils from '../utils/promptUtils';
+import { PromptChatMessage } from '../models/promptChatMessageModel';
 
 const getPrompts = async (
     externalId: string,
@@ -42,7 +41,7 @@ const createPrompt = async (
     providerId: number,
     templatesIds: number[],
     modifiersIds: number[],
-    chatHistory: History[]
+    chatMessages: PromptChatMessage[]
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -54,10 +53,9 @@ const createPrompt = async (
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
-
     // Clone
     const history: any = [];
-    chatHistory.forEach(h => history.push(h));
+    chatMessages.forEach(h => history.push(h));
 
     return await promptModel.createOne(
         user.id,
@@ -71,7 +69,8 @@ const createPrompt = async (
         providerId,
         templatesIds,
         modifiersIds,
-        history
+        history,
+        chatMessages
     )
 }
 

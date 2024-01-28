@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { PromptChatMessage } from "./promptChatMessageModel";
 
 const prisma = new PrismaClient();
 
@@ -49,7 +50,9 @@ const getOneById = async (id: number) => {
                 include: {
                     modifier: true
                 }
-            }
+            },
+            
+            prompts_chat_messages: true
         }
     });
 }
@@ -178,7 +181,8 @@ const createOne = async (
     provider_id: number,
     templatesIds: number[],
     modifiersIds: number[],
-    history: Prisma.InputJsonValue
+    history: Prisma.InputJsonValue,
+    chatMessages: PromptChatMessage[]
 ) => {
     const templates_ids = templatesIds.map(t => {
         return { template_id: t };
@@ -186,7 +190,7 @@ const createOne = async (
 
     const modifiers_ids = modifiersIds.map(m => {
         return { modifier_id: m };
-    })
+    });
 
     return await prisma.prompt.create({
         data: {
@@ -209,7 +213,12 @@ const createOne = async (
                     data: modifiers_ids
                 }
             },
-            history
+            history,
+            prompts_chat_messages: {
+                createMany: {
+                    data: chatMessages
+                }
+            }
         },
     })
 }

@@ -49,7 +49,7 @@ const createPrompt = async (req: Request, res: Response) => {
             controllerUtils.getProviderId(req, false, 'post'),
             controllerUtils.getTemplatesIds(req, true, 'post'),
             controllerUtils.getModifiersIds(req, true, 'post'),
-            controllerUtils.getChatHistory(req, false, 'post')
+            controllerUtils.getChatMessages(req, false, 'post')
         );
 
         res.status(201).json(response);

@@ -1,9 +1,8 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import httpUtils from '../utils/httpUtils';
-import aiPromptService from './aiPromptService';
-import templateService from './templateService';
 import modifierService from './modifierService';
+import { PromptChatMessage } from '../models/promptChatMessageModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -17,32 +16,26 @@ interface Settings {
     [key: string]: string
 }
 
-const chat = async (text: string, providerId: number, history: History[], modifiersIds: number[], templatesIds: number[]) => {
+const chat = async (text: string, providerId: number, chatMessages: PromptChatMessage[], modifiersIds: number[], templatesIds: number[]) => {
     // Validate provider
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
-
-
-    
     // Apply templates or modifiers (give priority to templates)
     // const {textModified, historyModified} = templatesIds.length > 0
     //     ? await templateService.applyTemplatesToText(text, templatesIds)
     //     : await modifierService.applyModifiersToChat(text, modifiersIds, history);
-    const {textModified, historyModified} = await modifierService.applyModifiersToChat(text, modifiersIds, history);
+    const {textModified, historyModified} = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
 
 
     // Apply provider model
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
-    console.log(history);
-    console.log(textModified);
-
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        previous_history: history,
+        previous_history: chatMessages,
         settings: JSON.stringify(settings)
     });
 };
@@ -51,11 +44,6 @@ const chatByPromptId = async (promptId: number) => {
     // Validate Prompt
     const prompt = await promptModel.getOneById(promptId);
     if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
-
-    let previous_history = [];
-    if (prompt.history) {
-        previous_history = JSON.parse(JSON.stringify(prompt.history));
-    }
 
     // Apply provider model
     const settings: Settings = {};
@@ -70,7 +58,7 @@ const chatByPromptId = async (promptId: number) => {
     const response = await httpUtils.post(API_URL, {
         text: prompt.content,
         provider: provider.slug,
-        previous_history,
+        previous_history: prompt.prompts_chat_messages,
         settings
     });
 

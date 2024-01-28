@@ -25,6 +25,7 @@ const getLanguagesIds = (req: Request, required: boolean = false, method: string
 const getRepositoriesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'repositories_ids', required, method)
 const getText = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'text', required, method)
 const getChatHistory = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_history', required, method)
+const getChatMessages = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_messages', required, method)
 
 const missingParameterMessage = (parameter: string): string => `Missing parameter ${parameter}`;
 
@@ -128,5 +129,6 @@ export default {
     getTemplateId,
     getLimit,
     getOffset,
-    getErrorResponse
+    getErrorResponse,
+    getChatMessages
 }

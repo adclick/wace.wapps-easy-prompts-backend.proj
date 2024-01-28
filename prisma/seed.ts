@@ -91,16 +91,7 @@ async function main() {
             slug: "openai",
             model_name: "ChatGPT 3.5",
             model_slug: "gpt-3.5-turbo-instruct",
-            technologies_providers: {
-                createMany: {
-                    data: [
-                        {
-                            technology_id: technologyTextGeneration.id,
-                            default: true
-                        }
-                    ]
-                }
-            }
+            technology_id: technologyTextGeneration.id,
         }
     });
 
@@ -110,16 +101,7 @@ async function main() {
             slug: "openai",
             model_name: "Dall-E 2",
             model_slug: "dall-e-2",
-            technologies_providers: {
-                createMany: {
-                    data: [
-                        {
-                            technology_id: technologyImageGeneration.id,
-                            default: false
-                        }
-                    ]
-                }
-            }
+            technology_id: technologyImageGeneration.id,
         }
     });
 
@@ -129,16 +111,7 @@ async function main() {
             slug: "openai",
             model_name: "Dall-E 3",
             model_slug: "dall-e-3",
-            technologies_providers: {
-                createMany: {
-                    data: [
-                        {
-                            technology_id: technologyImageGeneration.id,
-                            default: true
-                        }
-                    ]
-                }
-            }
+            technology_id: technologyImageGeneration.id,
         }
     });
 
@@ -148,16 +121,7 @@ async function main() {
             slug: "stability-ai",
             model_name: "Stable Diffusion",
             model_slug: "stable-diffusion-v1-6",
-            technologies_providers: {
-                createMany: {
-                    data: [
-                        {
-                            technology_id: technologyImageGeneration.id,
-                            default: false
-                        }
-                    ]
-                }
-            }
+            technology_id: technologyImageGeneration.id,
         }
     });
 
@@ -167,16 +131,7 @@ async function main() {
             slug: "openai",
             model_name: "ChatGPT 3.5",
             model_slug: "gpt-3.5-turbo",
-            technologies_providers: {
-                createMany: {
-                    data: [
-                        {
-                            technology_id: technologyChat.id,
-                            default: false
-                        }
-                    ]
-                }
-            }
+            technology_id: technologyChat.id,
         }
     });
 
@@ -186,16 +141,7 @@ async function main() {
             slug: "openai",
             model_name: "ChatGPT 4",
             model_slug: "gpt-4",
-            technologies_providers: {
-                createMany: {
-                    data: [
-                        {
-                            technology_id: technologyChat.id,
-                            default: true
-                        }
-                    ]
-                }
-            }
+            technology_id: technologyChat.id,
         }
     });
 }
