@@ -6,6 +6,12 @@ import textUtils from '../utils/textUtils';
 const login = async (email: string, username: string, externalId: string) => {
     // Create or update user
     const user = await userModel.upsertOne(email, username, externalId);
+    // let user = await userModel.getOneByEmailAndExternalId(email, externalId);
+
+    // if (!user) {
+    //     console.log("update");
+    //     user = await userModel.insertOne(externalId, email, username);
+    // }
 
     upsertUserToRepositories(email, user.id);
 

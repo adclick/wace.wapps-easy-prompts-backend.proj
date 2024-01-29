@@ -144,6 +144,26 @@ async function main() {
             technology_id: technologyChat.id,
         }
     });
+
+    let prompts = [];
+
+    for (let i = 0; i < 100; i++) {
+        prompts.push({
+            title: "teste " + i,
+            slug: "teste-" + i,
+            description: "teste",
+            content: "teste",
+            technology_id: 1,
+            provider_id: 1,
+            language_id: 1,
+            user_id: 1,
+            repository_id: 1
+        })
+    }
+
+    await prisma.prompt.createMany({
+        data: prompts
+    })
 }
 
 main()

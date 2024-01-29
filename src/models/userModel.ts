@@ -10,6 +10,25 @@ const getOneById = async (external_id: string) => {
     })
 }
 
+const getOneByEmailAndExternalId = async (email: string, external_id: string) => {
+    return await prisma.user.findUnique({
+        where: {
+            email,
+            external_id,
+        }
+    })
+}
+
+const insertOne = async (external_id: string, email: string, username: string) => {
+    return await prisma.user.create({
+        data: {
+            email,
+            username,
+            external_id
+        },
+    })
+}
+
 const upsertOne = async (email: string, username: string, external_id: string) => {
     return await prisma.user.upsert({
         where: { email },
@@ -20,5 +39,7 @@ const upsertOne = async (email: string, username: string, external_id: string) =
 
 export default {
     getOneById,
+    getOneByEmailAndExternalId,
+    insertOne,
     upsertOne,
 }
