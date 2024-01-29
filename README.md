@@ -1,1 +1,1 @@
-# wace.wapps-easy-prompts-backend.proj
+# EasyPrompts Backend
