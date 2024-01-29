@@ -147,7 +147,7 @@ async function main() {
 
     let prompts = [];
 
-    for (let i = 0; i < 100; i++) {
+    for (let i = 0; i < 50; i++) {
         prompts.push({
             title: "teste " + i,
             slug: "teste-" + i,
