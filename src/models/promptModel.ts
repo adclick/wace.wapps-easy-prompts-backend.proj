@@ -161,7 +161,29 @@ const getAll = async (
                         }
                     }
                 }
-            }
+            },
+            prompts_templates: {
+                include: {
+                    template: {
+                        select: {
+                            id: true,
+                            title: true,
+                            slug: true
+                        }
+                    }
+                }
+            },
+            prompts_modifiers: {
+                include: {
+                    modifier: {
+                        select: {
+                            id: true,
+                            title: true,
+                            slug: true
+                        }
+                    }
+                }
+            },
         },
         orderBy: [{ id: "desc" }],
         take: limit,
