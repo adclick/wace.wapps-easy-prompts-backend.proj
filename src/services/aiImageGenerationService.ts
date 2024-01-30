@@ -31,7 +31,7 @@ const imageGeneration = async (text: string, providerId: number, modifiersIds: n
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        resolution: "512x512",
+        resolution: "1024x1024",
         num_images: 1,
         settings: JSON.stringify(settings)
     });
@@ -58,7 +58,7 @@ const imageGenerationByPromptId = async (promptId: number) => {
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        resolution: "512x512",
+        resolution: "1024x1024",
         num_images: 1
     })
 };
