@@ -188,6 +188,17 @@ const getAll = async (
                     model_slug: true
                 }
             },
+            templates_modifiers: {
+                include: {
+                    modifier: {
+                        select: {
+                            id: true,
+                            title: true,
+                            slug: true
+                        }
+                    }
+                }
+            }
         },
         orderBy: [{ created_at: "desc" }],
         take: limit,
