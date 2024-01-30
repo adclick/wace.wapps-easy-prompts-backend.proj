@@ -49,6 +49,11 @@ const getOneById = async (id: number) => {
                     username: true,
                     external_id: true
                 }
+            },
+            templates_modifiers: {
+                include: {
+                    modifier: true
+                }
             }
         }
     });
@@ -204,8 +209,6 @@ const createOne = async (
     const modifiers_ids = modifiersIds.map(m => {
         return { modifier_id: m }
     });
-
-    console.log(modifiers_ids);
 
     return await prisma.template.create({
         data: {
