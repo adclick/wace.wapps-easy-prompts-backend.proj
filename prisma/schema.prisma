@@ -42,15 +42,18 @@ model Language {
 }
 
 model Repository {
-    id                 Int              @id @default(autoincrement())
-    name               String           @db.VarChar(255)
-    slug               String?          @db.VarChar(255)
-    user_id            Int
-    prompts            Prompt[]
-    modifiers          Modifier[]
-    templates          Template[]
-    user               User             @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    users_repositories UserRepository[]
+    id                     Int                  @id @default(autoincrement())
+    name                   String               @db.VarChar(255)
+    slug                   String?              @db.VarChar(255)
+    user_id                Int
+    prompts                Prompt[]
+    modifiers              Modifier[]
+    templates              Template[]
+    user                   User                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    users_repositories     UserRepository[]
+    prompts_repositories   PromptRepository[]
+    templates_repositories TemplateRepository[]
+    modifiers_repositories ModifierRepository[]
 
     @@unique([user_id, slug])
     @@map("repositories")
@@ -109,6 +112,7 @@ model Prompt {
     slug                  String              @db.VarChar(255)
     content               String
     description           String?
+    hash                  String?
     stars                 Int                 @default(0)
     plays                 Int                 @default(0)
     created_at            DateTime            @default(now()) @db.Timestamptz(6)
@@ -129,62 +133,70 @@ model Prompt {
     prompts_templates     PromptTemplate[]
     prompts_modifiers     PromptModifier[]
     prompts_chat_messages PromptChatMessage[]
+    prompts_respositories PromptRepository[]
 
     @@unique([slug, language_id, repository_id, technology_id])
+    @@index(fields: [hash], type: Hash)
     @@map("prompts")
 }
 
 model Template {
-    id                  Int                @id @default(autoincrement())
-    title               String             @db.VarChar(255)
-    slug                String             @db.VarChar(255)
-    description         String?
-    stars               Int                @default(0)
-    plays               Int                @default(0)
-    created_at          DateTime           @default(now()) @db.Timestamptz(6)
-    updated_at          DateTime           @default(now()) @db.Timestamptz(6)
-    language_id         Int
-    repository_id       Int
-    technology_id       Int
-    provider_id         Int?
-    user_id             Int
-    language            Language           @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    repository          Repository         @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    technology          Technology         @relation(fields: [technology_id], references: [id])
-    provider            Provider?          @relation(fields: [provider_id], references: [id])
-    user                User               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    prompts_templates   PromptTemplate[]
-    templates_modifiers TemplateModifier[]
+    id                     Int                  @id @default(autoincrement())
+    title                  String               @db.VarChar(255)
+    slug                   String               @db.VarChar(255)
+    description            String?
+    hash                   String?
+    stars                  Int                  @default(0)
+    plays                  Int                  @default(0)
+    created_at             DateTime             @default(now()) @db.Timestamptz(6)
+    updated_at             DateTime             @default(now()) @db.Timestamptz(6)
+    language_id            Int
+    repository_id          Int
+    technology_id          Int
+    provider_id            Int?
+    user_id                Int
+    language               Language             @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    repository             Repository           @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology             Technology           @relation(fields: [technology_id], references: [id])
+    provider               Provider?            @relation(fields: [provider_id], references: [id])
+    user                   User                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts_templates      PromptTemplate[]
+    templates_modifiers    TemplateModifier[]
+    templates_repositories TemplateRepository[]
 
     @@unique([slug, language_id, repository_id])
+    @@index(fields: [hash], type: Hash)
     @@map("templates")
 }
 
 model Modifier {
-    id                  Int                @id @default(autoincrement())
-    title               String             @db.VarChar(255)
-    slug                String             @db.VarChar(255)
-    content             String
-    description         String?
-    stars               Int                @default(0)
-    plays               Int                @default(0)
-    created_at          DateTime           @default(now()) @db.Timestamptz(6)
-    updated_at          DateTime           @default(now()) @db.Timestamptz(6)
-    language_id         Int
-    repository_id       Int
-    technology_id       Int
-    provider_id         Int?
-    user_id             Int
-    public              Boolean            @default(false)
-    language            Language           @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    repository          Repository         @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    technology          Technology         @relation(fields: [technology_id], references: [id])
-    provider            Provider?          @relation(fields: [provider_id], references: [id])
-    user                User               @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    prompts_modifiers   PromptModifier[]
-    templates_modifiers TemplateModifier[]
+    id                     Int                  @id @default(autoincrement())
+    title                  String               @db.VarChar(255)
+    slug                   String               @db.VarChar(255)
+    content                String
+    description            String?
+    hash                   String?
+    stars                  Int                  @default(0)
+    plays                  Int                  @default(0)
+    created_at             DateTime             @default(now()) @db.Timestamptz(6)
+    updated_at             DateTime             @default(now()) @db.Timestamptz(6)
+    language_id            Int
+    repository_id          Int
+    technology_id          Int
+    provider_id            Int?
+    user_id                Int
+    public                 Boolean              @default(false)
+    language               Language             @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    repository             Repository           @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology             Technology           @relation(fields: [technology_id], references: [id])
+    provider               Provider?            @relation(fields: [provider_id], references: [id])
+    user                   User                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts_modifiers      PromptModifier[]
+    templates_modifiers    TemplateModifier[]
+    modifiers_repositories ModifierRepository[]
 
     @@unique([slug, language_id, repository_id])
+    @@index(fields: [hash], type: Hash)
     @@map("modifiers")
 }
 
@@ -197,6 +209,36 @@ model PromptChatMessage {
 
     @@index([prompt_id])
     @@map("prompts_chat_messages")
+}
+
+model PromptRepository {
+    prompt_id     Int
+    repository_id Int
+
+    prompt     Prompt     @relation(fields: [prompt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    repository Repository @relation(fields: [repository_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([prompt_id, repository_id])
+}
+
+model TemplateRepository {
+    template_id   Int
+    repository_id Int
+
+    template   Template   @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    repository Repository @relation(fields: [repository_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([template_id, repository_id])
+}
+
+model ModifierRepository {
+    modifier_id   Int
+    repository_id Int
+
+    modifier   Modifier   @relation(fields: [modifier_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    repository Repository @relation(fields: [repository_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([modifier_id, repository_id])
 }
 
 model PromptTemplate {
