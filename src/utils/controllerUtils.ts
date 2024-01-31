@@ -89,10 +89,18 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
 const getErrorResponse = (error: any) => {
     console.error(error);
     if ("response" in error && "status" in error.response && "statusText" in error.response) {
+        let message = error.response.statusText;
+
+        switch (error.response.status) {
+            case 429:
+                message = "Sorry, this is an experimental version and our servers are full. Please try again later";
+                break;
+        }
+
         return {
             code: 400,
             status: error.response.status,
-            message: error.response.statusText
+            message
         }
     }
     
