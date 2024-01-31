@@ -16,8 +16,8 @@ const app = express();
 // Authorization middleware. When used, the Access Token must
 // exist and be verified against the Auth0 JSON Web Key Set.
 const jwtCheck = auth({
-    audience: 'https://easyprompts.wacestudio.pt/api',
-    issuerBaseURL: 'https://easyprompts.eu.auth0.com/',
+    audience: process.env.AUTH0_AUDIENCE,
+    issuerBaseURL: process.env.AUTH0_ISSUER_BASE_URL,
     tokenSigningAlg: 'RS256'
 });
 

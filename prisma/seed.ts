@@ -145,25 +145,26 @@ async function main() {
         }
     });
 
-    let prompts = [];
+    // Seed multiple prompts
+    // let prompts = [];
 
-    for (let i = 0; i < 50; i++) {
-        prompts.push({
-            title: "teste " + i,
-            slug: "teste-" + i,
-            description: "teste",
-            content: "teste",
-            technology_id: 1,
-            provider_id: 1,
-            language_id: 1,
-            user_id: 1,
-            repository_id: 1
-        })
-    }
+    // for (let i = 0; i < 50; i++) {
+    //     prompts.push({
+    //         title: "teste " + i,
+    //         slug: "teste-" + i,
+    //         description: "teste",
+    //         content: "teste",
+    //         technology_id: 1,
+    //         provider_id: 1,
+    //         language_id: 1,
+    //         user_id: 1,
+    //         repository_id: 1
+    //     })
+    // }
 
-    await prisma.prompt.createMany({
-        data: prompts
-    })
+    // await prisma.prompt.createMany({
+    //     data: prompts
+    // })
 }
 
 main()
