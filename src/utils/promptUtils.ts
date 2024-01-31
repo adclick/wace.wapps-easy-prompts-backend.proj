@@ -38,23 +38,31 @@ const optimizeChat = (
     language: string
 ): { textModified: string, chatMessagesModified: PromptChatMessage[] } => {
     let finalText = text;
+    let optimization = "";
 
     switch (language) {
         case 'en':
+            optimization = "In this conversation, I need you to always consider the following criteria:\n";
+            texts.map(t => {
+                optimization += " - " + t + "\n";
+            });
+            optimization += `My first prompt is:\n`;
             if (chatMessages.length === 0) {
-                let optimization = "In this conversation, I need you to always consider the following criteria:\n";
-                texts.map(t => {
-                    optimization += " - " + t + "\n";
-                });
-                optimization += `My first prompt is:\n`;
                 finalText = optimization + text;
             } else {
-                let optimization = "In this conversation, I need you to always consider the following criteria:\n";
-                texts.map(t => {
-                    optimization += " - " + t + "\n";
-                });
-                optimization += `My first prompt is:\n`;
-
+                chatMessages[0]['message'] = optimization + chatMessages[0]['message'];
+            }
+            break;
+        case 'pt':
+            optimization = "A partir de agora, responde-me sempre considerando os seguintes critérios:\n";
+            texts.map(t => {
+                optimization += " - " + t + "\n";
+            });
+            optimization += `O meu primeiro prompt é:\n`;
+            
+            if (chatMessages.length === 0) {
+                finalText = optimization + text;
+            } else {
                 chatMessages[0]['message'] = optimization + chatMessages[0]['message'];
             }
             break;
