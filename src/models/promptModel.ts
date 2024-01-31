@@ -156,7 +156,7 @@ const getAll = async (
                             id: true,
                             name: true,
                             slug: true,
-                            content: true,
+                            data: true,
 
                         }
                     }
