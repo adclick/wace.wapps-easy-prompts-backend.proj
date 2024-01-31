@@ -120,7 +120,7 @@ async function main() {
             name: "Stability AI",
             slug: "stability-ai",
             model_name: "Stable Diffusion",
-            model_slug: "stable-diffusion-v1-6",
+            model_slug: "stable-diffusion-xl-1024-v1-0",
             technology_id: technologyImageGeneration.id,
         }
     });
@@ -130,7 +130,7 @@ async function main() {
             name: "Openai",
             slug: "openai",
             model_name: "ChatGPT 3.5",
-            model_slug: "gpt-3.5-turbo",
+            model_slug: "gpt-3.5-turbo-1106",
             technology_id: technologyChat.id,
         }
     });

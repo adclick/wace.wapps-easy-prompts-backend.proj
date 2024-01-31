@@ -12,6 +12,9 @@ const getAllByIds = async (ids: number[]) => {
             id: {
                 in: ids
             }
+        },
+        orderBy: {
+            id: "asc"
         }
     })
 }
@@ -28,6 +31,9 @@ const getAll = async (technology_id: number) => {
     return await prisma.provider.findMany({
         where: {
             technology_id: technology_id
+        },
+        orderBy: {
+            id: "asc"
         }
     })
 }
