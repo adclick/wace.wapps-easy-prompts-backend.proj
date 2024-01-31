@@ -107,8 +107,6 @@ const getAll = async (
             title: true,
             description: true,
             slug: true,
-            plays: true,
-            stars: true,
             created_at: true,
             public: true,
             user: {
