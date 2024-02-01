@@ -8,7 +8,9 @@ const imageGeneration = async (req: Request, res: Response) => {
             controllerUtils.getText(req),
             controllerUtils.getProviderId(req),
             controllerUtils.getModifiersIds(req),
-            controllerUtils.getTemplatesIds(req)
+            controllerUtils.getTemplatesIds(req),
+            controllerUtils.getParameterNumImages(req),
+            controllerUtils.getParameterImageResolution(req)
         );
 
         res.status(200).json(response);

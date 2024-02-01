@@ -125,6 +125,16 @@ async function main() {
         }
     });
 
+    const providerDeepai = await prisma.provider.create({
+        data: {
+            name: "Deep AI",
+            slug: "deep-ai",
+            model_name: "Deep AI",
+            model_slug: "deepai",
+            technology_id: technologyImageGeneration.id,
+        }
+    });
+
     const providerOpenAIChatGPT35 = await prisma.provider.create({
         data: {
             name: "Openai",
@@ -151,19 +161,57 @@ async function main() {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerOpenaiDalle2.id,
-                data: { min: 1, max: 4 },
+                data: { min: "1", max: "4" },
+                value: "1",
             },
             {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerOpenaiDalle3.id,
-                data: { min: 1, max: 4 },
+                data: { min: "1", max: "4" },
+                value: "1",
             },
             {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerStabilityAI.id,
-                data: { min: 1, max: 4 },
+                data: { min: "1", max: "4" },
+                value: "1",
+            },
+            {
+                name: "Number of images",
+                slug: "num_images",
+                provider_id: providerDeepai.id,
+                data: { min: "1", max: "4" },
+                value: "1",
+            },
+            {
+                name: "Image Resolution",
+                slug: "image_resolution",
+                provider_id: providerOpenaiDalle2.id,
+                data: ["256x256", "512x512", "1024x1024"],
+                value: "1024x1024",
+            },
+            {
+                name: "Image Resolution",
+                slug: "image_resolution",
+                provider_id: providerOpenaiDalle3.id,
+                data: ["256x256", "512x512", "1024x1024"],
+                value: "1024x1024",
+            },
+            {
+                name: "Image Resolution",
+                slug: "image_resolution",
+                provider_id: providerStabilityAI.id,
+                data: ["256x256", "512x512", "1024x1024"],
+                value: "1024x1024",
+            },
+            {
+                name: "Image Resolution",
+                slug: "image_resolution",
+                provider_id: providerDeepai.id,
+                data: ["512x512"],
+                value: "512x512",
             },
         ]
     })

@@ -1,7 +1,6 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import httpUtils from '../utils/httpUtils';
-import aiPromptService from './aiPromptService';
 import templateService from './templateService';
 import modifierService from './modifierService';
 import promptService from './promptService';
@@ -13,7 +12,14 @@ interface Settings {
     [key: string]: string
 }
 
-const imageGeneration = async (text: string, providerId: number, modifiersIds: number[], templatesIds: number[]) => {
+const imageGeneration = async (
+    text: string,
+    providerId: number,
+    modifiersIds: number[],
+    templatesIds: number[],
+    numImages: number = 1,
+    imageResolution: string = "1024x1024"
+) => {
     // Validate provider
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
@@ -31,8 +37,8 @@ const imageGeneration = async (text: string, providerId: number, modifiersIds: n
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        resolution: "1024x1024",
-        num_images: 1,
+        resolution: imageResolution,
+        num_images: numImages,
         settings: JSON.stringify(settings)
     });
 };
