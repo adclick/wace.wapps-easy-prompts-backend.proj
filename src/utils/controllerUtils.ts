@@ -28,6 +28,8 @@ const getChatHistory = (req: Request, required: boolean = false, method: string 
 const getChatMessages = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_messages', required, method)
 const getParameterNumImages = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'num_images', required, method)
 const getParameterImageResolution = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'image_resolution', required, method)
+const getPromptParameters = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'prompt_parameters', required, method)
+const getTemplateParameters = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'template_parameters', required, method)
 
 const missingParameterMessage = (parameter: string): string => `Missing parameter ${parameter}`;
 
@@ -142,5 +144,7 @@ export default {
     getErrorResponse,
     getChatMessages,
     getParameterNumImages,
-    getParameterImageResolution
+    getParameterImageResolution,
+    getPromptParameters,
+    getTemplateParameters,
 }

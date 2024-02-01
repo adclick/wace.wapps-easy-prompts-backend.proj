@@ -47,7 +47,8 @@ const createTemplate = async (req: Request, res: Response) => {
             controllerUtils.getTechnologyId(req, true, 'post'),
             controllerUtils.getProviderId(req, false, 'post'),
             controllerUtils.getModifiersIds(req, true, 'post'),
-            controllerUtils.getChatHistory(req, false, 'post')
+            controllerUtils.getChatHistory(req, false, 'post'),
+            controllerUtils.getTemplateParameters(req, true, 'post')
         );
 
         res.status(201).json(response);

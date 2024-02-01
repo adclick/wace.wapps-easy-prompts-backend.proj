@@ -4,6 +4,7 @@ import httpUtils from '../utils/httpUtils';
 import templateService from './templateService';
 import modifierService from './modifierService';
 import promptService from './promptService';
+import parameterModel from '../models/parameterModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/image/generate-image';
@@ -17,8 +18,8 @@ const imageGeneration = async (
     providerId: number,
     modifiersIds: number[],
     templatesIds: number[],
-    numImages: number = 1,
-    imageResolution: string = "1024x1024"
+    numImages: number,
+    imageResolution: string
 ) => {
     // Validate provider
     const provider = await providerModel.getOneById(providerId);
@@ -33,14 +34,25 @@ const imageGeneration = async (
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
-    // Request
-    return await httpUtils.post(API_URL, {
-        text: textModified,
-        provider: provider.slug,
-        resolution: imageResolution,
-        num_images: numImages,
-        settings: JSON.stringify(settings)
-    });
+    console.log(text);
+    console.log(provider.slug);
+    console.log(imageResolution);
+    console.log(numImages);
+    console.log(settings);
+
+    try {
+        // Request
+        return await httpUtils.post(API_URL, {
+            text: textModified,
+            provider: provider.slug,
+            resolution: imageResolution,
+            num_images: numImages,
+            settings: JSON.stringify(settings)
+        });
+    } catch(e: any) {
+        console.error(e);
+        throw new Error(e.message);
+    }
 };
 
 const imageGenerationByPromptId = async (promptId: number) => {
@@ -50,6 +62,17 @@ const imageGenerationByPromptId = async (promptId: number) => {
 
     // Apply modifiers
     const textModified = await promptService.applyModifiersAndTemplatesFromPrompt(prompt.id);
+
+    let resolution = '1024x1024';
+    let num_images = 1;
+
+    for (const promptParameter of prompt.prompts_parameters) {
+        const parameter = await parameterModel.getOneById(promptParameter.parameter_id);
+        if (!parameter || !promptParameter.value) continue;
+
+        if (parameter.slug === "resolution") resolution = promptParameter.value;
+        if (parameter.slug === "num_images") num_images = parseInt(promptParameter.value);
+    }
 
     // Apply provider model
     const settings: Settings = {};
@@ -64,8 +87,8 @@ const imageGenerationByPromptId = async (promptId: number) => {
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        resolution: "1024x1024",
-        num_images: 1
+        resolution,
+        num_images
     })
 };
 

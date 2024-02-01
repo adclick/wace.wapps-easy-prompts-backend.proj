@@ -5,6 +5,7 @@ import textUtils from '../utils/textUtils';
 import { History } from './aiChatService';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
+import { TemplateParameter } from '../models/templateParameter';
 
 const getTemplates = async (
     externalId: string,
@@ -37,7 +38,8 @@ const createTemplate = async (
     technologyId: number,
     providerId: number,
     modifiersIds: number[],
-    chatHistory: History[]
+    chatHistory: History[],
+    templateParameters: TemplateParameter[]
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -63,6 +65,7 @@ const createTemplate = async (
         technologyId,
         providerId,
         modifiersIds,
+        templateParameters
     )
 }
 

@@ -118,7 +118,7 @@ async function main() {
     const providerStabilityAI = await prisma.provider.create({
         data: {
             name: "Stability AI",
-            slug: "stability-ai",
+            slug: "stabilityai",
             model_name: "Stable Diffusion",
             model_slug: "stable-diffusion-xl-1024-v1-0",
             technology_id: technologyImageGeneration.id,
@@ -128,7 +128,7 @@ async function main() {
     const providerDeepai = await prisma.provider.create({
         data: {
             name: "Deep AI",
-            slug: "deep-ai",
+            slug: "deepai",
             model_name: "Deep AI",
             model_slug: "deepai",
             technology_id: technologyImageGeneration.id,

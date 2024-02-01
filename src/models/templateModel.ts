@@ -1,4 +1,5 @@
 import { Prisma, PrismaClient } from "@prisma/client";
+import { TemplateParameter } from "./templateParameter";
 
 const prisma = new PrismaClient();
 
@@ -56,6 +57,12 @@ const getOneById = async (id: number) => {
                 include: {
                     modifier: true
                 }
+            },
+            templates_parameters: {
+                select: {
+                    value: true,
+                    parameter: true
+                }
             }
         }
     });
@@ -93,12 +100,10 @@ const getAllByIds = async (ids: number[]) => {
                     name: true,
                     slug: true,
                     model_name: true,
-                    model_slug: true
-                },
-                include: {
+                    model_slug: true,
                     technology: true,
                     parameters: true
-                }
+                },
             },
             user: {
                 select: {
@@ -191,11 +196,23 @@ const getAll = async (
                     name: true,
                     slug: true,
                     model_name: true,
-                    model_slug: true
-                },
-                include: {
+                    model_slug: true,
                     technology: true,
                     parameters: true
+                },
+            },
+            templates_parameters: {
+                select: {
+                    value: true,
+                    parameter: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            data: true,
+                            value: true
+                        }
+                    }
                 }
             },
             templates_modifiers: {
@@ -225,7 +242,8 @@ const createOne = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
-    modifiersIds: number[]
+    modifiersIds: number[],
+    templateParameters: TemplateParameter[]
 ) => {
     const modifiers_ids = modifiersIds.map(m => {
         return { modifier_id: m }
@@ -244,6 +262,11 @@ const createOne = async (
             templates_modifiers: {
                 createMany: {
                     data: modifiers_ids
+                }
+            },
+            templates_parameters: {
+                createMany: {
+                    data: templateParameters
                 }
             }
         },

@@ -5,6 +5,7 @@ import textUtils from '../utils/textUtils';
 import { History } from './aiChatService';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
+import { PromptParameter } from '../models/promptParameter';
 
 const getPrompts = async (
     externalId: string,
@@ -41,7 +42,8 @@ const createPrompt = async (
     providerId: number,
     templatesIds: number[],
     modifiersIds: number[],
-    chatMessages: PromptChatMessage[]
+    chatMessages: PromptChatMessage[],
+    promptParameters: PromptParameter[]
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -70,7 +72,8 @@ const createPrompt = async (
         templatesIds,
         modifiersIds,
         history,
-        chatMessages
+        chatMessages,
+        promptParameters
     )
 }
 
