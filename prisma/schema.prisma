@@ -180,14 +180,14 @@ model Modifier {
 }
 
 model Parameter {
-    id                 Int                 @id @default(autoincrement())
-    name               String              @db.VarChar(255)
-    slug               String              @db.VarChar(255)
-    data               Json                @db.Json
-    provider_id        Int
-    provider           Provider            @relation(fields: [provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    prompts_parameters PromptParameter[]
-    TemplateParameter  TemplateParameter[]
+    id                   Int                 @id @default(autoincrement())
+    name                 String              @db.VarChar(255)
+    slug                 String              @db.VarChar(255)
+    data                 Json                @db.Json
+    provider_id          Int
+    provider             Provider            @relation(fields: [provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    prompts_parameters   PromptParameter[]
+    templates_parameters TemplateParameter[]
 
     @@unique([slug, provider_id])
     @@map("parameters")

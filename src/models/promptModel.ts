@@ -32,6 +32,10 @@ const getOneById = async (id: number) => {
                     slug: true,
                     model_name: true,
                     model_slug: true
+                },
+                include: {
+                    technology: true,
+                    parameters: true
                 }
             },
             user: {
@@ -143,8 +147,10 @@ const getAll = async (
                     name: true,
                     slug: true,
                     model_name: true,
-                    model_slug: true
-                }
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
             },
             prompts_parameters: {
                 select: {

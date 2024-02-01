@@ -34,8 +34,10 @@ const getOneById = async (id: number) => {
                     name: true,
                     slug: true,
                     model_name: true,
-                    model_slug: true
-                }
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
             },
             user: {
                 select: {
@@ -80,8 +82,10 @@ const getAllByIds = async (ids: number[]) => {
                     name: true,
                     slug: true,
                     model_name: true,
-                    model_slug: true
-                }
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
             },
             user: {
                 select: {
@@ -169,8 +173,10 @@ const getAll = async (
                     name: true,
                     slug: true,
                     model_name: true,
-                    model_slug: true
-                }
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
             },
         },
         orderBy: [{ created_at: "desc" }],

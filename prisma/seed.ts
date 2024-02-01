@@ -145,6 +145,29 @@ async function main() {
         }
     });
 
+    await prisma.parameter.createMany({
+        data: [
+            {
+                name: "Number of images",
+                slug: "num_images",
+                provider_id: providerOpenaiDalle2.id,
+                data: { min: 1, max: 4 },
+            },
+            {
+                name: "Number of images",
+                slug: "num_images",
+                provider_id: providerOpenaiDalle3.id,
+                data: { min: 1, max: 4 },
+            },
+            {
+                name: "Number of images",
+                slug: "num_images",
+                provider_id: providerStabilityAI.id,
+                data: { min: 1, max: 4 },
+            },
+        ]
+    })
+
     // Seed multiple prompts
     // let prompts = [];
 
