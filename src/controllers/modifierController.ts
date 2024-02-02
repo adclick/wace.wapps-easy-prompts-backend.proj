@@ -57,6 +57,29 @@ const createModifier = async (req: Request, res: Response) => {
     }
 }
 
+const updateModifier = async (req: Request, res: Response) => {
+    try {
+        const response = await modifierService.updateModifier(
+            controllerUtils.getModifierId(req, true, 'url'),
+            controllerUtils.getUserExternalId(req, true, 'post'),
+            controllerUtils.getTitle(req, true, 'post'),
+            controllerUtils.getDescription(req, true, 'post'),
+            controllerUtils.getContent(req, true, 'post'),
+            controllerUtils.getLanguageId(req, true, 'post'),
+            controllerUtils.getRepositoryId(req, true, 'post'),
+            controllerUtils.getTechnologyId(req, true, 'post'),
+            controllerUtils.getProviderId(req, false, 'post')
+        );
+
+        res.status(200).json(response);
+    } catch (error: any) {
+        console.error(error);
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
+    }
+}
+
 const deleteModifier = async (req: Request, res: Response) => {
     try {
         const response = await modifierService.deleteModifier(
@@ -75,5 +98,6 @@ export default {
     getModifiers,
     getModifierById,
     createModifier,
+    updateModifier,
     deleteModifier
 };

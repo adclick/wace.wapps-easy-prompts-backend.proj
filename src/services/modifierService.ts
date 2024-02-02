@@ -62,6 +62,41 @@ const createModifier = async (
     )
 }
 
+const updateModifier = async (
+    id: number,
+    externalId: string,
+    name: string,
+    description: string,
+    content: string,
+    languageId: number,
+    repositoryId: number,
+    technologyId: number,
+    providerId: number
+) => {
+    const user = await userModel.getOneById(externalId);
+    if (!user) throw new Error("User not found");
+
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
+        externalId,
+        repositoryId
+    );
+
+    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
+
+    return await modifierModel.updateOne(
+        id,
+        user.id,
+        name,
+        textUtils.toSlug(name),
+        description,
+        content,
+        languageId,
+        repositoryId,
+        technologyId,
+        providerId,
+    )
+}
+
 const deleteModifier = async (id: number) => {
     return await modifierModel.deleteOne(id);
 }
@@ -102,6 +137,7 @@ export default {
     getModifiers,
     getModifierById,
     createModifier,
+    updateModifier,
     deleteModifier,
     applyModifiersToText,
     applyModifiersToChat
