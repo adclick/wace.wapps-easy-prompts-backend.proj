@@ -77,6 +77,41 @@ const createPrompt = async (
     )
 }
 
+const updatePrompt = async (
+    id: number,
+    externalId: string,
+    title: string,
+    description: string,
+    content: string,
+    languageId: number,
+    repositoryId: number,
+    technologyId: number,
+    providerId: number,
+) => {
+    const user = await userModel.getOneById(externalId);
+    if (!user) throw new Error("User not found");
+
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
+        externalId,
+        repositoryId
+    );
+
+    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
+
+    return await promptModel.updateOne(
+        id,
+        user.id,
+        title,
+        textUtils.toSlug(title),
+        description,
+        content,
+        languageId,
+        repositoryId,
+        technologyId,
+        providerId,
+    )
+}
+
 const applyModifiersAndTemplatesFromPrompt = async (promptId: number): Promise<string> => {
     const prompt = await promptModel.getOneById(promptId);
 
@@ -126,6 +161,7 @@ export default {
     getPrompts,
     getPromptById,
     createPrompt,
+    updatePrompt,
     deletePrompt,
     applyModifiersAndTemplatesFromPrompt
 }

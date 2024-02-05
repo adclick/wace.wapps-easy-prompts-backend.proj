@@ -273,6 +273,32 @@ const createOne = async (
     })
 }
 
+const updateOne = async (
+    id: number,
+    user_id: number,
+    title: string,
+    slug: string,
+    description: string,
+    language_id: number,
+    repository_id: number,
+    technology_id: number,
+    provider_id: number,
+) => {
+    return await prisma.template.update({
+        where: { id },
+        data: {
+            title,
+            slug,
+            description,
+            language_id,
+            repository_id,
+            technology_id,
+            provider_id,
+            user_id,
+        },
+    })
+}
+
 const deleteOne = async (id: number) => {
     return await prisma.template.delete({ where: { id } })
 }
@@ -282,5 +308,6 @@ export default {
     getAllByIds,
     getAll,
     createOne,
+    updateOne,
     deleteOne,
 }

@@ -69,6 +69,39 @@ const createTemplate = async (
     )
 }
 
+const updateTemplate = async (
+    id: number,
+    externalId: string,
+    name: string,
+    description: string,
+    languageId: number,
+    repositoryId: number,
+    technologyId: number,
+    providerId: number,
+) => {
+    const user = await userModel.getOneById(externalId);
+    if (!user) throw new Error("User not found");
+
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
+        externalId,
+        repositoryId
+    );
+
+    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
+
+    return await templateModel.updateOne(
+        id,
+        user.id,
+        name,
+        textUtils.toSlug(name),
+        description,
+        languageId,
+        repositoryId,
+        technologyId,
+        providerId,
+    )
+}
+
 const deleteTemplate = async (id: number) => {
     return await templateModel.deleteOne(id);
 }
@@ -145,6 +178,7 @@ export default {
     getTemplates,
     getTemplateById,
     createTemplate,
+    updateTemplate,
     deleteTemplate,
     applyTemplatesToText,
     applyTemplatesToChat

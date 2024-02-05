@@ -59,6 +59,27 @@ const createTemplate = async (req: Request, res: Response) => {
     }
 }
 
+const updateTemplate = async (req: Request, res: Response) => {
+    try {
+        const response = await templateService.updateTemplate(
+            controllerUtils.getTemplateId(req, true, 'url'),
+            controllerUtils.getUserExternalId(req, true, 'post'),
+            controllerUtils.getTitle(req, true, 'post'),
+            controllerUtils.getDescription(req, true, 'post'),
+            controllerUtils.getLanguageId(req, true, 'post'),
+            controllerUtils.getRepositoryId(req, true, 'post'),
+            controllerUtils.getTechnologyId(req, true, 'post'),
+            controllerUtils.getProviderId(req, false, 'post'),
+        );
+
+        res.status(200).json(response);
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
+    }
+}
+
 const deleteTemplate = async (req: Request, res: Response) => {
     try {
         const response = await templateService.deleteTemplate(
@@ -77,5 +98,6 @@ export default {
     getTemplates,
     getTemplateById,
     createTemplate,
+    updateTemplate,
     deleteTemplate
 };

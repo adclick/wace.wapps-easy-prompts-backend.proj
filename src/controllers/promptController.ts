@@ -62,6 +62,29 @@ const createPrompt = async (req: Request, res: Response) => {
     }
 }
 
+const updatePrompt = async (req: Request, res: Response) => {
+    try {
+        const response = await promptService.updatePrompt(
+            controllerUtils.getPromptId(req, true, 'url'),
+            controllerUtils.getUserExternalId(req, true, 'post'),
+            controllerUtils.getTitle(req, true, 'post'),
+            controllerUtils.getDescription(req, true, 'post'),
+            controllerUtils.getContent(req, true, 'post'),
+            controllerUtils.getLanguageId(req, true, 'post'),
+            controllerUtils.getRepositoryId(req, true, 'post'),
+            controllerUtils.getTechnologyId(req, true, 'post'),
+            controllerUtils.getProviderId(req, false, 'post'),
+        );
+
+        res.status(201).json(response);
+    } catch (error: any) {
+        console.error(error);
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
+    }
+}
+
 const deletePrompt = async (req: Request, res: Response) => {
     try {
         const response = await promptService.deletePrompt(
@@ -80,5 +103,6 @@ export default {
     getPrompts,
     getPromptById,
     createPrompt,
+    updatePrompt,
     deletePrompt
 };
