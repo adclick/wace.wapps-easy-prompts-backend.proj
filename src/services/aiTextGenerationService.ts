@@ -1,11 +1,10 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import httpUtils from '../utils/httpUtils';
-import aiPromptService from './aiPromptService';
-import { JsonValue } from '@prisma/client/runtime/library';
 import templateService from './templateService';
 import modifierService from './modifierService';
 import promptService from './promptService';
+import parameterModel from '../models/parameterModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/generate-text';
@@ -28,10 +27,13 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
+    const temperature = await parameterModel.getTemperature(provider.id);
+
     // Request
     const response = await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
+        temperature,
         settings: JSON.stringify(settings)
     });
 
