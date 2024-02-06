@@ -29,6 +29,7 @@ const getOneById = async (id: number) => {
             },
             provider: {
                 select: {
+                    id: true,
                     name: true,
                     slug: true,
                     model_name: true,

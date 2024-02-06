@@ -33,7 +33,7 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     const response = await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        temperature,
+        temperature: temperature ? temperature.value : 0.3,
         settings: JSON.stringify(settings)
     });
 
@@ -63,7 +63,7 @@ const textGenerationByPromptId = async (promptId: number) => {
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
-        temperature,
+        temperature: temperature ? temperature.value : 0.3,
         settings: JSON.stringify(settings)
     })
 };

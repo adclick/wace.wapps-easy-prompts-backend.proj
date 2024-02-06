@@ -38,7 +38,7 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
         text: textModified,
         provider: provider.slug,
         previous_history: chatMessagesModified,
-        temperature,
+        temperature: temperature ? temperature.value : 0.3,
         settings: JSON.stringify(settings)
     });
 };
@@ -79,7 +79,7 @@ const chatByPromptId = async (promptId: number) => {
         text: textModified,
         provider: provider.slug,
         previous_history: chatMessagesModified,
-        temperature,
+        temperature: temperature ? temperature.value : 0.3,
         settings
     });
 };
