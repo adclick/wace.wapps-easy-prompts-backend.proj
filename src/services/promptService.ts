@@ -120,8 +120,6 @@ const applyModifiersAndTemplatesFromPrompt = async (promptId: number): Promise<s
     // Apply language from first selected template
     const languageSlug = prompt.language.slug;
 
-    const promptTemplates = prompt.prompts_templates;
-
     const templates = JSON.parse(JSON.stringify(prompt.prompts_templates));
     const modifiers = JSON.parse(JSON.stringify(prompt.prompts_modifiers));
 

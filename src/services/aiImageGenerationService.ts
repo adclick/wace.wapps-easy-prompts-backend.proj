@@ -34,6 +34,8 @@ const imageGeneration = async (
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
+    const temperature = await parameterModel.getTemperature(provider.id);
+
     try {
         // Request
         return await httpUtils.post(API_URL, {
@@ -41,6 +43,7 @@ const imageGeneration = async (
             provider: provider.slug,
             resolution: imageResolution,
             num_images: numImages,
+            temperature,
             settings: JSON.stringify(settings)
         });
     } catch(e: any) {
@@ -77,11 +80,14 @@ const imageGenerationByPromptId = async (promptId: number) => {
     }
     settings[provider.slug] = provider.model_slug;
 
+    const temperature = await parameterModel.getTemperature(provider.id);
+
     // Request
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
         resolution,
+        temperature,
         num_images
     })
 };
