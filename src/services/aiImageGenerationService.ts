@@ -43,7 +43,7 @@ const imageGeneration = async (
             provider: provider.slug,
             resolution: imageResolution,
             num_images: numImages,
-            temperature,
+            temperature: temperature ? temperature.value : 0.3,
             settings: JSON.stringify(settings)
         });
     } catch(e: any) {
@@ -87,7 +87,7 @@ const imageGenerationByPromptId = async (promptId: number) => {
         text: textModified,
         provider: provider.slug,
         resolution,
-        temperature,
+        temperature: temperature ? temperature.value : 0.3,
         num_images
     })
 };
