@@ -4,6 +4,7 @@ import httpUtils from '../utils/httpUtils';
 import modifierService from './modifierService';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import templateService from './templateService';
+import parameterModel from '../models/parameterModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -31,10 +32,13 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
+    const temperature = await parameterModel.getTemperature(provider.id);
+
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
         previous_history: chatMessagesModified,
+        temperature,
         settings: JSON.stringify(settings)
     });
 };
@@ -68,20 +72,16 @@ const chatByPromptId = async (promptId: number) => {
     }
     settings[provider.slug] = provider.model_slug;
 
+    const temperature = await parameterModel.getTemperature(provider.id);
+
     // Request
-    const response = await httpUtils.post(API_URL, {
+    return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
         previous_history: chatMessagesModified,
+        temperature,
         settings
     });
-
-    return {
-        response,
-        provider: prompt.provider,
-        technology: prompt.technology,
-        user: prompt.user
-    }
 };
 
 

@@ -57,10 +57,13 @@ const textGenerationByPromptId = async (promptId: number) => {
     }
     settings[provider.slug] = provider.model_slug;
 
+    const temperature = await parameterModel.getTemperature(provider.id);
+
     // Request
     return await httpUtils.post(API_URL, {
         text: textModified,
         provider: provider.slug,
+        temperature,
         settings: JSON.stringify(settings)
     })
 };
