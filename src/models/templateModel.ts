@@ -17,42 +17,11 @@ const getOneById = async (id: number) => {
     return await prisma.template.findUnique({
         where: { id },
         include: {
-            language: {
-                select: {
-                    name: true,
-                    slug: true,
-                }
-            },
-            repository: {
-                select: {
-                    name: true,
-                    slug: true,
-                }
-            },
-            technology: {
-                select: {
-                    name: true,
-                    slug: true,
-                    default: true
-                }
-            },
-            provider: {
-                select: {
-                    name: true,
-                    slug: true,
-                    model_name: true,
-                    model_slug: true,
-                    technology: true,
-                    parameters: true
-                },
-            },
-            user: {
-                select: {
-                    email: true,
-                    username: true,
-                    external_id: true
-                }
-            },
+            language: true,
+            repository: true,
+            technology: true,
+            provider: true,
+            user: true,
             templates_modifiers: {
                 include: {
                     modifier: true
