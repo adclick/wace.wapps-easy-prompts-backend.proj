@@ -34,12 +34,6 @@ const imageGeneration = async (
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
-    console.log(text);
-    console.log(provider.slug);
-    console.log(imageResolution);
-    console.log(numImages);
-    console.log(settings);
-
     try {
         // Request
         return await httpUtils.post(API_URL, {
