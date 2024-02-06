@@ -20,7 +20,12 @@ const getOneById = async (id: number) => {
             language: true,
             repository: true,
             technology: true,
-            provider: true,
+            provider: {
+                include: {
+                    technology: true,
+                    parameters: true
+                }
+            },
             user: true,
             templates_modifiers: {
                 include: {
