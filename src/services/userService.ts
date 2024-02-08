@@ -39,8 +39,8 @@ const upsertUserToRepositories = async (email: string, userId: number) => {
     }
 
     if (email.endsWith('adclick.pt')) {
-        const repoAdclick = await repositoryModel.getOneBySlug("wace");
-        if (!repoAdclick) throw new Error(`Repository 'wace' not found`);
+        const repoAdclick = await repositoryModel.getOneBySlug("adclick");
+        if (!repoAdclick) throw new Error(`Repository 'adclick' not found`);
         await userRepositoryModel.upsertOne(repoAdclick.id, userId);
     }
 }
