@@ -1,10 +1,10 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
-import httpUtils from '../utils/httpUtils';
 import modifierService from './modifierService';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import templateService from './templateService';
 import parameterModel from '../models/parameterModel';
+import edenaiClient from '../clients/edenaiClient';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -34,13 +34,13 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
 
     const temperature = await parameterModel.getTemperature(provider.id);
 
-    return await httpUtils.post(API_URL, {
-        text: textModified,
-        provider: provider.slug,
-        previous_history: chatMessagesModified,
-        temperature: temperature ? temperature.value : 0.3,
-        settings: JSON.stringify(settings)
-    });
+    return await edenaiClient.chat(
+        textModified,
+        provider.slug,
+        chatMessagesModified,
+        temperature ? temperature.value : '0.3',
+        JSON.stringify(settings)
+    );
 };
 
 const chatByPromptId = async (promptId: number) => {
@@ -74,14 +74,13 @@ const chatByPromptId = async (promptId: number) => {
 
     const temperature = await parameterModel.getTemperature(provider.id);
 
-    // Request
-    return await httpUtils.post(API_URL, {
-        text: textModified,
-        provider: provider.slug,
-        previous_history: chatMessagesModified,
-        temperature: temperature ? temperature.value : 0.3,
-        settings
-    });
+    return await edenaiClient.chat(
+        textModified,
+        provider.slug,
+        chatMessagesModified,
+        temperature ? temperature.value : '0.3',
+        JSON.stringify(settings)
+    );
 };
 
 

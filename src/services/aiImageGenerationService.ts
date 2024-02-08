@@ -1,10 +1,10 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
-import httpUtils from '../utils/httpUtils';
 import templateService from './templateService';
 import modifierService from './modifierService';
 import promptService from './promptService';
 import parameterModel from '../models/parameterModel';
+import edenaiClient from '../clients/edenaiClient';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/image/generate-image';
@@ -36,20 +36,14 @@ const imageGeneration = async (
 
     const temperature = await parameterModel.getTemperature(provider.id);
 
-    try {
-        // Request
-        return await httpUtils.post(API_URL, {
-            text: textModified,
-            provider: provider.slug,
-            resolution: imageResolution,
-            num_images: numImages,
-            temperature: temperature ? temperature.value : 0.3,
-            settings: JSON.stringify(settings)
-        });
-    } catch(e: any) {
-        console.error(e);
-        throw new Error(e.message);
-    }
+    return await edenaiClient.imageGeneration(
+        textModified,
+        provider.slug,
+        temperature ? temperature.value : '0.3',
+        numImages,
+        imageResolution,
+        JSON.stringify(settings)
+    );
 };
 
 const imageGenerationByPromptId = async (promptId: number) => {
@@ -83,13 +77,14 @@ const imageGenerationByPromptId = async (promptId: number) => {
     const temperature = await parameterModel.getTemperature(provider.id);
 
     // Request
-    return await httpUtils.post(API_URL, {
-        text: textModified,
-        provider: provider.slug,
+    return await edenaiClient.imageGeneration(
+        textModified,
+        provider.slug,
+        temperature ? temperature.value : '0.3',
+        num_images,
         resolution,
-        temperature: temperature ? temperature.value : 0.3,
-        num_images
-    })
+        JSON.stringify(settings)
+    );
 };
 
 export default {
