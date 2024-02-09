@@ -9,6 +9,7 @@ const getModifiers = async (req: Request, res: Response) => {
             controllerUtils.getSearchTerm(req),
             controllerUtils.getLanguagesIds(req, true),
             controllerUtils.getRepositoriesIds(req, true),
+            controllerUtils.getTechnologiesIds(req),
             controllerUtils.getLimit(req, true),
             controllerUtils.getOffset(req, true)
         );

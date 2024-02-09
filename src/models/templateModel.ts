@@ -100,6 +100,7 @@ const getAll = async (
     search_term: string,
     languages_ids: number[],
     repositories_ids: number[],
+    technologies_ids: number[],
     limit: number,
     offset: number
 ) => {
@@ -134,6 +135,7 @@ const getAll = async (
                     }
                 ]
             },
+            technology: { id: { in: technologies_ids } },
         },
         include: {
             user: {

@@ -12,6 +12,7 @@ const getTemplates = async (
     searchTerm: string,
     languagesIds: number[],
     repositoriesIds: number[],
+    technologiesIds: number[],
     limit: number,
     offset: number
 ) => {
@@ -20,6 +21,7 @@ const getTemplates = async (
         searchTerm,
         languagesIds,
         repositoriesIds,
+        technologiesIds,
         limit,
         offset
     );
