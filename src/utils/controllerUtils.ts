@@ -92,6 +92,7 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
 
 const getErrorResponse = (error: any) => {
     console.error(error);
+    
     if ("response" in error && "status" in error.response && "statusText" in error.response) {
         let message = error.response.statusText;
 
@@ -111,7 +112,7 @@ const getErrorResponse = (error: any) => {
     return {
         code: 500,
         status: false,
-        message: "Internal server error"
+        message: error.message
     }
 }
 

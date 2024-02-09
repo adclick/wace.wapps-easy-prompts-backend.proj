@@ -2,7 +2,6 @@ import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import promptModel from '../models/promptModel';
 import textUtils from '../utils/textUtils';
-import { History } from './aiChatService';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import { PromptParameter } from '../models/promptParameter';
