@@ -16,6 +16,35 @@ const getAll = async (req: Request, res: Response) => {
     }
 };
 
+const getAllUserPrivateFilters = async (req: Request, res: Response) => {
+    try {
+        const response = await filterService.getAllUserPrivateFilters(
+            controllerUtils.getUserExternalId(req, true)
+        );
+
+        res.status(200).json(response);
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
+    }
+};
+const getAllUserPublicDatabaseFilters = async (req: Request, res: Response) => {
+    try {
+        const response = await filterService.getAllUserPublicDatabaseFilters(
+            controllerUtils.getUserExternalId(req, true)
+        );
+
+        res.status(200).json(response);
+    } catch (error: any) {
+        const {code, status, message} = controllerUtils.getErrorResponse(error);
+        
+        return res.status(code).json({ status, message });
+    }
+};
+
 export default {
     getAll,
+    getAllUserPrivateFilters,
+    getAllUserPublicDatabaseFilters
 };

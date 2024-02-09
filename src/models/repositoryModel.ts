@@ -37,6 +37,34 @@ const getAllByUser = async (external_id: string) => {
     })
 }
 
+const getAllCreatedByUser = async (external_id: string) => {
+    return await prisma.repository.findMany({
+        where: {
+            OR: [
+                {
+                    user: { external_id }
+                },
+            ]
+        }
+    })
+}
+
+const getAllSubscribedByUser = async (external_id: string) => {
+    return await prisma.repository.findMany({
+        where: {
+            OR: [
+                {
+                    users_repositories: {
+                        some: {
+                            user: { external_id }
+                        }
+                    }
+                }
+            ]
+        }
+    })
+}
+
 const getOneByUserAndRepository = async (external_id: string, repository_id: number) => {
     return await prisma.repository.findFirst({
         where: {
@@ -65,5 +93,7 @@ export default {
     getOneBySlug,
     upsertOne,
     getAllByUser,
+    getAllCreatedByUser,
+    getAllSubscribedByUser,
     getOneByUserAndRepository
 }
