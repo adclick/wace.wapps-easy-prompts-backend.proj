@@ -1,8 +1,11 @@
 import repositoryModel from '../models/repositoryModel';
 import languageModel from '../models/languageModel';
 import technologyModel from '../models/technologyModel';
+import BadRequestError from '../errors/BadRequestError';
 
 const getAll = async (externalId: string) => {
+    if (!externalId) throw new BadRequestError({message: 'Invalid User'});
+
     const [languages, repositories, technologies] = await Promise.all([
         languageModel.getAll(),
         repositoryModel.getAllByUser(externalId),
@@ -18,6 +21,8 @@ const getAll = async (externalId: string) => {
 };
 
 const getAllUserPrivateFilters = async (externalId: string) => {
+    if (!externalId) throw new BadRequestError({message: 'Invalid User'});
+
     const [languages, repositories, technologies] = await Promise.all([
         languageModel.getAll(),
         repositoryModel.getAllCreatedByUser(externalId),
@@ -32,6 +37,8 @@ const getAllUserPrivateFilters = async (externalId: string) => {
     }
 };
 const getAllUserPublicDatabaseFilters = async (externalId: string) => {
+    if (!externalId) throw new BadRequestError({message: 'Invalid User'});
+
     const [languages, repositories, technologies] = await Promise.all([
         languageModel.getAll(),
         repositoryModel.getAllSubscribedByUser(externalId),

@@ -1,30 +1,23 @@
-import { NextFunction, Request, Response } from "express";
+import { Request, Response, NextFunction } from "express";
+import { CustomError } from "../errors/CustomError";
 
-export const errorHandler = (
-    err: Error,
-    req: Request,
-    res: Response,
-    next: NextFunction
-) => {
-    // if ("response" in err && "status" in err.response && "statusText" in err.response) {
-    //     let message = err.response.statusText;
+export const errorHandler = (err: Error, req: Request, res: Response, next: NextFunction) => {
+    // Handled errors
+    if(err instanceof CustomError) {
+      const { statusCode, errors, logging, stack } = err;
 
-    //     switch (err.response.status) {
-    //         case 429:
-    //             message = "Sorry, this is an experimental version and our servers are full. Please try again later";
-    //             break;
-    //     }
-
-    //     return {
-    //         code: 400,
-    //         status: err.response.status,
-    //         message
-    //     }
-    // }
-    
-    // return {
-    //     code: 500,
-    //     status: false,
-    //     message: err.message
-    // }
-};
+      if(logging) {
+        console.error(JSON.stringify({
+          code: statusCode,
+          errors: errors,
+          stack: stack,
+        }, null, 2));
+      }
+  
+      return res.status(statusCode).json({status: false, message: err.message});
+    }
+  
+    // Unhandled errors
+    console.error(JSON.stringify(err, null, 2));
+    return res.status(500).send({ status: false, message: "Something went wrong"});
+  };
