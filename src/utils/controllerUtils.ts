@@ -13,6 +13,7 @@ const getProvidersIds = (req: Request, required: boolean = false, method: string
 const getTitle = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'title', required, method)
 const getDescription = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'description', required, method)
 const getContent = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'content', required, method)
+const getResponse = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'response', required, method)
 const getPromptId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'prompt_id', required, method)
 const getModifierId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'modifier_id', required, method)
 const getTemplateId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'template_id', required, method)
@@ -135,6 +136,7 @@ export default {
     getTitle,
     getDescription,
     getContent,
+    getResponse,
     getEmail,
     getUsername,
     getUserExternalId,
