@@ -62,7 +62,7 @@ const getArray = (req: Request, parameter: string, required: boolean = false, me
     const array = getParameter(req, parameter, method);
 
     // Check if exists
-    if (required && array === "") throw new Error(missingParameterMessage(parameter));
+    if (required && (array === "" || array === undefined)) throw new Error(missingParameterMessage(parameter));
 
     // Check if its an array
     const json = JSON.parse(array);

@@ -177,7 +177,6 @@ const createOne = async (
     provider_id: number,
     templatesIds: number[],
     modifiersIds: number[],
-    history: Prisma.InputJsonValue,
     chatMessages: PromptChatMessage[],
     promptParameters: PromptParameter[]
 ) => {
@@ -211,7 +210,6 @@ const createOne = async (
                     data: modifiers_ids
                 }
             },
-            history,
             prompts_chat_messages: {
                 createMany: {
                     data: chatMessages

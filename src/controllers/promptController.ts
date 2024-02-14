@@ -16,8 +16,8 @@ const getPrompts = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 };
@@ -30,37 +30,31 @@ const getPromptById = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 };
 
 const createPrompt = async (req: Request, res: Response) => {
-    try {
-        const response = await promptService.createPrompt(
-            controllerUtils.getUserExternalId(req, true, 'post'),
-            controllerUtils.getTitle(req, true, 'post'),
-            controllerUtils.getDescription(req, true, 'post'),
-            controllerUtils.getContent(req, true, 'post'),
-            controllerUtils.getResponse(req, true, 'post'),
-            controllerUtils.getLanguageId(req, true, 'post'),
-            controllerUtils.getRepositoryId(req, true, 'post'),
-            controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, false, 'post'),
-            controllerUtils.getTemplatesIds(req, true, 'post'),
-            controllerUtils.getModifiersIds(req, true, 'post'),
-            controllerUtils.getChatMessages(req, false, 'post'),
-            controllerUtils.getPromptParameters(req, true, 'post')
-        );
+    
+    const response = await promptService.createPrompt(
+        controllerUtils.getUserExternalId(req, true, 'post'),
+        controllerUtils.getTitle(req, true, 'post'),
+        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getContent(req, true, 'post'),
+        controllerUtils.getResponse(req, true, 'post'),
+        controllerUtils.getLanguageId(req, true, 'post'),
+        controllerUtils.getRepositoryId(req, true, 'post'),
+        controllerUtils.getTechnologyId(req, true, 'post'),
+        controllerUtils.getProviderId(req, false, 'post'),
+        controllerUtils.getTemplatesIds(req, true, 'post'),
+        controllerUtils.getModifiersIds(req, true, 'post'),
+        controllerUtils.getChatMessages(req, false, 'post'),
+        controllerUtils.getPromptParameters(req, true, 'post')
+    );
 
-        res.status(201).json(response);
-    } catch (error: any) {
-        console.error(error);
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
-        return res.status(code).json({ status, message });
-    }
+    res.status(201).json(response);
 }
 
 const updatePrompt = async (req: Request, res: Response) => {
@@ -80,8 +74,8 @@ const updatePrompt = async (req: Request, res: Response) => {
         res.status(201).json(response);
     } catch (error: any) {
         console.error(error);
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 }
@@ -94,8 +88,8 @@ const deletePrompt = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 }

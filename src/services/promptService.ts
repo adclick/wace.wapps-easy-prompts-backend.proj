@@ -55,10 +55,6 @@ const createPrompt = async (
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
-    // Clone
-    const history: any = [];
-    chatMessages.forEach(h => history.push(h));
-
     return await promptModel.createOne(
         user.id,
         title,
@@ -72,7 +68,6 @@ const createPrompt = async (
         providerId,
         templatesIds,
         modifiersIds,
-        history,
         chatMessages,
         promptParameters
     )
