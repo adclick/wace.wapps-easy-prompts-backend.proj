@@ -168,7 +168,7 @@ async function main() {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerOpenaiDalle3.id,
-                data: { min: "1", max: "4" },
+                data: { min: "1", max: "1" },
                 value: "1",
             },
             {
