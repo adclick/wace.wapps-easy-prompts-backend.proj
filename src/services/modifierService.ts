@@ -16,7 +16,7 @@ const getModifiers = async (
     limit: number,
     offset: number
 ) => {
-    return await modifierModel.getAll(
+    return await modifierModel.getAllByFilters(
         externalId,
         searchTerm,
         languagesIds,
@@ -24,6 +24,14 @@ const getModifiers = async (
         technologiesIds,
         limit,
         offset
+    );
+};
+
+const getAllModifiers = async (
+    externalId: string,
+) => {
+    return await modifierModel.getAllByUser(
+        externalId,
     );
 };
 
@@ -137,6 +145,7 @@ const applyModifiersToChat = async (
 
 export default {
     getModifiers,
+    getAllModifiers,
     getModifierById,
     createModifier,
     updateModifier,

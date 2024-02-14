@@ -3,23 +3,25 @@ import modifierService from "../services/modifierService";
 import controllerUtils from "../utils/controllerUtils";
 
 const getModifiers = async (req: Request, res: Response) => {
-    try {
-        const prompts = await modifierService.getModifiers(
-            controllerUtils.getUserExternalId(req, true),
-            controllerUtils.getSearchTerm(req),
-            controllerUtils.getLanguagesIds(req, true),
-            controllerUtils.getRepositoriesIds(req, true),
-            controllerUtils.getTechnologiesIds(req),
-            controllerUtils.getLimit(req, true),
-            controllerUtils.getOffset(req, true)
-        );
+    const prompts = await modifierService.getModifiers(
+        controllerUtils.getUserExternalId(req, true),
+        controllerUtils.getSearchTerm(req),
+        controllerUtils.getLanguagesIds(req, true),
+        controllerUtils.getRepositoriesIds(req, true),
+        controllerUtils.getTechnologiesIds(req),
+        controllerUtils.getLimit(req, true),
+        controllerUtils.getOffset(req, true)
+    );
 
-        res.status(200).json(prompts);
-    } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
-        return res.status(code).json({ status, message });
-    }
+    res.status(200).json(prompts);
+};
+
+const getAllModifiers = async (req: Request, res: Response) => {
+    const prompts = await modifierService.getAllModifiers(
+        controllerUtils.getUserExternalId(req, true),
+    );
+
+    res.status(200).json(prompts);
 };
 
 const getModifierById = async (req: Request, res: Response) => {
@@ -30,8 +32,8 @@ const getModifierById = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 };
@@ -52,8 +54,8 @@ const createModifier = async (req: Request, res: Response) => {
         res.status(201).json(response);
     } catch (error: any) {
         console.error(error);
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 }
@@ -75,8 +77,8 @@ const updateModifier = async (req: Request, res: Response) => {
         res.status(200).json(response);
     } catch (error: any) {
         console.error(error);
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 }
@@ -89,14 +91,15 @@ const deleteModifier = async (req: Request, res: Response) => {
 
         res.status(200).json(response);
     } catch (error: any) {
-        const {code, status, message} = controllerUtils.getErrorResponse(error);
-        
+        const { code, status, message } = controllerUtils.getErrorResponse(error);
+
         return res.status(code).json({ status, message });
     }
 }
 
 export default {
     getModifiers,
+    getAllModifiers,
     getModifierById,
     createModifier,
     updateModifier,

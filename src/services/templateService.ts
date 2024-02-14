@@ -16,7 +16,7 @@ const getTemplates = async (
     limit: number,
     offset: number
 ) => {
-    return await templateModel.getAll(
+    return await templateModel.getAllByFilters(
         externalId,
         searchTerm,
         languagesIds,
@@ -24,6 +24,14 @@ const getTemplates = async (
         technologiesIds,
         limit,
         offset
+    );
+};
+
+const getAllTemplates = async (
+    externalId: string,
+) => {
+    return await templateModel.getAllByUser(
+        externalId,
     );
 };
 
@@ -80,6 +88,7 @@ const updateTemplate = async (
     repositoryId: number,
     technologyId: number,
     providerId: number,
+    modifiersIds: number[],
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -101,6 +110,7 @@ const updateTemplate = async (
         repositoryId,
         technologyId,
         providerId,
+        modifiersIds,
     )
 }
 
@@ -178,6 +188,7 @@ const applyTemplatesToChat = async (
 
 export default {
     getTemplates,
+    getAllTemplates,
     getTemplateById,
     createTemplate,
     updateTemplate,

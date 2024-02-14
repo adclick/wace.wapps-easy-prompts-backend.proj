@@ -95,7 +95,7 @@ const getAllByIds = async (ids: number[]) => {
     })
 }
 
-const getAll = async (
+const getAllByFilters = async (
     external_id: string,
     search_term: string,
     languages_ids: number[],
@@ -209,6 +209,96 @@ const getAll = async (
     });
 }
 
+const getAllByUser = async (
+    external_id: string,
+) => {
+    return await prisma.template.findMany({
+        where: {
+            repository: {
+                OR: [
+                    {
+                        users_repositories: {
+                            some: {
+                                user: { external_id },
+                            }
+                        }
+                    },
+                    {
+                        user: { external_id },
+                    }
+                ]
+            },
+        },
+        include: {
+            user: {
+                select: {
+                    external_id: true,
+                    email: true,
+                    username: true,
+                }
+            },
+            language: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            provider: {
+                select: {
+                    id: true,
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
+            },
+            templates_parameters: {
+                select: {
+                    value: true,
+                    parameter: {
+                        select: {
+                            id: true,
+                            name: true,
+                            slug: true,
+                            data: true,
+                            value: true
+                        }
+                    }
+                }
+            },
+            templates_modifiers: {
+                include: {
+                    modifier: {
+                        select: {
+                            id: true,
+                            title: true,
+                            slug: true
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: [{ created_at: "desc" }],
+    });
+}
+
 const createOne = async (
     user_id: number,
     title: string,
@@ -259,7 +349,18 @@ const updateOne = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
+    modifiersIds: number[],
 ) => {
+    const modifiers_ids = modifiersIds.map(m => {
+        return { modifier_id: m };
+    });
+
+    await prisma.templateModifier.deleteMany({
+        where: {
+            template_id: id
+        }
+    });
+
     return await prisma.template.update({
         where: { id },
         data: {
@@ -271,6 +372,11 @@ const updateOne = async (
             technology_id,
             provider_id,
             user_id,
+            templates_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            },
         },
     })
 }
@@ -282,7 +388,8 @@ const deleteOne = async (id: number) => {
 export default {
     getOneById,
     getAllByIds,
-    getAll,
+    getAllByUser,
+    getAllByFilters,
     createOne,
     updateOne,
     deleteOne,

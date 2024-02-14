@@ -83,6 +83,8 @@ const updatePrompt = async (
     repositoryId: number,
     technologyId: number,
     providerId: number,
+    templatesIds: number[],
+    modifiersIds: number[],
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -105,6 +107,8 @@ const updatePrompt = async (
         repositoryId,
         technologyId,
         providerId,
+        templatesIds,
+        modifiersIds,
     )
 }
 

@@ -4,6 +4,7 @@ const router = express.Router();
 
 // Define routes
 router.get('/', templateController.getTemplates);
+router.get('/all', templateController.getAllTemplates);
 router.get('/:template_id', templateController.getTemplateById);
 router.post('/', templateController.createTemplate);
 router.put('/:template_id', templateController.updateTemplate);

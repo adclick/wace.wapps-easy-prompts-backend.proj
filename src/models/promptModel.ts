@@ -235,7 +235,29 @@ const updateOne = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
+    templatesIds: number[],
+    modifiersIds: number[],
 ) => {
+    const templates_ids = templatesIds.map(t => {
+        return { template_id: t };
+    });
+
+    const modifiers_ids = modifiersIds.map(m => {
+        return { modifier_id: m };
+    });
+
+    await prisma.promptTemplate.deleteMany({
+        where: {
+            prompt_id: id
+        }
+    });
+
+    await prisma.promptModifier.deleteMany({
+        where: {
+            prompt_id: id
+        }
+    });
+
     return await prisma.prompt.update({
         where: { id },
         data: {
@@ -248,6 +270,16 @@ const updateOne = async (
             technology_id,
             provider_id,
             user_id,
+            prompts_templates: {
+                createMany: {
+                    data: templates_ids
+                }
+            },
+            prompts_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            },
         },
     })
 }

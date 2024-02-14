@@ -4,6 +4,7 @@ const router = express.Router();
 
 // Define routes
 router.get('/', modifierController.getModifiers);
+router.get('/all', modifierController.getAllModifiers);
 router.post('/', modifierController.createModifier);
 router.get('/:modifier_id', modifierController.getModifierById);
 router.put('/:modifier_id', modifierController.updateModifier);

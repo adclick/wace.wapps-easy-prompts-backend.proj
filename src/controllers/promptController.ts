@@ -37,13 +37,13 @@ const getPromptById = async (req: Request, res: Response) => {
 };
 
 const createPrompt = async (req: Request, res: Response) => {
-    
+
     const response = await promptService.createPrompt(
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
         controllerUtils.getDescription(req, true, 'post'),
         controllerUtils.getContent(req, true, 'post'),
-        controllerUtils.getResponse(req, true, 'post'),
+        controllerUtils.getResponse(req, false, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
         controllerUtils.getRepositoryId(req, true, 'post'),
         controllerUtils.getTechnologyId(req, true, 'post'),
@@ -69,6 +69,8 @@ const updatePrompt = async (req: Request, res: Response) => {
             controllerUtils.getRepositoryId(req, true, 'post'),
             controllerUtils.getTechnologyId(req, true, 'post'),
             controllerUtils.getProviderId(req, false, 'post'),
+            controllerUtils.getTemplatesIds(req, true, 'post'),
+            controllerUtils.getModifiersIds(req, true, 'post'),
         );
 
         res.status(201).json(response);
