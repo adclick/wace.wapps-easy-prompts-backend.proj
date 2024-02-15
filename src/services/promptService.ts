@@ -85,6 +85,7 @@ const updatePrompt = async (
     providerId: number,
     templatesIds: number[],
     modifiersIds: number[],
+    chatMessages: PromptChatMessage[],
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
@@ -109,6 +110,7 @@ const updatePrompt = async (
         providerId,
         templatesIds,
         modifiersIds,
+        chatMessages,
     )
 }
 

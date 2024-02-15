@@ -118,7 +118,6 @@ model Prompt {
     prompts_chat_messages PromptChatMessage[]
     prompts_respositories PromptRepository[]
 
-    @@unique([slug, language_id, repository_id, technology_id])
     @@index(fields: [hash], type: Hash)
     @@map("prompts")
 }
@@ -146,7 +145,6 @@ model Template {
     templates_repositories TemplateRepository[]
     templates_parameters   TemplateParameter[]
 
-    @@unique([slug, language_id, repository_id])
     @@index(fields: [hash], type: Hash)
     @@map("templates")
 }
@@ -175,7 +173,6 @@ model Modifier {
     templates_modifiers    TemplateModifier[]
     modifiers_repositories ModifierRepository[]
 
-    @@unique([slug, language_id, repository_id])
     @@index(fields: [hash], type: Hash)
     @@map("modifiers")
 }

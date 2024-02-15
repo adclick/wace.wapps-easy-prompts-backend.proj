@@ -15,7 +15,11 @@ const getOneById = async (id: number) => {
             user: true,
             prompts_templates: {
                 include: {
-                    template: true
+                    template: {
+                        include: {
+                            templates_modifiers: true
+                        }
+                    }
                 }
             },
             prompts_modifiers: {
@@ -157,6 +161,7 @@ const getAll = async (
                     }
                 }
             },
+            prompts_chat_messages: true,
         },
         orderBy: [{ id: "desc" }],
         take: limit,
@@ -237,6 +242,7 @@ const updateOne = async (
     provider_id: number,
     templatesIds: number[],
     modifiersIds: number[],
+    chatMessages: PromptChatMessage[],
 ) => {
     const templates_ids = templatesIds.map(t => {
         return { template_id: t };
@@ -253,6 +259,12 @@ const updateOne = async (
     });
 
     await prisma.promptModifier.deleteMany({
+        where: {
+            prompt_id: id
+        }
+    });
+
+    await prisma.promptChatMessage.deleteMany({
         where: {
             prompt_id: id
         }
@@ -278,6 +290,11 @@ const updateOne = async (
             prompts_modifiers: {
                 createMany: {
                     data: modifiers_ids
+                }
+            },
+            prompts_chat_messages: {
+                createMany: {
+                    data: chatMessages
                 }
             },
         },
