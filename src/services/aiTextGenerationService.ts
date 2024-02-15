@@ -5,6 +5,8 @@ import modifierService from './modifierService';
 import promptService from './promptService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
+import templateModel from '../models/templateModel';
+import modifierModel from '../models/modifierModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/generate-text';
@@ -18,10 +20,21 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
+    const templates = await templateModel.getAllByIds(templatesIds);
+    for (const template of templates) {
+        const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
+
+        for (const templateModifierId of templateModifiersIds) {
+            if (modifiersIds.includes(templateModifierId)) {
+                continue;
+            }
+
+            modifiersIds.push(templateModifierId);
+        }
+    }
+
     // Apply templates or modifiers (give priority to templates)
-    const textModified = templatesIds.length > 0
-        ? await templateService.applyTemplatesToText(text, templatesIds)
-        : await modifierService.applyModifiersToText(text, modifiersIds);
+    const textModified = await modifierService.applyModifiersToText(text, modifiersIds);
 
     // Apply provider model
     const settings: Settings = {};

@@ -5,6 +5,7 @@ import { PromptChatMessage } from '../models/promptChatMessageModel';
 import templateService from './templateService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
+import templateModel from '../models/templateModel';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/text/chat';
@@ -23,10 +24,21 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
     const provider = await providerModel.getOneById(providerId);
     if (!provider) throw new Error(`Provider (${providerId}) not found`);
 
+    const templates = await templateModel.getAllByIds(templatesIds);
+    for (const template of templates) {
+        const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
+
+        for (const templateModifierId of templateModifiersIds) {
+            if (modifiersIds.includes(templateModifierId)) {
+                continue;
+            }
+
+            modifiersIds.push(templateModifierId);
+        }
+    }
+
     // Apply templates or modifiers (give priority to templates)
-    const { textModified, chatMessagesModified } = templatesIds.length > 0
-        ? await templateService.applyTemplatesToChat(text, templatesIds, chatMessages)
-        : await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
+    const {textModified, chatMessagesModified} = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
 
     // Apply provider model
     const settings: Settings = {};
