@@ -81,6 +81,7 @@ const getAll = async (
         select: {
             id: true,
             title: true,
+            content: true,
             description: true,
             response: true,
             slug: true,

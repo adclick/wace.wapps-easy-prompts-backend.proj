@@ -20,15 +20,12 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     // Apply templates or modifiers (give priority to templates)
     const textModified = await modifierService.applyModifiersToText(text, modifiersIds);
 
-    console.log(textModified);
-
     // Apply provider model
     const settings: Settings = {};
     settings[provider.slug] = provider.model_slug;
 
     const temperature = await parameterModel.getTemperature(provider.id);
 
-    // Request
     return await edenaiClient.textGeneration(
         textModified,
         provider.slug,
