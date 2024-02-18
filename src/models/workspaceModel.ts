@@ -12,10 +12,21 @@ const upsertOne = async (name: string, slug: string, user_id: number) => {
     })
 }
 
-const getOneByUser = async (external_id: string) => {
-    return await prisma.workspace.findFirst({
+const getAllByUser = async (external_id: string) => {
+    return await prisma.workspace.findMany({
         where: {
-            user: { external_id }
+            OR: [
+                {
+                    user: { external_id }
+                },
+                {
+                    users_workspaces: {
+                        every: {
+                            user: { external_id }
+                        }
+                    }
+                }
+            ]
         }
     })
 }
@@ -23,5 +34,5 @@ const getOneByUser = async (external_id: string) => {
 
 export default {
     upsertOne,
-    getOneByUser
+    getAllByUser
 }

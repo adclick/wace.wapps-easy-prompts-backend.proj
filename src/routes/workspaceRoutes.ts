@@ -5,7 +5,7 @@ import workspaceController from '../controllers/workspaceController';
 const router = express.Router();
 
 // Define routes
-router.get('/', workspaceController.getOneByUser);
+router.get('/', workspaceController.getAllByUser);
 
 router.use(errorHandler);
 

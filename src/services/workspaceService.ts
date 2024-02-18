@@ -1,9 +1,9 @@
 import workspaceModel from "../models/workspaceModel"
 
-const getOneWorkspaceByUser = async (external_id: string) => {
-    return await workspaceModel.getOneByUser(external_id);
+const getAllWorkspacesByUser = async (external_id: string) => {
+    return await workspaceModel.getAllByUser(external_id);
 }
 
 export default {
-    getOneWorkspaceByUser
+    getAllWorkspacesByUser
 }
