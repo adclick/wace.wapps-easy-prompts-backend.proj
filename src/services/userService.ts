@@ -1,6 +1,8 @@
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import userRepositoryModel from '../models/userRepositoryModel';
+import userWorkspaceModel from '../models/userWorkspaceModel';
+import workspaceModel from '../models/workspaceModel';
 import textUtils from '../utils/textUtils';
 
 const login = async (email: string, username: string, externalId: string) => {
@@ -9,13 +11,19 @@ const login = async (email: string, username: string, externalId: string) => {
     // Create or update main personal repo
     const repoName = "My Repository";
     const repoSlug = textUtils.toSlug(repoName);
-    const { id } = await repositoryModel.upsertOne(repoName, repoSlug, user.id);
+    const repository = await repositoryModel.upsertOne(repoName, repoSlug, user.id);
+    
+    // Create or update main Workspace
+    const workspaceName = "My Workspace";
+    const workspaceSlug = textUtils.toSlug(workspaceName);
+    const workspace = await workspaceModel.upsertOne(workspaceName, workspaceSlug, user.id);
 
     upsertUserToRepositories(email, user.id);
 
     return {
         ...user,
-        history_repository_id: id
+        history_repository_id: repository.id,
+        workspace_id: workspace.id
     };
 };
 

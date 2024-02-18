@@ -21,6 +21,9 @@ model User {
     templates          Template[]
     repositories       Repository[]
     users_repositories UserRepository[]
+    users_workspaces   UserWorkspace[]
+    threads            Thread[]
+    workspaces         Workspace[]
 
     @@unique([email])
     @@unique([external_id])
@@ -117,6 +120,7 @@ model Prompt {
     prompts_modifiers     PromptModifier[]
     prompts_chat_messages PromptChatMessage[]
     prompts_respositories PromptRepository[]
+    threads               Thread[]
 
     @@index(fields: [hash], type: Hash)
     @@map("prompts")
@@ -190,6 +194,45 @@ model Parameter {
 
     @@unique([slug, provider_id])
     @@map("parameters")
+}
+
+model Workspace {
+    id               Int             @id @default(autoincrement())
+    name             String          @db.VarChar(255)
+    slug             String          @db.VarChar(255)
+    user_id          Int
+    user             User            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    users_workspaces UserWorkspace[]
+    threads          Thread[]
+
+    @@unique([user_id, slug])
+    @@map("workspaces")
+}
+
+model Thread {
+    id           Int      @id @default(autoincrement())
+    title        String   @db.VarChar(255)
+    created_at   DateTime @default(now()) @db.Timestamptz(6)
+    user_id      Int
+    prompt_id    Int
+    workspace_id Int
+    response     String   @db.Text
+
+    user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    prompt    Prompt    @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@map("threads")
+}
+
+model UserWorkspace {
+    user_id      Int
+    workspace_id Int
+    user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    workspace    Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([user_id, workspace_id])
+    @@map("users_workspaces")
 }
 
 model PromptChatMessage {

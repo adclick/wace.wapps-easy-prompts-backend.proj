@@ -17,6 +17,7 @@ const getResponse = (req: Request, required: boolean = false, method: string = '
 const getPromptId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'prompt_id', required, method)
 const getModifierId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'modifier_id', required, method)
 const getTemplateId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'template_id', required, method)
+const getWorkspaceId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'workspace_id', required, method)
 const getLimit = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'limit', required, method)
 const getOffset = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'offset', required, method)
 const getEmail = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'email', required, method)
@@ -130,6 +131,7 @@ export default {
     getProvidersIds,
     getPromptId,
     getModifierId,
+    getWorkspaceId,
     getLanguageId,
     getRepositoryId,
     getTechnologyId,

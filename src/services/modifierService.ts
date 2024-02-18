@@ -2,9 +2,7 @@ import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import modifierModel from '../models/modifierModel';
 import textUtils from '../utils/textUtils';
-import promptService from './promptService';
 import promptUtils from '../utils/promptUtils';
-import { History } from './aiChatService';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 
 const getModifiers = async (
