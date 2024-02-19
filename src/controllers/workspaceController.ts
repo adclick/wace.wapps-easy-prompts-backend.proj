@@ -7,7 +7,7 @@ const getAllByUser = async (req: Request, res: Response) => {
         controllerUtils.getUserExternalId(req, true, 'get'),
     );
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
 };
 
 

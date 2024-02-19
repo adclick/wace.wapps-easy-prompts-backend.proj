@@ -3,23 +3,17 @@ import templateService from "../services/templateService";
 import controllerUtils from "../utils/controllerUtils";
 
 const getTemplates = async (req: Request, res: Response) => {
-    try {
-        const prompts = await templateService.getTemplates(
-            controllerUtils.getUserExternalId(req, true),
-            controllerUtils.getSearchTerm(req),
-            controllerUtils.getLanguagesIds(req, true),
-            controllerUtils.getRepositoriesIds(req, true),
-            controllerUtils.getTechnologiesIds(req),
-            controllerUtils.getLimit(req, true),
-            controllerUtils.getOffset(req, true)
-        );
+    const prompts = await templateService.getTemplates(
+        controllerUtils.getUserExternalId(req, true),
+        controllerUtils.getSearchTerm(req),
+        controllerUtils.getLanguagesIds(req, true),
+        controllerUtils.getRepositoriesIds(req, true),
+        controllerUtils.getTechnologiesIds(req),
+        controllerUtils.getLimit(req, true),
+        controllerUtils.getOffset(req, true)
+    );
 
-        res.status(200).json(prompts);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(prompts);
 };
 
 const getAllTemplates = async (req: Request, res: Response) => {
@@ -27,81 +21,57 @@ const getAllTemplates = async (req: Request, res: Response) => {
         controllerUtils.getUserExternalId(req, true),
     );
 
-    res.status(200).json(prompts);
+    return res.status(200).json(prompts);
 };
 
 const getTemplateById = async (req: Request, res: Response) => {
-    try {
-        const response = await templateService.getTemplateById(
-            controllerUtils.getTemplateId(req, true, 'url'),
-        );
+    const response = await templateService.getTemplateById(
+        controllerUtils.getTemplateId(req, true, 'url'),
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 };
 
 
 const createTemplate = async (req: Request, res: Response) => {
-    try {
-        const response = await templateService.createTemplate(
-            controllerUtils.getUserExternalId(req, true, 'post'),
-            controllerUtils.getTitle(req, true, 'post'),
-            controllerUtils.getDescription(req, true, 'post'),
-            controllerUtils.getLanguageId(req, true, 'post'),
-            controllerUtils.getRepositoryId(req, true, 'post'),
-            controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, false, 'post'),
-            controllerUtils.getModifiersIds(req, true, 'post'),
-            controllerUtils.getChatHistory(req, false, 'post'),
-            controllerUtils.getTemplateParameters(req, true, 'post')
-        );
+    const response = await templateService.createTemplate(
+        controllerUtils.getUserExternalId(req, true, 'post'),
+        controllerUtils.getTitle(req, true, 'post'),
+        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getLanguageId(req, true, 'post'),
+        controllerUtils.getRepositoryId(req, true, 'post'),
+        controllerUtils.getTechnologyId(req, true, 'post'),
+        controllerUtils.getProviderId(req, false, 'post'),
+        controllerUtils.getModifiersIds(req, true, 'post'),
+        controllerUtils.getChatHistory(req, false, 'post'),
+        controllerUtils.getTemplateParameters(req, true, 'post')
+    );
 
-        res.status(201).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(201).json(response);
 }
 
 const updateTemplate = async (req: Request, res: Response) => {
-    try {
-        const response = await templateService.updateTemplate(
-            controllerUtils.getTemplateId(req, true, 'url'),
-            controllerUtils.getUserExternalId(req, true, 'post'),
-            controllerUtils.getTitle(req, true, 'post'),
-            controllerUtils.getDescription(req, true, 'post'),
-            controllerUtils.getLanguageId(req, true, 'post'),
-            controllerUtils.getRepositoryId(req, true, 'post'),
-            controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, false, 'post'),
-            controllerUtils.getModifiersIds(req, true, 'post'),
-        );
+    const response = await templateService.updateTemplate(
+        controllerUtils.getTemplateId(req, true, 'url'),
+        controllerUtils.getUserExternalId(req, true, 'post'),
+        controllerUtils.getTitle(req, true, 'post'),
+        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getLanguageId(req, true, 'post'),
+        controllerUtils.getRepositoryId(req, true, 'post'),
+        controllerUtils.getTechnologyId(req, true, 'post'),
+        controllerUtils.getProviderId(req, false, 'post'),
+        controllerUtils.getModifiersIds(req, true, 'post'),
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 }
 
 const deleteTemplate = async (req: Request, res: Response) => {
-    try {
-        const response = await templateService.deleteTemplate(
-            controllerUtils.getTemplateId(req, true, 'url')
-        );
+    const response = await templateService.deleteTemplate(
+        controllerUtils.getTemplateId(req, true, 'url')
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 }
 
 export default {

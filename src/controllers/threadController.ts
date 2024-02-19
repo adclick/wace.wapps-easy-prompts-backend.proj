@@ -7,7 +7,7 @@ const getAllThreadsByWorkspace = async (req: Request, res: Response) => {
         controllerUtils.getWorkspaceId(req, true, 'get'),
     );
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
 };
 
 const createOneThread = async (req: Request, res: Response) => {
@@ -19,7 +19,7 @@ const createOneThread = async (req: Request, res: Response) => {
         controllerUtils.getResponse(req, true, 'post'),
     );
 
-    res.status(201).json(response);
+    return res.status(201).json(response);
 };
 
 export default {

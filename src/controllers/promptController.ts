@@ -3,41 +3,28 @@ import promptService from "../services/promptService";
 import controllerUtils from "../utils/controllerUtils";
 
 const getPrompts = async (req: Request, res: Response) => {
-    try {
-        const response = await promptService.getPrompts(
-            controllerUtils.getUserExternalId(req, true),
-            controllerUtils.getSearchTerm(req, false),
-            controllerUtils.getLanguagesIds(req),
-            controllerUtils.getRepositoriesIds(req),
-            controllerUtils.getTechnologiesIds(req),
-            controllerUtils.getLimit(req, true),
-            controllerUtils.getOffset(req, true)
-        );
+    const response = await promptService.getPrompts(
+        controllerUtils.getUserExternalId(req, true),
+        controllerUtils.getSearchTerm(req, false),
+        controllerUtils.getLanguagesIds(req),
+        controllerUtils.getRepositoriesIds(req),
+        controllerUtils.getTechnologiesIds(req),
+        controllerUtils.getLimit(req, true),
+        controllerUtils.getOffset(req, true)
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 };
 
 const getPromptById = async (req: Request, res: Response) => {
-    try {
-        const response = await promptService.getPromptById(
-            controllerUtils.getPromptId(req, true, 'url'),
-        );
+    const response = await promptService.getPromptById(
+        controllerUtils.getPromptId(req, true, 'url'),
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 };
 
 const createPrompt = async (req: Request, res: Response) => {
-
     const response = await promptService.createPrompt(
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
@@ -54,47 +41,34 @@ const createPrompt = async (req: Request, res: Response) => {
         controllerUtils.getPromptParameters(req, true, 'post')
     );
 
-    res.status(201).json(response);
+    return res.status(201).json(response);
 }
 
 const updatePrompt = async (req: Request, res: Response) => {
-    try {
-        const response = await promptService.updatePrompt(
-            controllerUtils.getPromptId(req, true, 'url'),
-            controllerUtils.getUserExternalId(req, true, 'post'),
-            controllerUtils.getTitle(req, true, 'post'),
-            controllerUtils.getDescription(req, true, 'post'),
-            controllerUtils.getContent(req, true, 'post'),
-            controllerUtils.getLanguageId(req, true, 'post'),
-            controllerUtils.getRepositoryId(req, true, 'post'),
-            controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, false, 'post'),
-            controllerUtils.getTemplatesIds(req, true, 'post'),
-            controllerUtils.getModifiersIds(req, true, 'post'),
-            controllerUtils.getChatMessages(req, false, 'post'),
-        );
+    const response = await promptService.updatePrompt(
+        controllerUtils.getPromptId(req, true, 'url'),
+        controllerUtils.getUserExternalId(req, true, 'post'),
+        controllerUtils.getTitle(req, true, 'post'),
+        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getContent(req, true, 'post'),
+        controllerUtils.getLanguageId(req, true, 'post'),
+        controllerUtils.getRepositoryId(req, true, 'post'),
+        controllerUtils.getTechnologyId(req, true, 'post'),
+        controllerUtils.getProviderId(req, false, 'post'),
+        controllerUtils.getTemplatesIds(req, true, 'post'),
+        controllerUtils.getModifiersIds(req, true, 'post'),
+        controllerUtils.getChatMessages(req, false, 'post'),
+    );
 
-        res.status(201).json(response);
-    } catch (error: any) {
-        console.error(error);
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(201).json(response);
 }
 
 const deletePrompt = async (req: Request, res: Response) => {
-    try {
-        const response = await promptService.deletePrompt(
-            controllerUtils.getPromptId(req, true, 'url')
-        );
+    const response = await promptService.deletePrompt(
+        controllerUtils.getPromptId(req, true, 'url')
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 }
 
 export default {

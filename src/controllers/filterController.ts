@@ -7,7 +7,7 @@ const getAll = async (req: Request, res: Response) => {
         controllerUtils.getUserExternalId(req, true)
     );
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
 };
 
 const getAllUserPrivateFilters = async (req: Request, res: Response) => {
@@ -15,7 +15,7 @@ const getAllUserPrivateFilters = async (req: Request, res: Response) => {
         controllerUtils.getUserExternalId(req, true)
     );
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
 }
 
 const getAllUserPublicDatabaseFilters = async (req: Request, res: Response) => {
@@ -23,7 +23,7 @@ const getAllUserPublicDatabaseFilters = async (req: Request, res: Response) => {
         controllerUtils.getUserExternalId(req, true)
     );
 
-    res.status(200).json(response);
+    return res.status(200).json(response);
 };
 
 export default {

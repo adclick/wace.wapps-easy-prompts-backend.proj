@@ -13,7 +13,7 @@ const getModifiers = async (req: Request, res: Response) => {
         controllerUtils.getOffset(req, true)
     );
 
-    res.status(200).json(prompts);
+    return res.status(200).json(prompts);
 };
 
 const getAllModifiers = async (req: Request, res: Response) => {
@@ -21,80 +21,54 @@ const getAllModifiers = async (req: Request, res: Response) => {
         controllerUtils.getUserExternalId(req, true),
     );
 
-    res.status(200).json(prompts);
+    return res.status(200).json(prompts);
 };
 
 const getModifierById = async (req: Request, res: Response) => {
-    try {
-        const response = await modifierService.getModifierById(
-            controllerUtils.getModifierId(req, true, 'url'),
-        );
+    const response = await modifierService.getModifierById(
+        controllerUtils.getModifierId(req, true, 'url'),
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 };
 
 const createModifier = async (req: Request, res: Response) => {
-    try {
-        const response = await modifierService.createModifier(
-            controllerUtils.getUserExternalId(req, true, 'post'),
-            controllerUtils.getTitle(req, true, 'post'),
-            controllerUtils.getDescription(req, true, 'post'),
-            controllerUtils.getContent(req, true, 'post'),
-            controllerUtils.getLanguageId(req, true, 'post'),
-            controllerUtils.getRepositoryId(req, true, 'post'),
-            controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, false, 'post')
-        );
+    const response = await modifierService.createModifier(
+        controllerUtils.getUserExternalId(req, true, 'post'),
+        controllerUtils.getTitle(req, true, 'post'),
+        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getContent(req, true, 'post'),
+        controllerUtils.getLanguageId(req, true, 'post'),
+        controllerUtils.getRepositoryId(req, true, 'post'),
+        controllerUtils.getTechnologyId(req, true, 'post'),
+        controllerUtils.getProviderId(req, false, 'post')
+    );
 
-        res.status(201).json(response);
-    } catch (error: any) {
-        console.error(error);
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(201).json(response);
 }
 
 const updateModifier = async (req: Request, res: Response) => {
-    try {
-        const response = await modifierService.updateModifier(
-            controllerUtils.getModifierId(req, true, 'url'),
-            controllerUtils.getUserExternalId(req, true, 'post'),
-            controllerUtils.getTitle(req, true, 'post'),
-            controllerUtils.getDescription(req, true, 'post'),
-            controllerUtils.getContent(req, true, 'post'),
-            controllerUtils.getLanguageId(req, true, 'post'),
-            controllerUtils.getRepositoryId(req, true, 'post'),
-            controllerUtils.getTechnologyId(req, true, 'post'),
-            controllerUtils.getProviderId(req, false, 'post')
-        );
+    const response = await modifierService.updateModifier(
+        controllerUtils.getModifierId(req, true, 'url'),
+        controllerUtils.getUserExternalId(req, true, 'post'),
+        controllerUtils.getTitle(req, true, 'post'),
+        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getContent(req, true, 'post'),
+        controllerUtils.getLanguageId(req, true, 'post'),
+        controllerUtils.getRepositoryId(req, true, 'post'),
+        controllerUtils.getTechnologyId(req, true, 'post'),
+        controllerUtils.getProviderId(req, false, 'post')
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        console.error(error);
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 }
 
 const deleteModifier = async (req: Request, res: Response) => {
-    try {
-        const response = await modifierService.deleteModifier(
-            controllerUtils.getModifierId(req, true, 'url')
-        );
+    const response = await modifierService.deleteModifier(
+        controllerUtils.getModifierId(req, true, 'url')
+    );
 
-        res.status(200).json(response);
-    } catch (error: any) {
-        const { code, status, message } = controllerUtils.getErrorResponse(error);
-
-        return res.status(code).json({ status, message });
-    }
+    return res.status(200).json(response);
 }
 
 export default {

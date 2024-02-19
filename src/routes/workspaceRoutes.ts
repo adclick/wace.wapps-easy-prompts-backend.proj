@@ -1,6 +1,7 @@
+import "express-async-errors";
 import express from 'express';
-import { errorHandler } from '../middlewares/errors';
 import workspaceController from '../controllers/workspaceController';
+import { errorHandler } from '../middlewares/errors';
 
 const router = express.Router();
 

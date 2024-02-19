@@ -2,7 +2,6 @@ import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import templateModel from '../models/templateModel';
 import textUtils from '../utils/textUtils';
-import { History } from './aiChatService';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import { TemplateParameter } from '../models/templateParameter';
@@ -48,7 +47,7 @@ const createTemplate = async (
     technologyId: number,
     providerId: number,
     modifiersIds: number[],
-    chatHistory: History[],
+    chatHistory: PromptChatMessage[],
     templateParameters: TemplateParameter[]
 ) => {
     const user = await userModel.getOneById(externalId);

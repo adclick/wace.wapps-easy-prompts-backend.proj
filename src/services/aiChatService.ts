@@ -7,14 +7,6 @@ import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
 import templateModel from '../models/templateModel';
 
-const BASE_URL = process.env.BASE_URL;
-const API_URL = BASE_URL + '/ai/text/chat';
-
-export interface History {
-    role: string,
-    message: string
-}
-
 interface Settings {
     [key: string]: string
 }
