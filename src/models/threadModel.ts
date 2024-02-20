@@ -6,7 +6,14 @@ const getOneById = async (id: number) => {
     return await prisma.thread.findUnique({
         where: { id },
         include: {
-            prompt: true
+            user: true,
+            workspace: true,
+            technology: true,
+            provider: true,
+            threads_chat_messages: true,
+            threads_templates: true,
+            threads_modifiers: true,
+            threads_parameters: true
         }
     });
 }
@@ -15,41 +22,40 @@ const getAllByWorkspace = async (workspace_id: number) => {
     return await prisma.thread.findMany({
         where: { workspace_id },
         include: {
-            prompt: {
-                include: {
-                    user: true,
-                    language: true,
-                    technology: true,
-                    provider: true,
-                    repository: true,
-                    prompts_chat_messages: true,
-                    prompts_templates: true,
-                    prompts_modifiers: true,
-                    prompts_parameters: true,
-                }
-            },
             user: true,
-            workspace: true
+            workspace: true,
+            technology: true,
+            provider: true,
+            threads_chat_messages: true,
+            threads_templates: true,
+            threads_modifiers: true,
+            threads_parameters: true
         }
     });
 }
 
 const createOne = async (
     title: string,
-    response: string,
-    prompt_id: number,
-    workspace_id: number,
+    slug: string,
     key: string,
-    user_id: number
+    content: string,
+    response: string,
+    user_id: number,
+    workspace_id: number,
+    technology_id: number,
+    provider_id: number,
 ) => {
     return await prisma.thread.create({
         data: {
             title,
-            prompt_id,
-            workspace_id,
-            response,
+            slug,
             key,
-            user_id
+            content,
+            response,
+            user_id,
+            workspace_id,
+            technology_id,
+            provider_id,
         }
     });
 }

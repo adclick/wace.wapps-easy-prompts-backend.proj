@@ -120,21 +120,25 @@ model Workspace {
 }
 
 model Thread {
-    id            Int        @id @default(autoincrement())
-    title         String     @db.VarChar(255)
-    slug          String     @db.VarChar(255)
-    content       String
-    response      String
-    created_at    DateTime   @default(now()) @db.Timestamptz(6)
-    key           String
-    technology_id Int
-    provider_id   Int?
-    user_id       Int
-    workspace_id  Int
-    technology    Technology @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    provider      Provider?  @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    user          User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    workspace     Workspace  @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    id                    Int                 @id @default(autoincrement())
+    title                 String              @db.VarChar(255)
+    slug                  String              @db.VarChar(255)
+    content               String
+    response              String
+    created_at            DateTime            @default(now()) @db.Timestamptz(6)
+    key                   String
+    technology_id         Int
+    provider_id           Int?
+    user_id               Int
+    workspace_id          Int
+    technology            Technology          @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    provider              Provider?           @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user                  User                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    workspace             Workspace           @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    threads_chat_messages ThreadChatMessage[]
+    threads_templates     ThreadTemplate[]
+    threads_modifiers     ThreadModifier[]
+    threads_parameters    ThreadParameter[]
 
     @@map("threads")
 }
@@ -192,6 +196,7 @@ model Template {
     templates_modifiers    TemplateModifier[]
     templates_repositories TemplateRepository[]
     templates_parameters   TemplateParameter[]
+    threads_templates      ThreadTemplate[]
 
     @@index(fields: [hash], type: Hash)
     @@map("templates")
@@ -220,6 +225,7 @@ model Modifier {
     prompts_modifiers      PromptModifier[]
     templates_modifiers    TemplateModifier[]
     modifiers_repositories ModifierRepository[]
+    threads_modifiers      ThreadModifier[]
 
     @@index(fields: [hash], type: Hash)
     @@map("modifiers")
@@ -235,6 +241,7 @@ model Parameter {
     provider             Provider            @relation(fields: [provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     prompts_parameters   PromptParameter[]
     templates_parameters TemplateParameter[]
+    threads_parameters   ThreadParameter[]
 
     @@unique([slug, provider_id])
     @@map("parameters")
@@ -259,6 +266,17 @@ model PromptChatMessage {
 
     @@index([prompt_id])
     @@map("prompts_chat_messages")
+}
+
+model ThreadChatMessage {
+    id        Int    @id @default(autoincrement())
+    thread_id Int
+    role      String @db.VarChar(255)
+    message   String @db.Text
+    thread    Thread @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@index([thread_id])
+    @@map("threads_chat_messages")
 }
 
 model PromptRepository {
@@ -305,6 +323,17 @@ model PromptTemplate {
     @@map("prompts_templates")
 }
 
+model ThreadTemplate {
+    thread_id   Int
+    template_id Int
+
+    thread   Thread   @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    template Template @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_id, template_id])
+    @@map("threads_templates")
+}
+
 model PromptModifier {
     prompt_id   Int
     modifier_id Int
@@ -314,6 +343,17 @@ model PromptModifier {
 
     @@id([prompt_id, modifier_id])
     @@map("prompts_modifiers")
+}
+
+model ThreadModifier {
+    thread_id   Int
+    modifier_id Int
+
+    thread   Thread   @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    modifier Modifier @relation(fields: [modifier_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_id, modifier_id])
+    @@map("threads_modifiers")
 }
 
 model TemplateModifier {
@@ -336,6 +376,17 @@ model PromptParameter {
 
     @@id([prompt_id, parameter_id])
     @@map("prompts_parameters")
+}
+
+model ThreadParameter {
+    thread_id    Int
+    parameter_id Int
+    value        String?
+    parameter    Parameter @relation(fields: [parameter_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    thread       Thread    @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_id, parameter_id])
+    @@map("threads_parameters")
 }
 
 model TemplateParameter {
