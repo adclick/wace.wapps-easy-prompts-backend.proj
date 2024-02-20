@@ -13,7 +13,6 @@ const getProviderId = (req: Request, required: boolean = false, method: string =
 const getProvidersIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'providers_ids', required, method)
 const getTitle = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'title', required, method)
 const getKey = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'key', required, method)
-const getStatus = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'status', required, method)
 const getDescription = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'description', required, method)
 const getContent = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'content', required, method)
 const getResponse = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'response', required, method)
@@ -36,6 +35,7 @@ const getParameterNumImages = (req: Request, required: boolean = false, method: 
 const getParameterImageResolution = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'image_resolution', required, method)
 const getPromptParameters = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'prompt_parameters', required, method)
 const getTemplateParameters = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'template_parameters', required, method)
+const getThreadParameters = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'thread_parameters', required, method)
 
 const missingParameterMessage = (parameter: string): string => `Missing parameter ${parameter}`;
 
@@ -142,7 +142,6 @@ export default {
     getRepositoryId,
     getTechnologyId,
     getTitle,
-    getStatus,
     getDescription,
     getContent,
     getResponse,
@@ -159,4 +158,5 @@ export default {
     getParameterImageResolution,
     getPromptParameters,
     getTemplateParameters,
+    getThreadParameters,
 }

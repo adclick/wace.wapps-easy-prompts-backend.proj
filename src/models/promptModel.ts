@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient, PromptStatus } from "@prisma/client";
+import { Prisma, PrismaClient } from "@prisma/client";
 import { PromptChatMessage } from "./promptChatMessageModel";
 import { PromptParameter } from "./promptParameter";
 
@@ -81,7 +81,6 @@ const getAll = async (
         select: {
             id: true,
             title: true,
-            status: true,
             content: true,
             description: true,
             slug: true,
@@ -174,7 +173,6 @@ const createOne = async (
     user_id: number,
     title: string,
     slug: string,
-    status: PromptStatus,
     description: string,
     content: string,
     language_id: number,
@@ -198,7 +196,6 @@ const createOne = async (
         data: {
             title,
             slug,
-            status,
             description,
             content,
             language_id,
@@ -235,7 +232,6 @@ const updateOne = async (
     user_id: number,
     title: string,
     slug: string,
-    status: PromptStatus,
     description: string,
     content: string,
     language_id: number,
@@ -277,7 +273,6 @@ const updateOne = async (
         data: {
             title,
             slug,
-            status,
             description,
             content,
             language_id,

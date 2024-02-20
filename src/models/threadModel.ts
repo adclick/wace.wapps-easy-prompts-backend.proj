@@ -27,11 +27,28 @@ const getAllByWorkspace = async (workspace_id: number) => {
             user: true,
             workspace: true,
             technology: true,
-            provider: true,
+            provider: {
+                include: {
+                    technology: true,
+                    parameters: true
+                }
+            },
             threads_chat_messages: true,
-            threads_templates: true,
-            threads_modifiers: true,
-            threads_parameters: true
+            threads_templates: {
+                include: {
+                    template: true
+                }
+            },
+            threads_modifiers: {
+                include: {
+                    modifier: true
+                }
+            },
+            threads_parameters: {
+                include: {
+                    parameter: true
+                }
+            }
         }
     });
 }
@@ -167,10 +184,17 @@ const updateOne = async (
 }
 
 
-
 const deleteOne = async (id: number) => {
     return await prisma.thread.delete({
         where: { id }
+    })
+}
+
+const deleteAllByWorkspaceId = async (workspace_id: number) => {
+    return await prisma.thread.deleteMany({
+        where: {
+            workspace_id
+        }
     })
 }
 
@@ -180,5 +204,6 @@ export default {
     getAllByWorkspace,
     createOne,
     updateOne,
-    deleteOne
+    deleteOne,
+    deleteAllByWorkspaceId
 }

@@ -1,8 +1,8 @@
-import { PromptStatus } from "@prisma/client";
-import BadRequestError from "../errors/BadRequestError";
-import promptModel from "../models/promptModel";
+import { ThreadChatMessage } from "../models/threadChatMessageModel";
 import threadModel from "../models/threadModel";
+import { ThreadParameter } from "../models/threadParameter";
 import userModel from "../models/userModel";
+import textUtils from "../utils/textUtils";
 
 const getAllThreadsByWorkspace = async (workspace_id: number) => {
     return await threadModel.getAllByWorkspace(workspace_id);
@@ -10,71 +10,86 @@ const getAllThreadsByWorkspace = async (workspace_id: number) => {
 
 const createOneThread = async (
     title: string,
-    response: string,
-    promptId: number,
-    workspaceId: number,
     key: string,
-    userExternalId: string
+    content: string,
+    response: string,
+    userExternalId: string,
+    workspaceId: number,
+    technologyId: number,
+    providerId: number,
+    templatesIds: number[],
+    modifiersIds: number[],
+    threadChatMessages: ThreadChatMessage[],
+    threadParameters: ThreadParameter[]
 ) => {
     const user = await userModel.getOneById(userExternalId);
     if (!user) throw new Error("User not found");
 
-    const thread = await threadModel.createOne(
+    return await threadModel.createOne(
         title,
-        response,
-        promptId,
-        workspaceId,
+        textUtils.toSlug(title),
         key,
-        user.id
+        content,
+        response,
+        user.id,
+        workspaceId,
+        technologyId,
+        providerId,
+        templatesIds,
+        modifiersIds,
+        threadChatMessages,
+        threadParameters,
     );
-
-    console.log(thread);
-    return thread;
 }
 
 const updateOneThread = async (
     id: number,
     title: string,
-    response: string,
-    promptId: number,
-    workspaceId: number,
     key: string,
-    userExternalId: string
+    content: string,
+    response: string,
+    userExternalId: string,
+    workspaceId: number,
+    technologyId: number,
+    providerId: number,
+    templatedsIds: number[],
+    modifiersIds: number[],
+    threadChatMessages: ThreadChatMessage[],
 ) => {
     const user = await userModel.getOneById(userExternalId);
     if (!user) throw new Error("User not found");
 
-    const thread = await threadModel.updateOne(
+    return await threadModel.updateOne(
         id,
         title,
-        response,
-        promptId,
-        workspaceId,
+        textUtils.toSlug(title),
         key,
-        user.id
+        content,
+        response,
+        user.id,
+        workspaceId,
+        technologyId,
+        providerId,
+        templatedsIds,
+        modifiersIds,
+        threadChatMessages,
     );
-
-    console.log(thread);
-    return thread;
 }
 
 
 const deleteOneThread = async (id: number) => {
-    const thread = await threadModel.getOneById(id);
-    if (!thread) throw new BadRequestError({message: 'Thread not found'});
-
-    await threadModel.deleteOne(id);
-
-
-    const prompt = thread.prompt;
-    if (prompt.status === PromptStatus.DRAFT) {
-        await promptModel.deleteOne(prompt.id);
-    }
+    return await threadModel.deleteOne(id);
 }
+
+const deleteAllThreadsByWorkspaceId = async (workspaceId: number) => {
+    return await threadModel.deleteAllByWorkspaceId(workspaceId);
+}
+
 
 export default {
     getAllThreadsByWorkspace,
     createOneThread,
     updateOneThread,
-    deleteOneThread
+    deleteOneThread,
+    deleteAllThreadsByWorkspaceId
 }

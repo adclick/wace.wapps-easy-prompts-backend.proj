@@ -1,7 +1,6 @@
 import { Request, Response } from "express";
 import promptService from "../services/promptService";
 import controllerUtils from "../utils/controllerUtils";
-import { PromptStatus } from "@prisma/client";
 
 const getPrompts = async (req: Request, res: Response) => {
     const response = await promptService.getPrompts(
@@ -29,7 +28,6 @@ const createPrompt = async (req: Request, res: Response) => {
     const response = await promptService.createPrompt(
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
-        controllerUtils.getStatus(req, true, 'post') as PromptStatus,
         controllerUtils.getDescription(req, true, 'post'),
         controllerUtils.getContent(req, true, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
