@@ -5,7 +5,7 @@
 
 */
 -- AlterTable
-ALTER TABLE "users" ADD COLUMN     "language_id" INTEGER NOT NULL;
+ALTER TABLE "users" ADD COLUMN     "language_id" INTEGER;
 
 -- CUSTOM: update all users with default language
 UPDATE users SET language_id=(SELECT id from languages WHERE slug = 'pt');
