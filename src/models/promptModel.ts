@@ -44,7 +44,6 @@ const getAll = async (
 ) => {
     return await prisma.prompt.findMany({
         where: {
-            status: "PUBLISHED",
             OR: [
                 { title: { startsWith: search_term, mode: "insensitive" } },
                 { title: { endsWith: search_term, mode: "insensitive" } },
@@ -85,7 +84,6 @@ const getAll = async (
             status: true,
             content: true,
             description: true,
-            response: true,
             slug: true,
             created_at: true,
             public: true,

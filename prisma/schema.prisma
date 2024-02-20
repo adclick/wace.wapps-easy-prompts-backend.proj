@@ -9,11 +9,6 @@ datasource db {
     directUrl = env("DATABASE_DIRECT_URL")
 }
 
-enum PromptStatus {
-    DRAFT
-    PUBLISHED
-}
-
 model User {
     id                 Int              @id @default(autoincrement())
     email              String           @db.VarChar(255)
@@ -147,7 +142,6 @@ model Prompt {
     id                    Int                 @id @default(autoincrement())
     title                 String              @db.VarChar(255)
     slug                  String              @db.VarChar(255)
-    status                PromptStatus        @default(DRAFT)
     content               String
     description           String?
     hash                  String?

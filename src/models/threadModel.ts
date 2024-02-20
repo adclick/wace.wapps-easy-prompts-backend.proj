@@ -1,4 +1,6 @@
 import { PrismaClient } from "@prisma/client";
+import { ThreadChatMessage } from "./threadChatMessageModel";
+import { ThreadParameter } from "./threadParameter";
 
 const prisma = new PrismaClient();
 
@@ -44,7 +46,19 @@ const createOne = async (
     workspace_id: number,
     technology_id: number,
     provider_id: number,
+    templatesIds: number[],
+    modifiersIds: number[],
+    threadChatMessages: ThreadChatMessage[],
+    threadParameters: ThreadParameter[]
 ) => {
+    const templates_ids = templatesIds.map(t => {
+        return { template_id: t };
+    });
+
+    const modifiers_ids = modifiersIds.map(m => {
+        return { modifier_id: m };
+    });
+
     return await prisma.thread.create({
         data: {
             title,
@@ -56,6 +70,26 @@ const createOne = async (
             workspace_id,
             technology_id,
             provider_id,
+            threads_templates: {
+                createMany: {
+                    data: templates_ids
+                }
+            },
+            threads_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            },
+            threads_chat_messages: {
+                createMany: {
+                    data: threadChatMessages
+                }
+            },
+            threads_parameters: {
+                createMany: {
+                    data: threadParameters
+                }
+            }
         }
     });
 }
@@ -63,21 +97,71 @@ const createOne = async (
 const updateOne = async (
     id: number,
     title: string,
-    response: string,
-    prompt_id: number,
-    workspace_id: number,
+    slug: string,
     key: string,
-    user_id: number
+    content: string,
+    response: string,
+    user_id: number,
+    workspace_id: number,
+    technology_id: number,
+    provider_id: number,
+    templatesIds: number[],
+    modifiersIds: number[],
+    threadChatMessages: ThreadChatMessage[]
 ) => {
+    const templates_ids = templatesIds.map(t => {
+        return { template_id: t };
+    });
+
+    const modifiers_ids = modifiersIds.map(m => {
+        return { modifier_id: m };
+    });
+
+    await prisma.threadTemplate.deleteMany({
+        where: {
+            thread_id: id
+        }
+    });
+
+    await prisma.threadModifier.deleteMany({
+        where: {
+            thread_id: id
+        }
+    });
+
+    await prisma.threadChatMessage.deleteMany({
+        where: {
+            thread_id: id
+        }
+    });
+
     return await prisma.thread.update({
         where: { id },
         data: {
             title,
-            prompt_id,
-            workspace_id,
-            response,
+            slug,
             key,
-            user_id
+            content,
+            response,
+            user_id,
+            workspace_id,
+            technology_id,
+            provider_id,
+            threads_templates: {
+                createMany: {
+                    data: templates_ids
+                }
+            },
+            threads_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            },
+            threads_chat_messages: {
+                createMany: {
+                    data: threadChatMessages
+                }
+            }
         }
     });
 }
