@@ -6,6 +6,15 @@ const getAll = async () => {
     return await prisma.language.findMany();
 }
 
+const getDefault = async () => {
+    return await prisma.language.findFirst({
+        where: {
+            default: true
+        }
+    })
+}
+
 export default {
-    getAll
+    getAll,
+    getDefault
 }

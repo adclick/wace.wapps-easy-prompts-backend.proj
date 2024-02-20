@@ -1,30 +1,29 @@
+import languageModel from '../models/languageModel';
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import userRepositoryModel from '../models/userRepositoryModel';
-import userWorkspaceModel from '../models/userWorkspaceModel';
 import workspaceModel from '../models/workspaceModel';
 import textUtils from '../utils/textUtils';
 
 const login = async (email: string, username: string, externalId: string) => {
-    const user = await userModel.upsertOne(email, username, externalId);
+    const defaultLanguage = await languageModel.getDefault();
+    if (!defaultLanguage) throw new Error('No default language defined in the system. Please contact support');
+
+    const user = await userModel.upsertOne(email, username, externalId, defaultLanguage.id);
 
     // Create or update main personal repo
     const repoName = "My Repository";
     const repoSlug = textUtils.toSlug(repoName);
-    const repository = await repositoryModel.upsertOne(repoName, repoSlug, user.id);
+    const repository = await repositoryModel.upsertOne(repoName, repoSlug, user.id, true);
     
     // Create or update main Workspace
     const workspaceName = "My Workspace";
     const workspaceSlug = textUtils.toSlug(workspaceName);
-    const workspace = await workspaceModel.upsertOne(workspaceName, workspaceSlug, user.id);
+    const workspace = await workspaceModel.upsertOne(workspaceName, workspaceSlug, user.id, true);
 
     upsertUserToRepositories(email, user.id);
 
-    return {
-        ...user,
-        history_repository_id: repository.id,
-        workspace_id: workspace.id
-    };
+    return user;
 };
 
 const upsertUserToRepositories = async (email: string, userId: number) => {

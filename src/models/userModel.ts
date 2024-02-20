@@ -6,31 +6,29 @@ const getOneById = async (external_id: string) => {
     return await prisma.user.findUnique({
         where: {
             external_id
+        },
+        include: {
+            language: true,
+            repositories: true,
+            workspaces: true,
         }
     })
 }
 
-
-const insertOne = async (external_id: string, email: string, username: string) => {
-    return await prisma.user.create({
-        data: {
-            email,
-            username,
-            external_id
-        },
-    })
-}
-
-const upsertOne = async (email: string, username: string, external_id: string) => {
+const upsertOne = async (email: string, username: string, external_id: string, language_id: number) => {
     return await prisma.user.upsert({
         where: { email },
-        update: { username, external_id },
-        create: { email, username, external_id }
+        update: { username, external_id, language_id },
+        create: { email, username, external_id, language_id },
+        include: {
+            language: true,
+            repositories: true,
+            workspaces: true,
+        }
     })
 }
 
 export default {
     getOneById,
-    insertOne,
     upsertOne,
 }

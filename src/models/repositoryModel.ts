@@ -8,13 +8,22 @@ const getOneBySlug = async (slug: string) => {
     });
 }
 
-const upsertOne = async (name: string, slug: string, user_id: number) => {
+const getDefault = async (external_id: string) => {
+    return await prisma.repository.findFirst({
+        where: {
+            user: {external_id},
+            
+        }
+    })
+}
+
+const upsertOne = async (name: string, slug: string, user_id: number, isDefault: boolean) => {
     return await prisma.repository.upsert({
         where: {
             user_id_slug: { user_id, slug }
         },
-        update: { name, slug, },
-        create: { name, slug, user_id }
+        update: { name, slug, default: isDefault },
+        create: { name, slug, user_id, default: isDefault }
     })
 }
 

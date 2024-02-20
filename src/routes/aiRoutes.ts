@@ -4,11 +4,8 @@ import aiController from '../controllers/aiChatController';
 import aiTextGenerationController from '../controllers/aiTextGenerationController';
 import aiImageGenerationController from '../controllers/aiImageGenerationController';
 import { errorHandler } from '../middlewares/errors';
-import { userExists } from "../middlewares/userMiddleware";
 
 const router = express.Router();
-
-router.use(userExists);
 
 // Text Generation
 router.post('/text-generation/', aiTextGenerationController.textGeneration);

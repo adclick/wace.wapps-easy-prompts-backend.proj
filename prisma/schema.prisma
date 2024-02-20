@@ -9,6 +9,11 @@ datasource db {
     directUrl = env("DATABASE_DIRECT_URL")
 }
 
+enum PromptStatus {
+    DRAFT
+    PUBLISHED
+}
+
 model User {
     id                 Int              @id @default(autoincrement())
     email              String           @db.VarChar(255)
@@ -16,6 +21,8 @@ model User {
     theme              String           @default("dark") @db.VarChar(255)
     first_login        Boolean          @default(true)
     external_id        String
+    language_id        Int
+    language           Language         @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     prompts            Prompt[]
     modifiers          Modifier[]
     templates          Template[]
@@ -36,9 +43,11 @@ model Language {
     id        Int        @id @default(autoincrement())
     name      String     @db.VarChar(255)
     slug      String     @db.VarChar(255)
+    default   Boolean    @default(false)
     prompts   Prompt[]
     modifiers Modifier[]
     templates Template[]
+    users     User[]
 
     @@unique([slug])
     @@map("languages")
@@ -49,6 +58,7 @@ model Repository {
     name                   String               @db.VarChar(255)
     slug                   String?              @db.VarChar(255)
     user_id                Int
+    default                Boolean              @default(false)
     prompts                Prompt[]
     modifiers              Modifier[]
     templates              Template[]
@@ -97,6 +107,7 @@ model Prompt {
     id                    Int                 @id @default(autoincrement())
     title                 String              @db.VarChar(255)
     slug                  String              @db.VarChar(255)
+    status                PromptStatus        @default(DRAFT)
     content               String
     response              Json?
     description           String?
@@ -121,6 +132,8 @@ model Prompt {
     prompts_chat_messages PromptChatMessage[]
     prompts_respositories PromptRepository[]
     threads               Thread[]
+    Workspace             Workspace?          @relation(fields: [workspaceId], references: [id])
+    workspaceId           Int?
 
     @@index(fields: [hash], type: Hash)
     @@map("prompts")
@@ -200,10 +213,12 @@ model Workspace {
     id               Int             @id @default(autoincrement())
     name             String          @db.VarChar(255)
     slug             String          @db.VarChar(255)
+    default          Boolean         @default(false)
     user_id          Int
     user             User            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     users_workspaces UserWorkspace[]
     threads          Thread[]
+    Prompt           Prompt[]
 
     @@unique([user_id, slug])
     @@map("workspaces")
@@ -213,6 +228,7 @@ model Thread {
     id           Int      @id @default(autoincrement())
     title        String   @db.VarChar(255)
     created_at   DateTime @default(now()) @db.Timestamptz(6)
+    key          String
     user_id      Int
     prompt_id    Int
     workspace_id Int

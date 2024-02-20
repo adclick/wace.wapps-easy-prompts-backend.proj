@@ -15,7 +15,8 @@ async function main() {
     const languagePT = await prisma.language.create({
         data: {
             name: "Portuguese",
-            slug: "pt"
+            slug: "pt",
+            default: true
         }
     });
 
@@ -24,7 +25,8 @@ async function main() {
             email: "nuno.saraiva@wacestudio.com",
             username: "nuno.saraiva",
             theme: "dark",
-            external_id: randomUUID()
+            external_id: randomUUID(),
+            language_id: languagePT.id
         }
     });
 

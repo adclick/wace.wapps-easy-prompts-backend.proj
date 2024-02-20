@@ -1,4 +1,4 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { Prisma, PrismaClient, PromptStatus } from "@prisma/client";
 import { PromptChatMessage } from "./promptChatMessageModel";
 import { PromptParameter } from "./promptParameter";
 
@@ -44,6 +44,7 @@ const getAll = async (
 ) => {
     return await prisma.prompt.findMany({
         where: {
+            status: "PUBLISHED",
             OR: [
                 { title: { startsWith: search_term, mode: "insensitive" } },
                 { title: { endsWith: search_term, mode: "insensitive" } },
@@ -81,6 +82,7 @@ const getAll = async (
         select: {
             id: true,
             title: true,
+            status: true,
             content: true,
             description: true,
             response: true,
@@ -174,9 +176,9 @@ const createOne = async (
     user_id: number,
     title: string,
     slug: string,
+    status: PromptStatus,
     description: string,
     content: string,
-    response: string,
     language_id: number,
     repository_id: number,
     technology_id: number,
@@ -198,9 +200,9 @@ const createOne = async (
         data: {
             title,
             slug,
+            status,
             description,
             content,
-            response,
             language_id,
             repository_id,
             technology_id,
@@ -235,6 +237,7 @@ const updateOne = async (
     user_id: number,
     title: string,
     slug: string,
+    status: PromptStatus,
     description: string,
     content: string,
     language_id: number,
@@ -276,6 +279,7 @@ const updateOne = async (
         data: {
             title,
             slug,
+            status,
             description,
             content,
             language_id,

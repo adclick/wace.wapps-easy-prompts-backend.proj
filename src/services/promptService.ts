@@ -5,6 +5,7 @@ import textUtils from '../utils/textUtils';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import { PromptParameter } from '../models/promptParameter';
+import { PromptStatus } from '@prisma/client';
 
 const getPrompts = async (
     externalId: string,
@@ -33,9 +34,9 @@ const getPromptById = async (promptId: number) => {
 const createPrompt = async (
     externalId: string,
     title: string,
+    status: PromptStatus,
     description: string,
     content: string,
-    response: string,
     languageId: number,
     repositoryId: number,
     technologyId: number,
@@ -59,9 +60,9 @@ const createPrompt = async (
         user.id,
         title,
         textUtils.toSlug(title),
+        status,
         description,
         content,
-        response,
         languageId,
         repositoryId,
         technologyId,
@@ -102,6 +103,7 @@ const updatePrompt = async (
         user.id,
         title,
         textUtils.toSlug(title),
+        PromptStatus.PUBLISHED,
         description,
         content,
         languageId,

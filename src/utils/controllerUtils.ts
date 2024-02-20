@@ -1,4 +1,5 @@
 import { Request } from "express";
+import BadRequestError from "../errors/BadRequestError";
 
 const getUserId = (req: Request): string => getString(req, 'user_id');
 const getSearchTerm = (req: Request, required: boolean = false): string => getString(req, 'search_term', required);
@@ -11,10 +12,13 @@ const getTechnologyId = (req: Request, required: boolean = false, method: string
 const getProviderId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'provider_id', required, method)
 const getProvidersIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'providers_ids', required, method)
 const getTitle = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'title', required, method)
+const getKey = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'key', required, method)
+const getStatus = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'status', required, method)
 const getDescription = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'description', required, method)
 const getContent = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'content', required, method)
 const getResponse = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'response', required, method)
 const getPromptId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'prompt_id', required, method)
+const getThreadId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'thread_id', required, method)
 const getModifierId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'modifier_id', required, method)
 const getTemplateId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'template_id', required, method)
 const getWorkspaceId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'workspace_id', required, method)
@@ -46,7 +50,7 @@ const getParameter = (req: Request, parameter: string, method: string = 'get'): 
 const getString = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): string => {
     const string = getParameter(req, parameter, method);
 
-    if (required && string === "") throw new Error(missingParameterMessage(parameter));
+    if (required && string === "") throw new BadRequestError({ message: missingParameterMessage(parameter) });
 
     return string;
 }
@@ -54,7 +58,7 @@ const getString = (req: Request, parameter: string, required: boolean = false, m
 const getNumber = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): number => {
     const number = parseInt(getParameter(req, parameter, method));
 
-    if (required && isNaN(number)) throw new Error(missingParameterMessage(parameter));
+    if (required && isNaN(number)) throw new BadRequestError({ message: missingParameterMessage(parameter) });
 
     return number;
 }
@@ -63,11 +67,11 @@ const getArray = (req: Request, parameter: string, required: boolean = false, me
     const array = getParameter(req, parameter, method);
 
     // Check if exists
-    if (required && (array === "" || array === undefined)) throw new Error(missingParameterMessage(parameter));
+    if (required && (array === "" || array === undefined)) throw new BadRequestError({ message: missingParameterMessage(parameter) });
 
     // Check if its an array
     const json = JSON.parse(array);
-    if (!Array.isArray(json)) throw new Error(`Incorrect format for parameter ${parameter}`);
+    if (!Array.isArray(json)) throw new BadRequestError({ message: `Incorrect format for parameter ${parameter}` });
 
     return json;
 }
@@ -76,25 +80,25 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
     const ids = getParameter(req, parameter, method);
 
     // Check if exists
-    if (required && ids === "") throw new Error(missingParameterMessage(parameter));
+    if (required && ids === "") throw new BadRequestError({ message: missingParameterMessage(parameter) });
 
     // Return empty array if not exists
     if (ids === undefined) return [];
 
     // Check if its an array
     const json = JSON.parse(ids);
-    if (!Array.isArray(json)) throw new Error(`Incorrect format for parameter ${parameter}`);
+    if (!Array.isArray(json)) throw new BadRequestError({ message: `Incorrect format for parameter ${parameter}` });
 
     // Check if it contains numeric values
     const invalidIds = json.find(id => isNaN(parseInt(id)));
-    if (invalidIds !== undefined) throw new Error(`All elements of parameter ${parameter} need to be numeric`);
+    if (invalidIds !== undefined) throw new BadRequestError({ message: `All elements of parameter ${parameter} need to be numeric` });
 
     return json;
 }
 
 const getErrorResponse = (error: any) => {
     console.error(error);
-    
+
     if ("response" in error && "status" in error.response && "statusText" in error.response) {
         let message = error.response.statusText;
 
@@ -110,7 +114,7 @@ const getErrorResponse = (error: any) => {
             message
         }
     }
-    
+
     return {
         code: 500,
         status: false,
@@ -130,12 +134,15 @@ export default {
     getProviderId,
     getProvidersIds,
     getPromptId,
+    getThreadId,
+    getKey,
     getModifierId,
     getWorkspaceId,
     getLanguageId,
     getRepositoryId,
     getTechnologyId,
     getTitle,
+    getStatus,
     getDescription,
     getContent,
     getResponse,

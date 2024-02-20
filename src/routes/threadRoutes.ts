@@ -8,6 +8,8 @@ const router = express.Router();
 // Define routes
 router.get('/', threadController.getAllThreadsByWorkspace);
 router.post('/', threadController.createOneThread);
+router.post('/:thread_id', threadController.updateOneThread);
+router.delete('/:thread_id', threadController.deleteOnethread);
 
 router.use(errorHandler);
 
