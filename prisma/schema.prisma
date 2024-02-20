@@ -81,6 +81,7 @@ model Technology {
     prompts   Prompt[]
     templates Template[]
     modifier  Modifier[]
+    threads   Thread[]
 
     @@unique([slug])
     @@map("technologies")
@@ -98,9 +99,44 @@ model Provider {
     templates     Template[]
     modifier      Modifier[]
     parameters    Parameter[]
+    threads       Thread[]
 
     @@unique([slug, model_slug])
     @@map("providers")
+}
+
+model Workspace {
+    id               Int             @id @default(autoincrement())
+    name             String          @db.VarChar(255)
+    slug             String          @db.VarChar(255)
+    default          Boolean         @default(false)
+    user_id          Int
+    user             User            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    users_workspaces UserWorkspace[]
+    threads          Thread[]
+
+    @@unique([user_id, slug])
+    @@map("workspaces")
+}
+
+model Thread {
+    id            Int        @id @default(autoincrement())
+    title         String     @db.VarChar(255)
+    slug          String     @db.VarChar(255)
+    content       String
+    response      String
+    created_at    DateTime   @default(now()) @db.Timestamptz(6)
+    key           String
+    technology_id Int
+    provider_id   Int?
+    user_id       Int
+    workspace_id  Int
+    technology    Technology @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    provider      Provider?  @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user          User       @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    workspace     Workspace  @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@map("threads")
 }
 
 model Prompt {
@@ -109,7 +145,6 @@ model Prompt {
     slug                  String              @db.VarChar(255)
     status                PromptStatus        @default(DRAFT)
     content               String
-    response              Json?
     description           String?
     hash                  String?
     created_at            DateTime            @default(now()) @db.Timestamptz(6)
@@ -131,11 +166,7 @@ model Prompt {
     prompts_modifiers     PromptModifier[]
     prompts_chat_messages PromptChatMessage[]
     prompts_respositories PromptRepository[]
-    threads               Thread[]
-    Workspace             Workspace?          @relation(fields: [workspaceId], references: [id])
-    workspaceId           Int?
 
-    @@index(fields: [hash], type: Hash)
     @@map("prompts")
 }
 
@@ -207,38 +238,6 @@ model Parameter {
 
     @@unique([slug, provider_id])
     @@map("parameters")
-}
-
-model Workspace {
-    id               Int             @id @default(autoincrement())
-    name             String          @db.VarChar(255)
-    slug             String          @db.VarChar(255)
-    default          Boolean         @default(false)
-    user_id          Int
-    user             User            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    users_workspaces UserWorkspace[]
-    threads          Thread[]
-    Prompt           Prompt[]
-
-    @@unique([user_id, slug])
-    @@map("workspaces")
-}
-
-model Thread {
-    id           Int      @id @default(autoincrement())
-    title        String   @db.VarChar(255)
-    created_at   DateTime @default(now()) @db.Timestamptz(6)
-    key          String
-    user_id      Int
-    prompt_id    Int
-    workspace_id Int
-    response     String   @db.Text
-
-    user      User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-    prompt    Prompt    @relation(fields: [prompt_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    workspace Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
-
-    @@map("threads")
 }
 
 model UserWorkspace {
