@@ -49,6 +49,9 @@ const getAllByWorkspace = async (workspace_id: number) => {
                     parameter: true
                 }
             }
+        },
+        orderBy: {
+            key: "asc"
         }
     });
 }
