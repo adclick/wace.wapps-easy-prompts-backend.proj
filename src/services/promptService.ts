@@ -5,6 +5,7 @@ import textUtils from '../utils/textUtils';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import { PromptParameter } from '../models/promptParameter';
+import { ThreadChatMessage } from '@prisma/client';
 
 const getPrompts = async (
     externalId: string,
@@ -54,6 +55,13 @@ const createPrompt = async (
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
+    const promptChatMessages = chatMessages.map(cm => {
+        return {
+            role: cm.role,
+            message: cm.message
+        }
+    })
+
     return await promptModel.createOne(
         user.id,
         title,
@@ -66,7 +74,7 @@ const createPrompt = async (
         providerId,
         templatesIds,
         modifiersIds,
-        chatMessages,
+        promptChatMessages,
         promptParameters
     )
 }

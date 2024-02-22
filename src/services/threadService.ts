@@ -54,10 +54,18 @@ const updateOneThread = async (
     providerId: number,
     templatedsIds: number[],
     modifiersIds: number[],
-    threadChatMessages: ThreadChatMessage[],
+    chatMessages: ThreadChatMessage[],
 ) => {
     const user = await userModel.getOneById(userExternalId);
     if (!user) throw new Error("User not found");
+
+    
+    const threadChatMessages = chatMessages.map(cm => {
+        return {
+            role: cm.role,
+            message: cm.message
+        }
+    })
 
     return await threadModel.updateOne(
         id,
