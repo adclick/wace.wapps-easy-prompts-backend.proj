@@ -1,10 +1,17 @@
+import BadRequestError from "../errors/BadRequestError";
 import { ThreadChatMessage } from "../models/threadChatMessageModel";
 import threadModel from "../models/threadModel";
 import { ThreadParameter } from "../models/threadParameter";
 import userModel from "../models/userModel";
+import workspaceModel from "../models/workspaceModel";
 import textUtils from "../utils/textUtils";
 
-const getAllThreadsByWorkspace = async (workspace_id: number) => {
+const getAllThreadsByWorkspace = async (
+    userExternalId: string,
+    workspace_id: number
+) => {
+    await validateUserForWorkspace(userExternalId, workspace_id);
+
     return await threadModel.getAllByWorkspace(workspace_id);
 }
 
@@ -24,6 +31,8 @@ const createOneThread = async (
 ) => {
     const user = await userModel.getOneById(userExternalId);
     if (!user) throw new Error("User not found");
+
+    await validateUserForWorkspace(userExternalId, workspaceId);
 
     return await threadModel.createOne(
         title,
@@ -59,7 +68,8 @@ const updateOneThread = async (
     const user = await userModel.getOneById(userExternalId);
     if (!user) throw new Error("User not found");
 
-    
+    await validateUserForWorkspace(userExternalId, workspaceId);
+
     const threadChatMessages = chatMessages.map(cm => {
         return {
             role: cm.role,
@@ -91,6 +101,14 @@ const deleteOneThread = async (id: number) => {
 
 const deleteAllThreadsByWorkspaceId = async (workspaceId: number) => {
     return await threadModel.deleteAllByWorkspaceId(workspaceId);
+}
+
+const validateUserForWorkspace = async (userExternalId: string, workspaceId: number) => {
+    const userWorkspaces = await workspaceModel.getAllByUser(userExternalId);
+
+    const hasWorkspace = userWorkspaces.find(w => w.id === workspaceId);
+
+    if (!hasWorkspace) throw new BadRequestError({ message: "Permission denied for the given workspace" }); 
 }
 
 

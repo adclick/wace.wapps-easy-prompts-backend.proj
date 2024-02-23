@@ -4,6 +4,7 @@ import threadService from "../services/threadService";
 
 const getAllThreadsByWorkspace = async (req: Request, res: Response) => {
     const response = await threadService.getAllThreadsByWorkspace(
+        controllerUtils.getUserExternalId(req, true, 'get'),
         controllerUtils.getWorkspaceId(req, true, 'get'),
     );
 
