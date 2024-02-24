@@ -21,7 +21,7 @@ const getAllByUser = async (external_id: string) => {
                 },
                 {
                     users_workspaces: {
-                        every: {
+                        some: {
                             user: { external_id }
                         }
                     }

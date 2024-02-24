@@ -94,12 +94,23 @@ const updateOneThread = async (
     );
 }
 
+const deleteOneThread = async (userExternalId: string, threadId: number) => {
+    const thread = await threadModel.getOneById(threadId);
 
-const deleteOneThread = async (id: number) => {
-    return await threadModel.deleteOne(id);
+    if (!thread) {
+        throw new BadRequestError({ message: "Thread not found" });
+    }
+
+    if (thread.user.external_id !== userExternalId) {
+        throw new BadRequestError({ message: "Permission denied for the given workspace" });
+    }
+
+    return await threadModel.deleteOne(threadId);
 }
 
-const deleteAllThreadsByWorkspaceId = async (workspaceId: number) => {
+const deleteAllThreadsByWorkspaceId = async (userExternalId: string, workspaceId: number) => {
+    await validateUserForWorkspace(userExternalId, workspaceId);
+
     return await threadModel.deleteAllByWorkspaceId(workspaceId);
 }
 
@@ -108,7 +119,7 @@ const validateUserForWorkspace = async (userExternalId: string, workspaceId: num
 
     const hasWorkspace = userWorkspaces.find(w => w.id === workspaceId);
 
-    if (!hasWorkspace) throw new BadRequestError({ message: "Permission denied for the given workspace" }); 
+    if (!hasWorkspace) throw new BadRequestError({ message: "Permission denied for the given workspace" });
 }
 
 

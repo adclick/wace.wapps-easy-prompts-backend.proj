@@ -51,7 +51,8 @@ const updateOneThread = async (req: Request, res: Response) => {
 
 const deleteOnethread = async (req: Request, res: Response) => {
     const response = await threadService.deleteOneThread(
-        controllerUtils.getThreadId(req, true, 'url')
+        controllerUtils.getUserExternalId(req, true, 'post'),
+        controllerUtils.getThreadId(req, true, 'url'),
     );
 
     return res.status(200).json(response);
@@ -59,6 +60,7 @@ const deleteOnethread = async (req: Request, res: Response) => {
 
 const deleteAllThreadsByWorkspaceId = async (req: Request, res: Response) => {
     const response = await threadService.deleteAllThreadsByWorkspaceId(
+        controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getWorkspaceId(req, true, 'post')
     );
 
