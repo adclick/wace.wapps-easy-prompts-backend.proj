@@ -163,56 +163,142 @@ async function main() {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerOpenaiDalle2.id,
-                data: { min: "1", max: "4" },
+                data: [
+                    {
+                        value: "1", label: "1"
+                    },
+                    {
+                        value: "2", label: "2"
+                    },
+                    {
+                        value: "3", label: "3"
+                    },
+                    {
+                        value: "4", label: "4"
+                    },
+                ],
                 value: "1",
             },
             {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerOpenaiDalle3.id,
-                data: { min: "1", max: "1" },
+                data: [
+                    {
+                        value: "1", label: "1"
+                    },
+                    {
+                        value: "2", label: "2"
+                    },
+                    {
+                        value: "3", label: "3"
+                    },
+                    {
+                        value: "4", label: "4"
+                    },
+                ],
                 value: "1",
             },
             {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerStabilityAI.id,
-                data: { min: "1", max: "4" },
+                data: [
+                    {
+                        value: "1", label: "1"
+                    },
+                    {
+                        value: "2", label: "2"
+                    },
+                    {
+                        value: "3", label: "3"
+                    },
+                    {
+                        value: "4", label: "4"
+                    },
+                ],
                 value: "1",
             },
             {
                 name: "Number of images",
                 slug: "num_images",
                 provider_id: providerDeepai.id,
-                data: { min: "1", max: "4" },
+                data: [
+                    {
+                        value: "1", label: "1"
+                    },
+                    {
+                        value: "2", label: "2"
+                    },
+                    {
+                        value: "3", label: "3"
+                    },
+                    {
+                        value: "4", label: "4"
+                    },
+                ],
                 value: "1",
             },
             {
                 name: "Image Resolution",
                 slug: "image_resolution",
                 provider_id: providerOpenaiDalle2.id,
-                data: ["256x256", "512x512", "1024x1024"],
+                data: [
+                    {
+                        value: "256x256", label: "256x256"
+                    },
+                    {
+                        value: "512x512", label: "512x512"
+                    },
+                    {
+                        value: "1024x1024", label: "1024x1024"
+                    },
+                ],
                 value: "1024x1024",
             },
             {
                 name: "Image Resolution",
                 slug: "image_resolution",
                 provider_id: providerOpenaiDalle3.id,
-                data: ["256x256", "512x512", "1024x1024"],
+                data: [
+                    {
+                        value: "256x256", label: "256x256"
+                    },
+                    {
+                        value: "512x512", label: "512x512"
+                    },
+                    {
+                        value: "1024x1024", label: "1024x1024"
+                    },
+                ],
                 value: "1024x1024",
             },
             {
                 name: "Image Resolution",
                 slug: "image_resolution",
                 provider_id: providerStabilityAI.id,
-                data: ["256x256", "512x512", "1024x1024"],
+                data: [
+                    {
+                        value: "256x256", label: "256x256"
+                    },
+                    {
+                        value: "512x512", label: "512x512"
+                    },
+                    {
+                        value: "1024x1024", label: "1024x1024"
+                    },
+                ],
                 value: "1024x1024",
             },
             {
                 name: "Image Resolution",
                 slug: "image_resolution",
                 provider_id: providerDeepai.id,
-                data: ["512x512"],
+                data: [
+                    {
+                        value: "512x512", label: "512x512"
+                    },
+                ],
                 value: "512x512",
             },
         ]
