@@ -28,7 +28,7 @@ const createPrompt = async (req: Request, res: Response) => {
     const response = await promptService.createPrompt(
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
-        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getDescription(req, false, 'post'),
         controllerUtils.getContent(req, true, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
         controllerUtils.getRepositoryId(req, true, 'post'),

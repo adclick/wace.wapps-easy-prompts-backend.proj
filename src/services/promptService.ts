@@ -5,7 +5,6 @@ import textUtils from '../utils/textUtils';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import { PromptParameter } from '../models/promptParameter';
-import { ThreadChatMessage } from '@prisma/client';
 
 const getPrompts = async (
     externalId: string,
