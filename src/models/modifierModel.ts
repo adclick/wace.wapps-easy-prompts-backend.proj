@@ -156,6 +156,7 @@ const getAllByFilters = async (
             provider: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -223,6 +224,7 @@ const getAllByUser = async (
             provider: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,

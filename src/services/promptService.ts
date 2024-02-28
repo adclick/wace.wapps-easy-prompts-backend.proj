@@ -73,7 +73,10 @@ const createPrompt = async (
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
-    const provider = await providerModel.getOneByUUID(providerUUID);
+    let provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) {
+        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    }
     if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
     const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
@@ -140,7 +143,10 @@ const updatePrompt = async (
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
-    const provider = await providerModel.getOneByUUID(providerUUID);
+    let provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) {
+        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    }
     if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
     const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
