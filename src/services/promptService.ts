@@ -5,29 +5,46 @@ import textUtils from '../utils/textUtils';
 import promptUtils from '../utils/promptUtils';
 import { PromptChatMessage } from '../models/promptChatMessageModel';
 import { PromptParameter } from '../models/promptParameter';
+import languageService from './languageService';
+import repositoryService from './repositoryService';
+import technologyService from './technologyService';
+import BadRequestError from '../errors/BadRequestError';
+import languageModel from '../models/languageModel';
+import technologyModel from '../models/technologyModel';
+import providerModel from '../models/providerModel';
+import templateService from './templateService';
+import modifierService from './modifierService';
 
 const getPrompts = async (
     externalId: string,
     search_term: string,
-    languages_ids: number[],
-    repositories_ids: number[],
-    technologies_ids: number[],
+    languages_uuids: string[],
+    repositories_uuids: string[],
+    technologies_uuids: string[],
     limit: number,
     offset: number,
 ) => {
+    const languagesIds = await languageService.getIdsFromUUIDs(languages_uuids);
+    const repositoriesIds = await repositoryService.getIdsFromUUIDs(repositories_uuids);
+    const technologiesIds = await technologyService.getIdsFromUUIDs(technologies_uuids);
+
     return await promptModel.getAll(
         externalId,
         search_term,
-        languages_ids,
-        repositories_ids,
-        technologies_ids,
+        languagesIds,
+        repositoriesIds,
+        technologiesIds,
         limit,
         offset,
     );
 };
 
-const getPromptById = async (promptId: number) => {
-    return await promptModel.getOneById(promptId);
+const getPromptById = async (promptUUID: string) => {
+    const prompt = await promptModel.getOneByUUID(promptUUID);
+    
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
+
+    return await promptModel.getOneById(prompt.id);
 };
 
 const createPrompt = async (
@@ -35,21 +52,36 @@ const createPrompt = async (
     title: string,
     description: string,
     content: string,
-    languageId: number,
-    repositoryId: number,
-    technologyId: number,
-    providerId: number,
-    templatesIds: number[],
-    modifiersIds: number[],
+    languageUUID: string,
+    repositoryUUID: string,
+    technologyUUID: string,
+    providerUUID: string,
+    templatesUUIDs: string[],
+    modifiersUUIDs: string[],
     chatMessages: PromptChatMessage[],
     promptParameters: PromptParameter[]
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
 
+    const language = await languageModel.getOneByUUID(languageUUID);
+    if (!language) throw new BadRequestError({ message: `Language "${languageUUID}" not found` });
+
+    const repository = await repositoryModel.getOneByUUID(repositoryUUID);
+    if (!repository) throw new BadRequestError({ message: `Repository "${repositoryUUID}" not found` });
+
+    const technology = await technologyModel.getOneByUUID(technologyUUID);
+    if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
+
+    const provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
+
+    const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
+    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+
     const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
         externalId,
-        repositoryId
+        repository.id
     );
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
@@ -68,10 +100,10 @@ const createPrompt = async (
         textUtils.toSlug(title),
         description,
         content,
-        languageId,
-        repositoryId,
-        technologyId,
-        providerId,
+        language.id,
+        repository.id,
+        technology.id,
+        provider.id,
         templatesIds,
         modifiersIds,
         promptChatMessages,
@@ -80,40 +112,58 @@ const createPrompt = async (
 }
 
 const updatePrompt = async (
-    id: number,
+    uuid: string,
     externalId: string,
     title: string,
     description: string,
     content: string,
-    languageId: number,
-    repositoryId: number,
-    technologyId: number,
-    providerId: number,
-    templatesIds: number[],
-    modifiersIds: number[],
+    languageUUID: string,
+    repositoryUUID: string,
+    technologyUUID: string,
+    providerUUID: string,
+    templatesUUIDs: string[],
+    modifiersUUIDs: string[],
     chatMessages: PromptChatMessage[],
 ) => {
     const user = await userModel.getOneById(externalId);
     if (!user) throw new Error("User not found");
 
+    const prompt = await promptModel.getOneByUUID(uuid);
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${uuid}" not found` });
+
+    const language = await languageModel.getOneByUUID(languageUUID);
+    if (!language) throw new BadRequestError({ message: `Language "${languageUUID}" not found` });
+
+    const repository = await repositoryModel.getOneByUUID(repositoryUUID);
+    if (!repository) throw new BadRequestError({ message: `Repository "${repositoryUUID}" not found` });
+
+    const technology = await technologyModel.getOneByUUID(technologyUUID);
+    if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
+
+    const provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
+
+    const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
+    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+
     const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
         externalId,
-        repositoryId
+        repository.id
     );
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
     return await promptModel.updateOne(
-        id,
+        prompt.id,
         user.id,
         title,
         textUtils.toSlug(title),
         description,
         content,
-        languageId,
-        repositoryId,
-        technologyId,
-        providerId,
+        language.id,
+        repository.id,
+        technology.id,
+        provider.id,
         templatesIds,
         modifiersIds,
         chatMessages,
@@ -159,8 +209,11 @@ const applyModifiersAndTemplatesFromPrompt = async (promptId: number): Promise<s
 
 }
 
-const deletePrompt = async (id: number) => {
-    return await promptModel.deleteOne(id);
+const deletePrompt = async (uuid: string) => {
+    const prompt = await promptModel.getOneByUUID(uuid);
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${uuid}" not found` });
+    
+    return await promptModel.deleteOne(prompt.id);
 }
 
 export default {

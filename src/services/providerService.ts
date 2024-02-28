@@ -1,11 +1,19 @@
+import BadRequestError from "../errors/BadRequestError";
 import providerModel from "../models/providerModel";
+import technologyModel from "../models/technologyModel";
 
-const getDefault = async (technologyId: number) => {
-    return await providerModel.getOneDefaultByTechnologyId(technologyId);
+const getDefault = async (technologyUUID: string) => {
+    const technology = await technologyModel.getOneByUUID(technologyUUID);
+    if (!technology) throw new BadRequestError({message: `Technology "${technologyUUID}" not found`});
+
+    return await providerModel.getOneDefaultByTechnologyId(technology.id);
 };
 
-const getProviders = async (technologyId: number) => {
-    return await providerModel.getAll(technologyId);
+const getProviders = async (technologyUUID: string) => {
+    const technology = await technologyModel.getOneByUUID(technologyUUID);
+    if (!technology) throw new BadRequestError({message: `Technology "${technologyUUID}" not found`});
+    
+    return await providerModel.getAll(technology.id);
 }
 
 export default {

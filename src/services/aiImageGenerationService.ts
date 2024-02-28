@@ -6,6 +6,7 @@ import promptService from './promptService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
 import templateModel from '../models/templateModel';
+import BadRequestError from '../errors/BadRequestError';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/image/generate-image';
@@ -16,17 +17,19 @@ interface Settings {
 
 const imageGeneration = async (
     text: string,
-    providerId: number,
-    modifiersIds: number[],
-    templatesIds: number[],
+    providerUUID: string,
+    modifiersUUIDs: string[],
+    templatesUUIDs: string[],
     numImages: number,
     imageResolution: string
 ) => {
     // Validate provider
-    const provider = await providerModel.getOneById(providerId);
-    if (!provider) throw new Error(`Provider (${providerId}) not found`);
+    const provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
 
-    const templates = await templateModel.getAllByIds(templatesIds);
+    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
+    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+
     for (const template of templates) {
         const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
 
@@ -58,10 +61,10 @@ const imageGeneration = async (
     );
 };
 
-const imageGenerationByPromptId = async (promptId: number) => {
+const imageGenerationByPromptId = async (promptUUID: string) => {
     // Validate Prompt
-    const prompt = await promptModel.getOneById(promptId);
-    if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
+    const prompt = await promptModel.getOneByUUID(promptUUID);
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
 
     // Apply modifiers
     const textModified = await promptService.applyModifiersAndTemplatesFromPrompt(prompt.id);

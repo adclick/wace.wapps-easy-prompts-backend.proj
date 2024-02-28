@@ -6,6 +6,16 @@ export interface Modifier {
     content: string,
 }
 
+const getOneByUUID = async (uuid: string) => await prisma.modifier.findUnique({ where: { uuid } });
+
+const getAllByUUIDs = async (uuids: string[]) => {
+    return await prisma.modifier.findMany({
+        where: {
+            uuid: { in: uuids }
+        }
+    })
+}
+
 const getOneById = async (id: number) => {
     return await prisma.modifier.findUnique({
         where: { id },
@@ -285,6 +295,8 @@ const deleteOne = async (id: number) => {
 }
 
 export default {
+    getOneByUUID,
+    getAllByUUIDs,
     getOneById,
     getAllByIds,
     getAllByFilters,

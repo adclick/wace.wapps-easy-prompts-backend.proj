@@ -13,6 +13,59 @@ export interface Modifier {
     content: string
 }
 
+const getOneByUUID = async (uuid: string) => await prisma.template.findUnique({ where: { uuid } });
+
+const getAllByUUIDs = async (uuids: string[]) => {
+    return await prisma.template.findMany({
+        where: {
+            uuid: { in: uuids }
+        },
+        include: {
+            language: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    name: true,
+                    slug: true,
+                    default: true
+                }
+            },
+            provider: {
+                select: {
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
+            },
+            user: {
+                select: {
+                    email: true,
+                    username: true,
+                    external_id: true
+                }
+            },
+            templates_modifiers: {
+                include: {
+                    modifier: true
+                }
+            }
+        }
+    })
+}
+
 const getOneById = async (id: number) => {
     return await prisma.template.findUnique({
         where: { id },
@@ -386,6 +439,8 @@ const deleteOne = async (id: number) => {
 }
 
 export default {
+    getOneByUUID,
+    getAllByUUIDs,
     getOneById,
     getAllByIds,
     getAllByUser,

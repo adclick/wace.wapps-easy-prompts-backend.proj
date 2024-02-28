@@ -4,6 +4,24 @@ import { ThreadParameter } from "./threadParameter";
 
 const prisma = new PrismaClient();
 
+const getOneByUUID = async (uuid: string) => {
+    return await prisma.thread.findUnique({ 
+        where: { 
+            uuid 
+        },
+        include: {
+            user: true,
+            workspace: true,
+            technology: true,
+            provider: true,
+            threads_chat_messages: true,
+            threads_templates: true,
+            threads_modifiers: true,
+            threads_parameters: true
+        }
+    });
+}
+
 const getOneById = async (id: number) => {
     return await prisma.thread.findUnique({
         where: { id },
@@ -219,6 +237,7 @@ const deleteAllByWorkspaceId = async (workspace_id: number) => {
 
 
 export default {
+    getOneByUUID,
     getOneById,
     getAllByWorkspace,
     createOne,

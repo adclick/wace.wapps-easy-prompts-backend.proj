@@ -16,7 +16,7 @@ const createOneThread = async (req: Request, res: Response) => {
         controllerUtils.getTitle(req, true, 'post'),
         controllerUtils.getKey(req, true, 'post'),
         controllerUtils.getContent(req, true, 'post'),
-        controllerUtils.getResponse(req, true, 'post'),
+        controllerUtils.getResponse(req, false, 'post'),
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getWorkspaceId(req, true, 'post'),
         controllerUtils.getTechnologyId(req, true, 'post'),

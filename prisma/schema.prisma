@@ -11,6 +11,7 @@ datasource db {
 
 model User {
     id                    Int                 @id @default(autoincrement())
+    uuid                  String              @default(uuid()) @db.VarChar(255)
     email                 String              @db.VarChar(255)
     username              String              @db.VarChar(255)
     theme                 String              @default("dark") @db.VarChar(255)
@@ -29,8 +30,10 @@ model User {
     threads_chat_messages ThreadChatMessage[]
     prompts_chat_messages PromptChatMessage[]
 
+    @@unique([uuid])
     @@unique([email])
     @@unique([external_id])
+    @@index([uuid])
     @@index([email])
     @@index([external_id])
     @@map("users")
@@ -38,6 +41,7 @@ model User {
 
 model Language {
     id        Int        @id @default(autoincrement())
+    uuid      String     @default(uuid()) @db.VarChar(255)
     name      String     @db.VarChar(255)
     slug      String     @db.VarChar(255)
     default   Boolean    @default(false)
@@ -46,12 +50,15 @@ model Language {
     templates Template[]
     users     User[]
 
+    @@unique([uuid])
     @@unique([slug])
+    @@index([uuid])
     @@map("languages")
 }
 
 model Repository {
     id                     Int                  @id @default(autoincrement())
+    uuid                   String               @default(uuid()) @db.VarChar(255)
     name                   String               @db.VarChar(255)
     slug                   String?              @db.VarChar(255)
     user_id                Int
@@ -65,12 +72,15 @@ model Repository {
     templates_repositories TemplateRepository[]
     modifiers_repositories ModifierRepository[]
 
+    @@unique([uuid])
     @@unique([user_id, slug])
+    @@index([uuid])
     @@map("repositories")
 }
 
 model Technology {
     id        Int        @id @default(autoincrement())
+    uuid      String     @default(uuid()) @db.VarChar(255)
     name      String     @db.VarChar
     slug      String     @db.VarChar
     default   Boolean?
@@ -80,12 +90,15 @@ model Technology {
     modifier  Modifier[]
     threads   Thread[]
 
+    @@unique([uuid])
     @@unique([slug])
+    @@index([uuid])
     @@map("technologies")
 }
 
 model Provider {
     id            Int         @id @default(autoincrement())
+    uuid          String      @default(uuid()) @db.VarChar(255)
     name          String      @db.VarChar(255)
     slug          String      @db.VarChar(255)
     model_name    String      @db.VarChar(255)
@@ -98,12 +111,15 @@ model Provider {
     parameters    Parameter[]
     threads       Thread[]
 
+    @@unique([uuid])
     @@unique([slug, model_slug])
+    @@index([uuid])
     @@map("providers")
 }
 
 model Workspace {
     id               Int             @id @default(autoincrement())
+    uuid             String          @default(uuid()) @db.VarChar(255)
     name             String          @db.VarChar(255)
     slug             String          @db.VarChar(255)
     default          Boolean         @default(false)
@@ -112,12 +128,15 @@ model Workspace {
     users_workspaces UserWorkspace[]
     threads          Thread[]
 
+    @@unique([uuid])
     @@unique([user_id, slug])
+    @@index([uuid])
     @@map("workspaces")
 }
 
 model Thread {
     id                    Int                 @id @default(autoincrement())
+    uuid                  String              @default(uuid()) @db.VarChar(255)
     title                 String              @db.VarChar(255)
     slug                  String              @db.VarChar(255)
     content               String
@@ -138,11 +157,14 @@ model Thread {
     threads_modifiers     ThreadModifier[]
     threads_parameters    ThreadParameter[]
 
+    @@unique([uuid])
+    @@index([uuid])
     @@map("threads")
 }
 
 model Prompt {
     id                    Int                 @id @default(autoincrement())
+    uuid                  String              @default(uuid()) @db.VarChar(255)
     title                 String              @db.VarChar(255)
     slug                  String              @db.VarChar(255)
     content               String
@@ -168,11 +190,14 @@ model Prompt {
     prompts_chat_messages PromptChatMessage[]
     prompts_respositories PromptRepository[]
 
+    @@unique([uuid])
+    @@index([uuid])
     @@map("prompts")
 }
 
 model Template {
     id                     Int                  @id @default(autoincrement())
+    uuid                   String               @default(uuid()) @db.VarChar(255)
     title                  String               @db.VarChar(255)
     slug                   String               @db.VarChar(255)
     description            String?
@@ -195,12 +220,15 @@ model Template {
     templates_parameters   TemplateParameter[]
     threads_templates      ThreadTemplate[]
 
+    @@unique([uuid])
+    @@index([uuid])
     @@index(fields: [hash], type: Hash)
     @@map("templates")
 }
 
 model Modifier {
     id                     Int                  @id @default(autoincrement())
+    uuid                   String               @default(uuid()) @db.VarChar(255)
     title                  String               @db.VarChar(255)
     slug                   String               @db.VarChar(255)
     content                String
@@ -224,12 +252,15 @@ model Modifier {
     modifiers_repositories ModifierRepository[]
     threads_modifiers      ThreadModifier[]
 
+    @@unique([uuid])
+    @@index([uuid])
     @@index(fields: [hash], type: Hash)
     @@map("modifiers")
 }
 
 model Parameter {
     id                   Int                 @id @default(autoincrement())
+    uuid                 String              @default(uuid()) @db.VarChar(255)
     name                 String              @db.VarChar(255)
     slug                 String              @db.VarChar(255)
     value                String
@@ -240,7 +271,9 @@ model Parameter {
     templates_parameters TemplateParameter[]
     threads_parameters   ThreadParameter[]
 
+    @@unique([uuid])
     @@unique([slug, provider_id])
+    @@index([uuid])
     @@map("parameters")
 }
 
@@ -256,6 +289,7 @@ model UserWorkspace {
 
 model PromptChatMessage {
     id        Int    @id @default(autoincrement())
+    uuid      String @default(uuid()) @db.VarChar(255)
     prompt_id Int
     user_id   Int
     role      String @db.VarChar(255)
@@ -263,12 +297,15 @@ model PromptChatMessage {
     prompt    Prompt @relation(fields: [prompt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     user      User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+    @@unique([uuid])
+    @@index([uuid])
     @@index([prompt_id])
     @@map("prompts_chat_messages")
 }
 
 model ThreadChatMessage {
     id        Int    @id @default(autoincrement())
+    uuid      String @default(uuid()) @db.VarChar(255)
     thread_id Int
     user_id   Int
     role      String @db.VarChar(255)
@@ -276,6 +313,8 @@ model ThreadChatMessage {
     thread    Thread @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     user      User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
+    @@unique([uuid])
+    @@index([uuid])
     @@index([thread_id])
     @@map("threads_chat_messages")
 }

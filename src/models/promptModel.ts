@@ -1,8 +1,42 @@
-import { Prisma, PrismaClient } from "@prisma/client";
+import { PrismaClient } from "@prisma/client";
 import { PromptChatMessage } from "./promptChatMessageModel";
 import { PromptParameter } from "./promptParameter";
 
 const prisma = new PrismaClient();
+
+const getOneByUUID = async (uuid: string) => {
+    return await prisma.prompt.findUnique({
+        where: { uuid },
+        include: {
+            language: true,
+            repository: true,
+            technology: true,
+            provider: {
+                include: {
+                    technology: true,
+                    parameters: true
+                }
+            },
+            user: true,
+            prompts_templates: {
+                include: {
+                    template: {
+                        include: {
+                            templates_modifiers: true
+                        }
+                    }
+                }
+            },
+            prompts_modifiers: {
+                include: {
+                    modifier: true
+                }
+            },
+            prompts_parameters: true,
+            prompts_chat_messages: true
+        }
+    });
+}
 
 const getOneById = async (id: number) => {
     return await prisma.prompt.findUnique({
@@ -85,6 +119,7 @@ const getAll = async (
         },
         select: {
             id: true,
+            uuid: true,
             title: true,
             content: true,
             description: true,
@@ -122,6 +157,7 @@ const getAll = async (
             provider: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -325,6 +361,7 @@ const deleteOne = async (id: number) => {
 }
 
 export default {
+    getOneByUUID,
     getOneById,
     getAll,
     createOne,

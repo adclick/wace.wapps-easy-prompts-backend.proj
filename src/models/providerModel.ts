@@ -2,6 +2,8 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const getOneByUUID = async (uuid: string) => await prisma.provider.findUnique({where: {uuid}});
+
 const getOneById = async (id: number) => {
     return await prisma.provider.findUnique({where: {id}});
 }
@@ -51,6 +53,7 @@ const getAll = async (technology_id: number) => {
 }
 
 export default {
+    getOneByUUID,
     getOneById,
     getAllByIds,
     getOneDefaultByTechnologyId,

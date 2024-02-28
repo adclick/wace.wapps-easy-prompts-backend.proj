@@ -6,17 +6,27 @@ import templateService from './templateService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
 import templateModel from '../models/templateModel';
+import modifierModel from '../models/modifierModel';
+import BadRequestError from '../errors/BadRequestError';
 
 interface Settings {
     [key: string]: string
 }
 
-const chat = async (text: string, providerId: number, chatMessages: PromptChatMessage[], modifiersIds: number[], templatesIds: number[]) => {
+const chat = async (
+    text: string,
+    providerUUID: string,
+    chatMessages: PromptChatMessage[],
+    modifiersUUIDs: string[],
+    templatesUUIDs: string[]
+) => {
     // Validate provider
-    const provider = await providerModel.getOneById(providerId);
-    if (!provider) throw new Error(`Provider (${providerId}) not found`);
+    const provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
 
-    const templates = await templateModel.getAllByIds(templatesIds);
+    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
+    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+    
     for (const template of templates) {
         const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
 
@@ -30,7 +40,7 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
     }
 
     // Apply templates or modifiers (give priority to templates)
-    const {textModified, chatMessagesModified} = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
+    const { textModified, chatMessagesModified } = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
 
     // Apply provider model
     const settings: Settings = {};
@@ -47,10 +57,10 @@ const chat = async (text: string, providerId: number, chatMessages: PromptChatMe
     );
 };
 
-const chatByPromptId = async (promptId: number) => {
+const chatByPromptId = async (promptUUID: string) => {
     // Validate Prompt
-    const prompt = await promptModel.getOneById(promptId);
-    if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
+    const prompt = await promptModel.getOneByUUID(promptUUID);
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
 
     const text = prompt.content;
     const chatMessages = prompt.prompts_chat_messages.map(m => {

@@ -5,17 +5,23 @@ import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
 import templateModel from '../models/templateModel';
 import templateService from './templateService';
+import BadRequestError from '../errors/BadRequestError';
 
 interface Settings {
     [key: string]: string
 }
 
-const textGeneration = async (text: string, providerId: number, modifiersIds: number[], templatesIds: number[]) => {
+const textGeneration = async (
+    text: string,
+    providerUUID: string,
+    modifiersUUIDs: string[],
+    templatesUUIDs: string[]
+) => {
     // Validate provider
-    const provider = await providerModel.getOneById(providerId);
-    if (!provider) throw new Error(`Provider (${providerId}) not found`);
+    const provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
 
-    modifiersIds = await deduplicateModifiersIds(templatesIds, modifiersIds);
+    const modifiersIds = await deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
 
     // Apply templates or modifiers (give priority to templates)
     const textModified = await modifierService.applyModifiersToText(text, modifiersIds);
@@ -34,14 +40,14 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     );
 };
 
-const textGenerationByPromptId = async (promptId: number) => {
+const textGenerationByPromptId = async (promptUUID: string) => {
     // Validate Prompt
-    const prompt = await promptModel.getOneById(promptId);
-    if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
+    const prompt = await promptModel.getOneByUUID(promptUUID);
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
 
     const modifiersIds = await deduplicateModifiersIds(
-        prompt.prompts_templates.map(t => t.template_id),
-        prompt.prompts_modifiers.map(m => m.modifier_id)
+        prompt.prompts_templates.map(t => t.template.uuid),
+        prompt.prompts_modifiers.map(m => m.modifier.uuid)
     );
 
     // Apply modifiers
@@ -69,8 +75,10 @@ const textGenerationByPromptId = async (promptId: number) => {
     );
 };
 
-const deduplicateModifiersIds = async (templatesIds: number[], modifiersIds: number[]) => {
-    const templates = await templateModel.getAllByIds(templatesIds);
+const deduplicateModifiersIds = async (templatesUUIDs: string[], modifiersUUIDs: string[]) => {
+    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
+    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+
     for (const template of templates) {
         const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
 

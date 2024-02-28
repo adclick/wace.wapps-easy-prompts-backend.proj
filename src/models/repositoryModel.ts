@@ -2,6 +2,16 @@ import { PrismaClient } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
+const getOneByUUID = async (uuid: string) => await prisma.repository.findUnique({where: {uuid}});
+
+const getAllByUUIDs = async (uuids: string[]) => {
+    return await prisma.repository.findMany({
+        where: {
+            uuid: { in: uuids }
+        }
+    })
+}
+
 const getOneBySlug = async (slug: string) => {
     return await prisma.repository.findFirst({
         where: { slug }
@@ -100,6 +110,8 @@ const getOneByUserAndRepository = async (external_id: string, repository_id: num
 }
 
 export default {
+    getOneByUUID,
+    getAllByUUIDs,
     getOneBySlug,
     upsertOne,
     getAllByUser,

@@ -3,32 +3,32 @@ import BadRequestError from "../errors/BadRequestError";
 
 const getUserId = (req: Request): string => getString(req, 'user_id');
 const getSearchTerm = (req: Request, required: boolean = false): string => getString(req, 'search_term', required);
-const getTechnologiesIds = (req: Request): number[] => getIds(req, 'technologies_ids');
-const getModifiersIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'modifiers_ids', required, method)
-const getTemplatesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'templates_ids', required, method)
-const getLanguageId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'language_id', required, method)
-const getRepositoryId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'repository_id', required, method)
-const getTechnologyId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'technology_id', required, method)
-const getProviderId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'provider_id', required, method)
-const getProvidersIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'providers_ids', required, method)
+const getTechnologiesIds = (req: Request): string[] => getUUIDs(req, 'technologies_ids');
+const getModifiersIds = (req: Request, required: boolean = false, method: string = 'get'): string[] => getUUIDs(req, 'modifiers_ids', required, method)
+const getTemplatesIds = (req: Request, required: boolean = false, method: string = 'get'): string[] => getUUIDs(req, 'templates_ids', required, method)
+const getLanguageId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'language_id', required, method)
+const getRepositoryId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'repository_id', required, method)
+const getTechnologyId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'technology_id', required, method)
+const getProviderId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'provider_id', required, method)
+const getProvidersIds = (req: Request, required: boolean = false, method: string = 'get'): string[] => getUUIDs(req, 'providers_ids', required, method)
 const getTitle = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'title', required, method)
 const getKey = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'key', required, method)
 const getDescription = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'description', required, method)
 const getContent = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'content', required, method)
 const getResponse = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'response', required, method)
-const getPromptId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'prompt_id', required, method)
-const getThreadId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'thread_id', required, method)
-const getModifierId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'modifier_id', required, method)
-const getTemplateId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'template_id', required, method)
-const getWorkspaceId = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'workspace_id', required, method)
+const getPromptId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'prompt_id', required, method)
+const getThreadId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'thread_id', required, method)
+const getModifierId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'modifier_id', required, method)
+const getTemplateId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'template_id', required, method)
+const getWorkspaceId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'workspace_id', required, method)
 const getLimit = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'limit', required, method)
 const getOffset = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'offset', required, method)
 const getEmail = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'email', required, method)
 const getCollapsed = (req: Request, required: boolean = false, method: string = 'get'): boolean => getBoolean(req, 'collapsed', required, method)
 const getUsername = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'username', required, method)
 const getUserExternalId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'user_external_id', required, method)
-const getLanguagesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'languages_ids', required, method)
-const getRepositoriesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'repositories_ids', required, method)
+const getLanguagesIds = (req: Request, required: boolean = false, method: string = 'get'): string[] => getUUIDs(req, 'languages_ids', required, method)
+const getRepositoriesIds = (req: Request, required: boolean = false, method: string = 'get'): string[] => getUUIDs(req, 'repositories_ids', required, method)
 const getText = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'text', required, method)
 const getChatHistory = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_history', required, method)
 const getChatMessages = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_messages', required, method)
@@ -67,9 +67,9 @@ const getNumber = (req: Request, parameter: string, required: boolean = false, m
 const getBoolean = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): boolean => {
     const bool = getParameter(req, parameter, method);
 
-    if (required && bool === "") throw new BadRequestError({ message: missingParameterMessage(parameter) });
+    if (required && typeof bool !== "boolean") throw new BadRequestError({ message: missingParameterMessage(parameter) });
 
-    return bool === "true";
+    return Boolean(bool);
 }
 
 const getArray = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): any[] => {
@@ -101,6 +101,22 @@ const getIds = (req: Request, parameter: string, required: boolean = false, meth
     // Check if it contains numeric values
     const invalidIds = json.find(id => isNaN(parseInt(id)));
     if (invalidIds !== undefined) throw new BadRequestError({ message: `All elements of parameter ${parameter} need to be numeric` });
+
+    return json;
+}
+
+const getUUIDs = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): string[] => {
+    const ids = getParameter(req, parameter, method);
+
+    // Check if exists
+    if (required && ids === "") throw new BadRequestError({ message: missingParameterMessage(parameter) });
+
+    // Return empty array if not exists
+    if (ids === undefined) return [];
+
+    // Check if its an array
+    const json = JSON.parse(ids);
+    if (!Array.isArray(json)) throw new BadRequestError({ message: `Incorrect format for parameter ${parameter}` });
 
     return json;
 }
