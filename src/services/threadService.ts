@@ -57,6 +57,7 @@ const updateOneThread = async (
     key: string,
     content: string,
     response: string,
+    collapsed: boolean,
     userExternalId: string,
     workspaceId: number,
     technologyId: number,
@@ -73,7 +74,8 @@ const updateOneThread = async (
     const threadChatMessages = chatMessages.map(cm => {
         return {
             role: cm.role,
-            message: cm.message
+            message: cm.message,
+            user_id: user.id
         }
     })
 
@@ -84,6 +86,7 @@ const updateOneThread = async (
         key,
         content,
         response,
+        collapsed,
         user.id,
         workspaceId,
         technologyId,

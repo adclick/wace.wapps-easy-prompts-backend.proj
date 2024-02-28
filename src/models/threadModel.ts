@@ -68,7 +68,7 @@ const createOne = async (
     provider_id: number,
     templatesIds: number[],
     modifiersIds: number[],
-    threadChatMessages: ThreadChatMessage[],
+    chatMessages: ThreadChatMessage[],
     threadParameters: ThreadParameter[]
 ) => {
     const templates_ids = templatesIds.map(t => {
@@ -78,6 +78,13 @@ const createOne = async (
     const modifiers_ids = modifiersIds.map(m => {
         return { modifier_id: m };
     });
+
+    const threadChatMessages = chatMessages.map(c => {
+        return {
+            ...c,
+            user_id
+        }
+    })
 
     return await prisma.thread.create({
         data: {
@@ -121,13 +128,14 @@ const updateOne = async (
     key: string,
     content: string,
     response: string,
+    collapsed: boolean,
     user_id: number,
     workspace_id: number,
     technology_id: number,
     provider_id: number,
     templatesIds: number[],
     modifiersIds: number[],
-    threadChatMessages: ThreadChatMessage[]
+    chatMessages: ThreadChatMessage[]
 ) => {
     const templates_ids = templatesIds.map(t => {
         return { template_id: t };
@@ -154,6 +162,13 @@ const updateOne = async (
             thread_id: id
         }
     });
+    
+    const threadChatMessages = chatMessages.map(c => {
+        return {
+            ...c,
+            user_id
+        }
+    })
 
     return await prisma.thread.update({
         where: { id },
@@ -163,6 +178,7 @@ const updateOne = async (
             key,
             content,
             response,
+            collapsed,
             user_id,
             workspace_id,
             technology_id,

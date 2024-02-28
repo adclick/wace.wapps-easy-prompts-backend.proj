@@ -57,7 +57,8 @@ const createPrompt = async (
     const promptChatMessages = chatMessages.map(cm => {
         return {
             role: cm.role,
-            message: cm.message
+            message: cm.message,
+            user_id: user.id
         }
     })
 

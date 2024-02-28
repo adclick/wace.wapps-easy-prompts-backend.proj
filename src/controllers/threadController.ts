@@ -37,6 +37,7 @@ const updateOneThread = async (req: Request, res: Response) => {
         controllerUtils.getKey(req, true, 'post'),
         controllerUtils.getContent(req, true, 'post'),
         controllerUtils.getResponse(req, false, 'post'),
+        controllerUtils.getCollapsed(req, true, 'post'),
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getWorkspaceId(req, true, 'post'),
         controllerUtils.getTechnologyId(req, true, 'post'),

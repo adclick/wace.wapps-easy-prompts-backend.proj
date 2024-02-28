@@ -197,6 +197,13 @@ const createOne = async (
         return { modifier_id: m };
     });
 
+    const promptChatMessages = chatMessages.map(c => {
+        return {
+            ...c,
+            user_id
+        }
+    })
+
     return await prisma.prompt.create({
         data: {
             title,
@@ -220,7 +227,7 @@ const createOne = async (
             },
             prompts_chat_messages: {
                 createMany: {
-                    data: chatMessages
+                    data: promptChatMessages
                 }
             },
             prompts_parameters: {
@@ -273,6 +280,13 @@ const updateOne = async (
         }
     });
 
+    const promptChatMessages = chatMessages.map(c => {
+        return {
+            ...c,
+            user_id
+        }
+    })
+
     return await prisma.prompt.update({
         where: { id },
         data: {
@@ -297,7 +311,7 @@ const updateOne = async (
             },
             prompts_chat_messages: {
                 createMany: {
-                    data: chatMessages
+                    data: promptChatMessages
                 }
             },
         },

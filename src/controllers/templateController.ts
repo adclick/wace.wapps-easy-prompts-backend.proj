@@ -37,7 +37,7 @@ const createTemplate = async (req: Request, res: Response) => {
     const response = await templateService.createTemplate(
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
-        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getDescription(req, false, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
         controllerUtils.getRepositoryId(req, true, 'post'),
         controllerUtils.getTechnologyId(req, true, 'post'),
@@ -55,7 +55,7 @@ const updateTemplate = async (req: Request, res: Response) => {
         controllerUtils.getTemplateId(req, true, 'url'),
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
-        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getDescription(req, false, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
         controllerUtils.getRepositoryId(req, true, 'post'),
         controllerUtils.getTechnologyId(req, true, 'post'),

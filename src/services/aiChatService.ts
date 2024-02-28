@@ -56,7 +56,7 @@ const chatByPromptId = async (promptId: number) => {
     const chatMessages = prompt.prompts_chat_messages.map(m => {
         return {
             role: m.role,
-            message: m.message
+            message: m.message,
         }
     });
     const templatesIds = prompt.prompts_templates.map(pt => pt.template_id);

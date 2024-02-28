@@ -10,22 +10,24 @@ datasource db {
 }
 
 model User {
-    id                 Int              @id @default(autoincrement())
-    email              String           @db.VarChar(255)
-    username           String           @db.VarChar(255)
-    theme              String           @default("dark") @db.VarChar(255)
-    first_login        Boolean          @default(true)
-    external_id        String
-    language_id        Int
-    language           Language         @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    prompts            Prompt[]
-    modifiers          Modifier[]
-    templates          Template[]
-    repositories       Repository[]
-    users_repositories UserRepository[]
-    users_workspaces   UserWorkspace[]
-    threads            Thread[]
-    workspaces         Workspace[]
+    id                    Int                 @id @default(autoincrement())
+    email                 String              @db.VarChar(255)
+    username              String              @db.VarChar(255)
+    theme                 String              @default("dark") @db.VarChar(255)
+    first_login           Boolean             @default(true)
+    external_id           String
+    language_id           Int
+    language              Language            @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts               Prompt[]
+    modifiers             Modifier[]
+    templates             Template[]
+    repositories          Repository[]
+    users_repositories    UserRepository[]
+    users_workspaces      UserWorkspace[]
+    threads               Thread[]
+    workspaces            Workspace[]
+    threads_chat_messages ThreadChatMessage[]
+    prompts_chat_messages PromptChatMessage[]
 
     @@unique([email])
     @@unique([external_id])
@@ -126,6 +128,7 @@ model Thread {
     provider_id           Int?
     user_id               Int
     workspace_id          Int
+    collapsed             Boolean             @default(false)
     technology            Technology          @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     provider              Provider?           @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
     user                  User                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -254,9 +257,11 @@ model UserWorkspace {
 model PromptChatMessage {
     id        Int    @id @default(autoincrement())
     prompt_id Int
+    user_id   Int
     role      String @db.VarChar(255)
     message   String @db.Text
     prompt    Prompt @relation(fields: [prompt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    user      User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@index([prompt_id])
     @@map("prompts_chat_messages")
@@ -265,9 +270,11 @@ model PromptChatMessage {
 model ThreadChatMessage {
     id        Int    @id @default(autoincrement())
     thread_id Int
+    user_id   Int
     role      String @db.VarChar(255)
     message   String @db.Text
     thread    Thread @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    user      User   @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
 
     @@index([thread_id])
     @@map("threads_chat_messages")

@@ -36,7 +36,7 @@ const createModifier = async (req: Request, res: Response) => {
     const response = await modifierService.createModifier(
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
-        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getDescription(req, false, 'post'),
         controllerUtils.getContent(req, true, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
         controllerUtils.getRepositoryId(req, true, 'post'),
@@ -52,7 +52,7 @@ const updateModifier = async (req: Request, res: Response) => {
         controllerUtils.getModifierId(req, true, 'url'),
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
-        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getDescription(req, false, 'post'),
         controllerUtils.getContent(req, true, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
         controllerUtils.getRepositoryId(req, true, 'post'),

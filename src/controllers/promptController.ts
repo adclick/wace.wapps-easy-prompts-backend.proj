@@ -48,7 +48,7 @@ const updatePrompt = async (req: Request, res: Response) => {
         controllerUtils.getPromptId(req, true, 'url'),
         controllerUtils.getUserExternalId(req, true, 'post'),
         controllerUtils.getTitle(req, true, 'post'),
-        controllerUtils.getDescription(req, true, 'post'),
+        controllerUtils.getDescription(req, false, 'post'),
         controllerUtils.getContent(req, true, 'post'),
         controllerUtils.getLanguageId(req, true, 'post'),
         controllerUtils.getRepositoryId(req, true, 'post'),

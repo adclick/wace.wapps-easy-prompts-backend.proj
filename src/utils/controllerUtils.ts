@@ -24,6 +24,7 @@ const getWorkspaceId = (req: Request, required: boolean = false, method: string 
 const getLimit = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'limit', required, method)
 const getOffset = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'offset', required, method)
 const getEmail = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'email', required, method)
+const getCollapsed = (req: Request, required: boolean = false, method: string = 'get'): boolean => getBoolean(req, 'collapsed', required, method)
 const getUsername = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'username', required, method)
 const getUserExternalId = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'user_external_id', required, method)
 const getLanguagesIds = (req: Request, required: boolean = false, method: string = 'get'): number[] => getIds(req, 'languages_ids', required, method)
@@ -61,6 +62,14 @@ const getNumber = (req: Request, parameter: string, required: boolean = false, m
     if (required && isNaN(number)) throw new BadRequestError({ message: missingParameterMessage(parameter) });
 
     return number;
+}
+
+const getBoolean = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): boolean => {
+    const bool = getParameter(req, parameter, method);
+
+    if (required && bool === "") throw new BadRequestError({ message: missingParameterMessage(parameter) });
+
+    return bool === "true";
 }
 
 const getArray = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): any[] => {
@@ -148,6 +157,7 @@ export default {
     getEmail,
     getUsername,
     getUserExternalId,
+    getCollapsed,
     getChatHistory,
     getTemplateId,
     getLimit,
