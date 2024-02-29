@@ -105,6 +105,9 @@ const createOne = async (
     })
 
     return await prisma.thread.create({
+        include: {
+            threads_chat_messages: true
+        },
         data: {
             title,
             slug,

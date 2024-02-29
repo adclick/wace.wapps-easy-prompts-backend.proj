@@ -4,6 +4,7 @@ import providerModel from "../models/providerModel";
 import repositoryModel from "../models/repositoryModel";
 import technologyModel from "../models/technologyModel";
 import { ThreadChatMessage } from "../models/threadChatMessageModel";
+import threadChatMessageModifierModel from "../models/threadChatMessageModifierModel";
 import threadModel from "../models/threadModel";
 import { ThreadParameter } from "../models/threadParameter";
 import userModel from "../models/userModel";
@@ -55,7 +56,7 @@ const createOneThread = async (
 
     await validateUserForWorkspace(userExternalId, workspace.id);
 
-    return await threadModel.createOne(
+    const thread = await threadModel.createOne(
         title,
         textUtils.toSlug(title),
         key,
@@ -70,6 +71,12 @@ const createOneThread = async (
         threadChatMessages,
         threadParameters,
     );
+
+    thread.threads_chat_messages.forEach(async tcm => {
+        await threadChatMessageModifierModel.createMany(tcm.id, modifiersIds);
+    })
+
+    return thread;
 }
 
 const updateOneThread = async (
