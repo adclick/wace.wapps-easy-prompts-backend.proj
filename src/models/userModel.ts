@@ -2,6 +2,13 @@ import { PrismaClient } from '@prisma/client'
 
 const prisma = new PrismaClient();
 
+const PUBLIC_FIELDS = {
+    external_id: true,
+    email: true,
+    username: true,    
+    theme: true,
+}
+
 const getOneById = async (external_id: string) => {
     return await prisma.user.findUnique({
         where: {
@@ -29,6 +36,7 @@ const upsertOne = async (email: string, username: string, external_id: string, l
 }
 
 export default {
+    PUBLIC_FIELDS,
     getOneById,
     upsertOne,
 }

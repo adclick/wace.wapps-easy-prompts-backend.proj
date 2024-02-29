@@ -1,8 +1,19 @@
 import { PrismaClient } from "@prisma/client";
 import { PromptChatMessage } from "./promptChatMessageModel";
 import { PromptParameter } from "./promptParameter";
+import userModel from "./userModel";
 
 const prisma = new PrismaClient();
+
+export const PUBLIC_FIELDS = {
+    uuid: true,
+    title: true,
+    content: true,
+    description: true,
+    slug: true,
+    created_at: true,
+    public: true,
+}
 
 const getOneByUUID = async (uuid: string) => {
     return await prisma.prompt.findUnique({
@@ -118,21 +129,8 @@ const getAll = async (
             technology: { id: { in: technologies_ids } },
         },
         select: {
-            id: true,
-            uuid: true,
-            title: true,
-            content: true,
-            description: true,
-            slug: true,
-            created_at: true,
-            public: true,
-            user: {
-                select: {
-                    external_id: true,
-                    email: true,
-                    username: true,
-                }
-            },
+            ...PUBLIC_FIELDS,
+            user: { select: userModel.PUBLIC_FIELDS },
             language: {
                 select: {
                     id: true,
