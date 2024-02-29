@@ -23,18 +23,21 @@ const getAllByUUIDs = async (uuids: string[]) => {
         include: {
             language: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             repository: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             technology: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     default: true
@@ -42,6 +45,7 @@ const getAllByUUIDs = async (uuids: string[]) => {
             },
             provider: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -52,6 +56,7 @@ const getAllByUUIDs = async (uuids: string[]) => {
             },
             user: {
                 select: {
+                    uuid: true,
                     email: true,
                     username: true,
                     external_id: true
@@ -105,18 +110,21 @@ const getAllByIds = async (ids: number[]) => {
         include: {
             language: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             repository: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             technology: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     default: true
@@ -124,6 +132,7 @@ const getAllByIds = async (ids: number[]) => {
             },
             provider: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -134,6 +143,7 @@ const getAllByIds = async (ids: number[]) => {
             },
             user: {
                 select: {
+                    uuid: true,
                     email: true,
                     username: true,
                     external_id: true
@@ -193,6 +203,7 @@ const getAllByFilters = async (
         include: {
             user: {
                 select: {
+                    uuid: true,
                     external_id: true,
                     email: true,
                     username: true,
@@ -201,6 +212,7 @@ const getAllByFilters = async (
             language: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -208,6 +220,7 @@ const getAllByFilters = async (
             repository: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -215,6 +228,7 @@ const getAllByFilters = async (
             technology: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -237,6 +251,7 @@ const getAllByFilters = async (
                     parameter: {
                         select: {
                             id: true,
+                            uuid: true,
                             name: true,
                             slug: true,
                             data: true,
@@ -250,6 +265,7 @@ const getAllByFilters = async (
                     modifier: {
                         select: {
                             id: true,
+                            uuid: true,
                             title: true,
                             slug: true
                         }
@@ -287,6 +303,7 @@ const getAllByUser = async (
             user: {
                 select: {
                     external_id: true,
+                    uuid: true,
                     email: true,
                     username: true,
                 }
@@ -294,6 +311,7 @@ const getAllByUser = async (
             language: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -301,6 +319,7 @@ const getAllByUser = async (
             repository: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -308,6 +327,7 @@ const getAllByUser = async (
             technology: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -330,6 +350,7 @@ const getAllByUser = async (
                     parameter: {
                         select: {
                             id: true,
+                            uuid: true,
                             name: true,
                             slug: true,
                             data: true,
@@ -343,6 +364,7 @@ const getAllByUser = async (
                     modifier: {
                         select: {
                             id: true,
+                            uuid: true,
                             title: true,
                             slug: true
                         }

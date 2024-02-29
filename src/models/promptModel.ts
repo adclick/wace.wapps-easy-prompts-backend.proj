@@ -134,6 +134,7 @@ const getAll = async (
             language: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -141,6 +142,7 @@ const getAll = async (
             repository: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -148,6 +150,7 @@ const getAll = async (
             technology: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -170,6 +173,7 @@ const getAll = async (
                     parameter: {
                         select: {
                             id: true,
+                            uuid: true,
                             name: true,
                             slug: true,
                             data: true,
@@ -183,6 +187,7 @@ const getAll = async (
                     template: {
                         select: {
                             id: true,
+                            uuid: true,
                             title: true,
                             slug: true
                         }
@@ -194,6 +199,7 @@ const getAll = async (
                     modifier: {
                         select: {
                             id: true,
+                            uuid: true,
                             title: true,
                             slug: true
                         }
