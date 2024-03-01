@@ -95,7 +95,9 @@ const createPrompt = async (
             message: cm.message,
             user_id: user.id
         }
-    })
+    });
+
+    const contentModified = content;
 
     return await promptModel.createOne(
         user.id,
@@ -103,6 +105,7 @@ const createPrompt = async (
         textUtils.toSlug(title),
         description,
         content,
+        contentModified,
         language.id,
         repository.id,
         technology.id,
@@ -159,6 +162,8 @@ const updatePrompt = async (
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
 
+    const contentModified = content;
+
     return await promptModel.updateOne(
         prompt.id,
         user.id,
@@ -166,6 +171,7 @@ const updatePrompt = async (
         textUtils.toSlug(title),
         description,
         content,
+        contentModified,
         language.id,
         repository.id,
         technology.id,

@@ -1,7 +1,5 @@
 import BadRequestError from "../errors/BadRequestError";
-import languageModel from "../models/languageModel";
 import providerModel from "../models/providerModel";
-import repositoryModel from "../models/repositoryModel";
 import technologyModel from "../models/technologyModel";
 import { ThreadChatMessage } from "../models/threadChatMessageModel";
 import threadChatMessageModifierModel from "../models/threadChatMessageModifierModel";
@@ -56,11 +54,14 @@ const createOneThread = async (
 
     await validateUserForWorkspace(userExternalId, workspace.id);
 
+    const contentModified = content;
+
     const thread = await threadModel.createOne(
         title,
         textUtils.toSlug(title),
         key,
         content,
+        contentModified,
         response,
         user.id,
         workspace.id,
@@ -122,12 +123,15 @@ const updateOneThread = async (
         }
     })
 
+    const contentModified = content;
+
     const threadUpdated = await threadModel.updateOne(
         thread.id,
         title,
         textUtils.toSlug(title),
         key,
         content,
+        contentModified,
         response,
         collapsed,
         user.id,
