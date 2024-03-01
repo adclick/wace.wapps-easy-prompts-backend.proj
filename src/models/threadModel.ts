@@ -4,6 +4,15 @@ import { ThreadParameter } from "./threadParameter";
 
 const prisma = new PrismaClient();
 
+const PUBLIC_FIELDS = {
+    uuid: true,
+    key: true,
+    title: true,
+    slug: true,
+    response: true,
+    created_at: true,
+}
+
 const getOneByUUID = async (uuid: string) => {
     return await prisma.thread.findUnique({ 
         where: { 
@@ -51,7 +60,15 @@ const getAllByWorkspace = async (workspace_id: number) => {
                     parameters: true
                 }
             },
-            threads_chat_messages: true,
+            threads_chat_messages: {
+                include: {
+                    threads_chat_messages_modifiers: {
+                        select: {
+                            modifier: true
+                        }
+                    }
+                }
+            },
             threads_templates: {
                 include: {
                     template: true
@@ -130,14 +147,14 @@ const createOne = async (
             },
             threads_chat_messages: {
                 createMany: {
-                    data: threadChatMessages
-                }
+                    data: threadChatMessages,
+                },
             },
             threads_parameters: {
                 createMany: {
                     data: threadParameters
                 }
-            }
+            },
         }
     });
 }
@@ -178,11 +195,11 @@ const updateOne = async (
         }
     });
 
-    await prisma.threadChatMessage.deleteMany({
-        where: {
-            thread_id: id
-        }
-    });
+    // await prisma.threadChatMessage.deleteMany({
+    //     where: {
+    //         thread_id: id
+    //     }
+    // });
     
     const threadChatMessages = chatMessages.map(c => {
         return {
@@ -192,6 +209,9 @@ const updateOne = async (
     })
 
     return await prisma.thread.update({
+        include: {
+            threads_chat_messages: true
+        },
         where: { id },
         data: {
             title,
@@ -240,6 +260,7 @@ const deleteAllByWorkspaceId = async (workspace_id: number) => {
 
 
 export default {
+    PUBLIC_FIELDS,
     getOneByUUID,
     getOneById,
     getAllByWorkspace,

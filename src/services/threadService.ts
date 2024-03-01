@@ -114,7 +114,7 @@ const updateOneThread = async (
 
     await validateUserForWorkspace(userExternalId, workspace.id);
 
-    const threadChatMessages = chatMessages.map(cm => {
+    const threadChatMessages = chatMessages.slice(-2).map(cm => {
         return {
             role: cm.role,
             message: cm.message,
@@ -122,7 +122,7 @@ const updateOneThread = async (
         }
     })
 
-    return await threadModel.updateOne(
+    const threadUpdated = await threadModel.updateOne(
         thread.id,
         title,
         textUtils.toSlug(title),
@@ -138,6 +138,19 @@ const updateOneThread = async (
         modifiersIds,
         threadChatMessages,
     );
+
+    const lastTwoMessages = threadUpdated.threads_chat_messages.slice(-2);
+    if (lastTwoMessages.length > 0) {
+        await threadChatMessageModifierModel.createMany(lastTwoMessages[0].id, modifiersIds);
+        await threadChatMessageModifierModel.createMany(lastTwoMessages[1].id, modifiersIds);
+    }
+    console.log(lastTwoMessages);
+
+    // threadUpdated.threads_chat_messages.forEach(async tcm => {
+    //     await threadChatMessageModifierModel.createMany(tcm.id, modifiersIds);
+    // })
+
+    return threadUpdated;
 }
 
 const deleteOneThread = async (userExternalId: string, threadUUID: string) => {
