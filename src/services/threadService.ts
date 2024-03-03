@@ -1,6 +1,8 @@
 import BadRequestError from "../errors/BadRequestError";
+import modifierModel from "../models/modifierModel";
 import providerModel from "../models/providerModel";
 import technologyModel from "../models/technologyModel";
+import templateModel from "../models/templateModel";
 import { ThreadChatMessage } from "../models/threadChatMessageModel";
 import threadChatMessageModifierModel from "../models/threadChatMessageModifierModel";
 import threadModel from "../models/threadModel";
@@ -43,32 +45,31 @@ const createOneThread = async (
     const workspace = await workspaceModel.getOneByUUID(workspaceUUID);
     if (!workspace) throw new BadRequestError({ message: `Workspace "${workspaceUUID}" not found` });
 
+    await validateUserForWorkspace(userExternalId, workspace.id);
+
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
     const provider = await providerModel.getOneByUUID(providerUUID);
     if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
-    const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
-    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
+    const modifiers = await modifierModel.getAllByUUIDs(modifiersUUIDs);
 
-    await validateUserForWorkspace(userExternalId, workspace.id);
-
-    const contentModified = content;
+    const modifiersIds = modifiers.map(m => m.id);
 
     const thread = await threadModel.createOne(
         title,
         textUtils.toSlug(title),
         key,
         content,
-        contentModified,
         response,
         user.id,
         workspace.id,
         technology.id,
         provider.id,
-        templatesIds,
-        modifiersIds,
+        templates,
+        modifiers,
         threadChatMessages,
         threadParameters,
     );
@@ -104,16 +105,16 @@ const updateOneThread = async (
     const workspace = await workspaceModel.getOneByUUID(workspaceUUID);
     if (!workspace) throw new BadRequestError({ message: `Workspace "${workspaceUUID}" not found` });
 
+    await validateUserForWorkspace(userExternalId, workspace.id);
+
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
     const provider = await providerModel.getOneByUUID(providerUUID);
     if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
-    const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
-    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
-
-    await validateUserForWorkspace(userExternalId, workspace.id);
+    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
+    const modifiers = await modifierModel.getAllByUUIDs(modifiersUUIDs);
 
     const threadChatMessages = chatMessages.slice(-2).map(cm => {
         return {
@@ -121,9 +122,7 @@ const updateOneThread = async (
             message: cm.message,
             user_id: user.id
         }
-    })
-
-    const contentModified = content;
+    });
 
     const threadUpdated = await threadModel.updateOne(
         thread.id,
@@ -131,24 +130,23 @@ const updateOneThread = async (
         textUtils.toSlug(title),
         key,
         content,
-        contentModified,
         response,
         collapsed,
         user.id,
         workspace.id,
         technology.id,
         provider.id,
-        templatesIds,
-        modifiersIds,
+        templates,
+        modifiers,
         threadChatMessages,
     );
 
-    const lastTwoMessages = threadUpdated.threads_chat_messages.slice(-2);
-    if (lastTwoMessages.length > 0) {
-        await threadChatMessageModifierModel.createMany(lastTwoMessages[0].id, modifiersIds);
-        await threadChatMessageModifierModel.createMany(lastTwoMessages[1].id, modifiersIds);
-    }
-    console.log(lastTwoMessages);
+    // const lastTwoMessages = threadUpdated.threads_chat_messages.slice(-2);
+    // if (lastTwoMessages.length > 0) {
+    //     await threadChatMessageModifierModel.createMany(lastTwoMessages[0].id, modifiers);
+    //     await threadChatMessageModifierModel.createMany(lastTwoMessages[1].id, modifiersIds);
+    // }
+    // console.log(lastTwoMessages);
 
     // threadUpdated.threads_chat_messages.forEach(async tcm => {
     //     await threadChatMessageModifierModel.createMany(tcm.id, modifiersIds);

@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Modifier, PrismaClient, Template } from "@prisma/client";
 import { ThreadChatMessage } from "./threadChatMessageModel";
 import { ThreadParameter } from "./threadParameter";
 
@@ -96,23 +96,22 @@ const createOne = async (
     slug: string,
     key: string,
     content: string,
-    content_modified: string,
     response: string,
     user_id: number,
     workspace_id: number,
     technology_id: number,
     provider_id: number,
-    templatesIds: number[],
-    modifiersIds: number[],
+    templates: Template[],
+    modifiers: Modifier[],
     chatMessages: ThreadChatMessage[],
     threadParameters: ThreadParameter[]
 ) => {
-    const templates_ids = templatesIds.map(t => {
-        return { template_id: t };
+    const templates_ids = templates.map(t => {
+        return { template_id: t.id };
     });
 
-    const modifiers_ids = modifiersIds.map(m => {
-        return { modifier_id: m };
+    const modifiers_ids = modifiers.map(m => {
+        return { modifier_id: m.id };
     });
 
     const threadChatMessages = chatMessages.map(c => {
@@ -120,7 +119,7 @@ const createOne = async (
             ...c,
             user_id
         }
-    })
+    });
 
     return await prisma.thread.create({
         include: {
@@ -131,12 +130,13 @@ const createOne = async (
             slug,
             key,
             content,
-            content_modified,
             response,
             user_id,
             workspace_id,
             technology_id,
             provider_id,
+            templates,
+            modifiers,
             threads_templates: {
                 createMany: {
                     data: templates_ids
@@ -167,23 +167,22 @@ const updateOne = async (
     slug: string,
     key: string,
     content: string,
-    content_modified: string,
     response: string,
     collapsed: boolean,
     user_id: number,
     workspace_id: number,
     technology_id: number,
     provider_id: number,
-    templatesIds: number[],
-    modifiersIds: number[],
+    templates: Template[],
+    modifiers: Modifier[],
     chatMessages: ThreadChatMessage[]
 ) => {
-    const templates_ids = templatesIds.map(t => {
-        return { template_id: t };
+    const templates_ids = templates.map(t => {
+        return { template_id: t.id };
     });
 
-    const modifiers_ids = modifiersIds.map(m => {
-        return { modifier_id: m };
+    const modifiers_ids = modifiers.map(m => {
+        return { modifier_id: m.id };
     });
 
     await prisma.threadTemplate.deleteMany({
@@ -221,7 +220,6 @@ const updateOne = async (
             slug,
             key,
             content,
-            content_modified,
             response,
             collapsed,
             user_id,
