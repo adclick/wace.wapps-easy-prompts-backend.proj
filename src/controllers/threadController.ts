@@ -47,7 +47,7 @@ const updateOneThread = async (req: Request, res: Response) => {
         controllerUtils.getChatMessages(req, true, 'post'),
     );
 
-    return res.status(200).json(response);
+    return res.status(201).json(response);
 };
 
 const deleteOnethread = async (req: Request, res: Response) => {

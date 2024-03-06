@@ -3,7 +3,7 @@ import modifierModel from "../models/modifierModel";
 import providerModel from "../models/providerModel";
 import technologyModel from "../models/technologyModel";
 import templateModel from "../models/templateModel";
-import { ThreadChatMessage } from "../models/threadChatMessageModel";
+import threadChatMessageModel, { ThreadChatMessage } from "../models/threadChatMessageModel";
 import threadChatMessageModifierModel from "../models/threadChatMessageModifierModel";
 import threadModel from "../models/threadModel";
 import { ThreadParameter } from "../models/threadParameter";
@@ -74,9 +74,16 @@ const createOneThread = async (
         threadParameters,
     );
 
-    thread.threads_chat_messages.forEach(async tcm => {
-        await threadChatMessageModifierModel.createMany(tcm.id, modifiersIds);
-    })
+    for (const tcm of threadChatMessages) {
+        await threadChatMessageModel.createOne(
+            tcm.role,
+            tcm.message,
+            thread.id,
+            user.id,
+            modifiersIds
+        );
+    }
+
 
     return thread;
 }
@@ -116,13 +123,9 @@ const updateOneThread = async (
     const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
     const modifiers = await modifierModel.getAllByUUIDs(modifiersUUIDs);
 
-    const threadChatMessages = chatMessages.slice(-2).map(cm => {
-        return {
-            role: cm.role,
-            message: cm.message,
-            user_id: user.id
-        }
-    });
+    const modifiersIds = modifiers.map(m => m.id);
+
+    const threadChatMessages = chatMessages.slice(-2);
 
     const threadUpdated = await threadModel.updateOne(
         thread.id,
@@ -141,16 +144,16 @@ const updateOneThread = async (
         threadChatMessages,
     );
 
-    // const lastTwoMessages = threadUpdated.threads_chat_messages.slice(-2);
-    // if (lastTwoMessages.length > 0) {
-    //     await threadChatMessageModifierModel.createMany(lastTwoMessages[0].id, modifiers);
-    //     await threadChatMessageModifierModel.createMany(lastTwoMessages[1].id, modifiersIds);
-    // }
-    // console.log(lastTwoMessages);
-
-    // threadUpdated.threads_chat_messages.forEach(async tcm => {
-    //     await threadChatMessageModifierModel.createMany(tcm.id, modifiersIds);
-    // })
+    threadChatMessages.forEach(async tcm => {
+        console.log(modifiersIds);
+        await threadChatMessageModel.createOne(
+            tcm.role,
+            tcm.message,
+            threadUpdated.id,
+            user.id,
+            modifiersIds
+        );
+    })
 
     return threadUpdated;
 }

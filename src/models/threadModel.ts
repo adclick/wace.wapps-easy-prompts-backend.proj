@@ -116,7 +116,8 @@ const createOne = async (
 
     const threadChatMessages = chatMessages.map(c => {
         return {
-            ...c,
+            role: c.role,
+            message: c.message,
             user_id
         }
     });
@@ -137,21 +138,16 @@ const createOne = async (
             provider_id,
             templates,
             modifiers,
-            threads_templates: {
-                createMany: {
-                    data: templates_ids
-                }
-            },
-            threads_modifiers: {
-                createMany: {
-                    data: modifiers_ids
-                }
-            },
-            threads_chat_messages: {
-                createMany: {
-                    data: threadChatMessages,
-                },
-            },
+            // threads_templates: {
+            //     createMany: {
+            //         data: templates_ids
+            //     }
+            // },
+            // threads_modifiers: {
+            //     createMany: {
+            //         data: modifiers_ids
+            //     }
+            // },
             threads_parameters: {
                 createMany: {
                     data: threadParameters
@@ -226,21 +222,6 @@ const updateOne = async (
             workspace_id,
             technology_id,
             provider_id,
-            threads_templates: {
-                createMany: {
-                    data: templates_ids
-                }
-            },
-            threads_modifiers: {
-                createMany: {
-                    data: modifiers_ids
-                }
-            },
-            threads_chat_messages: {
-                createMany: {
-                    data: threadChatMessages
-                }
-            }
         }
     });
 }
