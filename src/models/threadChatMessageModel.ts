@@ -6,7 +6,6 @@ const prisma = new PrismaClient();
 export interface ThreadChatMessage {
     role: string,
     message: string,
-    threads_chat_messages_modifiers: ThreadChatMessageModifier[]
 }
 
 const createOne = async (

@@ -93,7 +93,8 @@ const createPrompt = async (
         return {
             role: cm.role,
             message: cm.message,
-            user_id: user.id
+            user_id: user.id,
+            threads_chat_messages_modifiers: []
         }
     });
 

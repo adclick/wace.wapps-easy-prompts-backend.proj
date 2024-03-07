@@ -85,7 +85,7 @@ const createOneThread = async (
     }
 
 
-    return thread;
+    return await threadModel.getOneById(thread.id);
 }
 
 const updateOneThread = async (
@@ -125,9 +125,9 @@ const updateOneThread = async (
 
     const modifiersIds = modifiers.map(m => m.id);
 
-    const threadChatMessages = chatMessages.slice(-2);
+    const threadChatMessages = chatMessages;
 
-    const threadUpdated = await threadModel.updateOne(
+    await threadModel.updateOne(
         thread.id,
         title,
         textUtils.toSlug(title),
@@ -144,18 +144,17 @@ const updateOneThread = async (
         threadChatMessages,
     );
 
-    threadChatMessages.forEach(async tcm => {
-        console.log(modifiersIds);
+    for (const tcm of threadChatMessages) {
         await threadChatMessageModel.createOne(
             tcm.role,
             tcm.message,
-            threadUpdated.id,
+            thread.id,
             user.id,
             modifiersIds
         );
-    })
+    }
 
-    return threadUpdated;
+    return await threadModel.getOneById(thread.id);
 }
 
 const deleteOneThread = async (userExternalId: string, threadUUID: string) => {

@@ -39,7 +39,20 @@ const getOneById = async (id: number) => {
             workspace: true,
             technology: true,
             provider: true,
-            threads_chat_messages: true,
+            threads_chat_messages: {
+                include: {
+                    threads_chat_messages_modifiers: {
+                        select: {
+                            modifier: {
+                                select: {
+                                    uuid: true,
+                                    title: true
+                                }
+                            }
+                        }
+                    }
+                }
+            },
             threads_templates: true,
             threads_modifiers: true,
             threads_parameters: true
@@ -64,7 +77,12 @@ const getAllByWorkspace = async (workspace_id: number) => {
                 include: {
                     threads_chat_messages_modifiers: {
                         select: {
-                            modifier: true
+                            modifier: {
+                                select: {
+                                    uuid: true,
+                                    title: true
+                                }
+                            }
                         }
                     }
                 }
@@ -138,16 +156,6 @@ const createOne = async (
             provider_id,
             templates,
             modifiers,
-            // threads_templates: {
-            //     createMany: {
-            //         data: templates_ids
-            //     }
-            // },
-            // threads_modifiers: {
-            //     createMany: {
-            //         data: modifiers_ids
-            //     }
-            // },
             threads_parameters: {
                 createMany: {
                     data: threadParameters

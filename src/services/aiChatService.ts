@@ -39,8 +39,28 @@ const chat = async (
         }
     }
 
+    const lastMessage = chatMessages.pop();
+
+    if (!lastMessage) throw new BadRequestError({message: "No message to process"});
+
+    const lastMessageModified = await modifierService.applyModifiersToText(lastMessage.message, lastMessage.threads_chat_messages_modifiers.map(m => m.modifier.id));
+
+    const chatMessagesModified = [];
+    for (const chatMessage of chatMessages) {
+        const newChatMessage = chatMessage;
+
+        if (chatMessage.role === 'user') {
+            newChatMessage.message = await modifierService.applyModifiersToText(chatMessage.message, chatMessage.threads_chat_messages_modifiers.map(m => m.modifier.id));
+        }
+
+        chatMessagesModified.push(newChatMessage);
+    }
+
+    console.log(lastMessageModified);
+    console.log(chatMessagesModified);
+
     // Apply templates or modifiers (give priority to templates)
-    const { textModified, chatMessagesModified } = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
+    // const { textModified, chatMessagesModified } = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
 
     // Apply provider model
     const settings: Settings = {};
@@ -49,7 +69,7 @@ const chat = async (
     const temperature = await parameterModel.getTemperature(provider.id);
 
     return await edenaiClient.chat(
-        textModified,
+        lastMessageModified,
         provider.slug,
         chatMessagesModified,
         temperature ? temperature.value : '0.3',
@@ -67,6 +87,7 @@ const chatByPromptId = async (promptUUID: string) => {
         return {
             role: m.role,
             message: m.message,
+            threads_chat_messages_modifiers: []
         }
     });
     const templatesIds = prompt.prompts_templates.map(pt => pt.template_id);
