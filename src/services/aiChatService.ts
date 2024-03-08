@@ -11,7 +11,7 @@ interface Settings {
 
 const chat = async (
     providerUUID: string,
-    chatMessages: { role: string, message: string, modifiers_ids: string[] }[],
+    chatMessages: { role: string, message: string, templatesUUIDs: string[], modifiersUUIDs: string[] }[],
 ) => {
     // Validate provider
     const provider = await providerModel.getOneByUUID(providerUUID);
@@ -20,14 +20,30 @@ const chat = async (
     const lastMessage = chatMessages.pop();
     if (!lastMessage) throw new BadRequestError({ message: "No message to process" });
 
-    const lastMessageModified = await modifierService.applyModifiersToText(lastMessage.message, lastMessage.modifiers_ids);
+    const modifiersUUIDsDeduplicated = await modifierService.deduplicateModifiersIds(
+        lastMessage.templatesUUIDs,
+        lastMessage.modifiersUUIDs
+    );
+
+    const lastMessageModified = await modifierService.applyModifiersToText(
+        lastMessage.message,
+        modifiersUUIDsDeduplicated
+    );
 
     const chatMessagesModified = [];
     for (const chatMessage of chatMessages) {
         const newChatMessage = chatMessage;
 
         if (chatMessage.role === 'user') {
-            newChatMessage.message = await modifierService.applyModifiersToText(chatMessage.message, chatMessage.modifiers_ids);
+            const modifiersUUIDsDeduplicated = await modifierService.deduplicateModifiersIds(
+                chatMessage.templatesUUIDs,
+                chatMessage.modifiersUUIDs
+            );
+
+            newChatMessage.message = await modifierService.applyModifiersToText(
+                chatMessage.message,
+                modifiersUUIDsDeduplicated
+            );
         }
 
         chatMessagesModified.push(newChatMessage);
