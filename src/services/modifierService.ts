@@ -11,6 +11,7 @@ import BadRequestError from '../errors/BadRequestError';
 import languageModel from '../models/languageModel';
 import technologyModel from '../models/technologyModel';
 import providerModel from '../models/providerModel';
+import templateModel from '../models/templateModel';
 
 const getIdsFromUUIDs = async (uuids: string[]) => {
     const modifiers = await modifierModel.getAllByUUIDs(uuids);
@@ -165,8 +166,8 @@ const deleteModifier = async (uuid: string) => {
     return await modifierModel.deleteOne(modifier.id);
 }
 
-const applyModifiersToText = async (text: string, modifiersIds: number[], isChat = false): Promise<string> => {
-    const modifiers = await modifierModel.getAllByIds(modifiersIds);
+const applyModifiersToText = async (text: string, modifiersIds: string[], isChat = false): Promise<string> => {
+    const modifiers = await modifierModel.getAllByUUIDs(modifiersIds);
 
     if (modifiers.length <= 0) return text;
 
@@ -197,6 +198,24 @@ const applyModifiersToChat = async (
     return promptUtils.optimizeChat(text, texts, chatMessages, languageSlug);
 }
 
+const deduplicateModifiersIds = async (templatesUUIDs: string[], modifiersUUIDs: string[]) => {
+    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
+
+    for (const template of templates) {
+        const templateModifiersIds = template.templates_modifiers.map(m => m.modifier.uuid);
+
+        for (const templateModifierId of templateModifiersIds) {
+            if (modifiersUUIDs.includes(templateModifierId)) {
+                continue;
+            }
+
+            modifiersUUIDs.push(templateModifierId);
+        }
+    }
+
+    return modifiersUUIDs;
+}
+
 export default {
     getIdsFromUUIDs,
     getModifiers,
@@ -206,5 +225,6 @@ export default {
     updateModifier,
     deleteModifier,
     applyModifiersToText,
-    applyModifiersToChat
+    applyModifiersToChat,
+    deduplicateModifiersIds
 }

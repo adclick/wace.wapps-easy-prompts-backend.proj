@@ -21,7 +21,7 @@ const textGeneration = async (
     const provider = await providerModel.getOneByUUID(providerUUID);
     if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
 
-    const modifiersIds = await deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
+    const modifiersIds = await modifierService.deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
 
     // Apply templates or modifiers (give priority to templates)
     const textModified = await modifierService.applyModifiersToText(text, modifiersIds);
@@ -45,15 +45,13 @@ const textGenerationByPromptId = async (promptUUID: string) => {
     const prompt = await promptModel.getOneByUUID(promptUUID);
     if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
 
-    const modifiersIds = await deduplicateModifiersIds(
+    const modifiersIds = await modifierService.deduplicateModifiersIds(
         prompt.prompts_templates.map(t => t.template.uuid),
         prompt.prompts_modifiers.map(m => m.modifier.uuid)
     );
 
     // Apply modifiers
     const textModified = await modifierService.applyModifiersToText(prompt.content, modifiersIds);
-
-    console.log(textModified);
 
     // Apply provider model
     const settings: Settings = {};
@@ -74,25 +72,6 @@ const textGenerationByPromptId = async (promptUUID: string) => {
         JSON.stringify(settings)
     );
 };
-
-const deduplicateModifiersIds = async (templatesUUIDs: string[], modifiersUUIDs: string[]) => {
-    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
-    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
-
-    for (const template of templates) {
-        const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
-
-        for (const templateModifierId of templateModifiersIds) {
-            if (modifiersIds.includes(templateModifierId)) {
-                continue;
-            }
-
-            modifiersIds.push(templateModifierId);
-        }
-    }
-
-    return modifiersIds;
-}
 
 export default {
     textGeneration,

@@ -1,11 +1,8 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
-import templateService from './templateService';
 import modifierService from './modifierService';
-import promptService from './promptService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
-import templateModel from '../models/templateModel';
 import BadRequestError from '../errors/BadRequestError';
 
 const BASE_URL = process.env.BASE_URL;
@@ -27,23 +24,9 @@ const imageGeneration = async (
     const provider = await providerModel.getOneByUUID(providerUUID);
     if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
 
-    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
-    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+    const modifiersUUIDsDeduplicated = await modifierService.deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
 
-    for (const template of templates) {
-        const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
-
-        for (const templateModifierId of templateModifiersIds) {
-            if (modifiersIds.includes(templateModifierId)) {
-                continue;
-            }
-
-            modifiersIds.push(templateModifierId);
-        }
-    }
-
-    // Apply templates or modifiers (give priority to templates)
-    const textModified = await modifierService.applyModifiersToText(text, modifiersIds);
+    const textModified = await modifierService.applyModifiersToText(text, modifiersUUIDsDeduplicated);
 
     // Apply provider model
     const settings: Settings = {};
@@ -66,8 +49,12 @@ const imageGenerationByPromptId = async (promptUUID: string) => {
     const prompt = await promptModel.getOneByUUID(promptUUID);
     if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
 
-    // Apply modifiers
-    const textModified = await promptService.applyModifiersAndTemplatesFromPrompt(prompt.id);
+    const templatesUUIDs = prompt.prompts_templates.map(t => t.template.uuid);
+    const modifiersUUIDs = prompt.prompts_modifiers.map(m => m.modifier.uuid);
+
+    const modifiersUUIDsDeduplicated = await modifierService.deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
+
+    const textModified = await modifierService.applyModifiersToText(prompt.content, modifiersUUIDsDeduplicated);
 
     let resolution = '1024x1024';
     let num_images = 1;

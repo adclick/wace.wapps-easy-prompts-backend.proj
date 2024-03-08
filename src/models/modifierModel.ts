@@ -11,7 +11,19 @@ const getOneByUUID = async (uuid: string) => await prisma.modifier.findUnique({ 
 const getAllByUUIDs = async (uuids: string[]) => {
     return await prisma.modifier.findMany({
         where: {
-            uuid: { in: uuids }
+            uuid: { in: uuids },
+        },
+        include: {
+            language: true,
+            repository: true,
+            technology: true,
+            provider: {
+                include: {
+                    technology: true,
+                    parameters: true
+                }
+            },
+            user: true
         }
     })
 }

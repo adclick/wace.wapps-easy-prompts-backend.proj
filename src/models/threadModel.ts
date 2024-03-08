@@ -226,6 +226,7 @@ const updateOne = async (
             content,
             response,
             collapsed,
+            modifiers,  
             user_id,
             workspace_id,
             technology_id,

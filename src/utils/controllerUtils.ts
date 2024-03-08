@@ -31,7 +31,7 @@ const getLanguagesIds = (req: Request, required: boolean = false, method: string
 const getRepositoriesIds = (req: Request, required: boolean = false, method: string = 'get'): string[] => getUUIDs(req, 'repositories_ids', required, method)
 const getText = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'text', required, method)
 const getChatHistory = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_history', required, method)
-const getChatMessages = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'chat_messages', required, method)
+const getChatMessages = (req: Request, required: boolean = false, method: string = 'get'): any[] => getJsonArray(req, 'chat_messages', required, method)
 const getParameterNumImages = (req: Request, required: boolean = false, method: string = 'get'): number => getNumber(req, 'num_images', required, method)
 const getParameterImageResolution = (req: Request, required: boolean = false, method: string = 'get'): string => getString(req, 'image_resolution', required, method)
 const getPromptParameters = (req: Request, required: boolean = false, method: string = 'get'): any[] => getArray(req, 'prompt_parameters', required, method)
@@ -83,6 +83,17 @@ const getArray = (req: Request, parameter: string, required: boolean = false, me
     if (!Array.isArray(json)) throw new BadRequestError({ message: `Incorrect format for parameter ${parameter}` });
 
     return json;
+}
+
+const getJsonArray = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): any[] => {
+    const array = getParameter(req, parameter, method);
+
+    // Check if exists
+    if (required && (array === "" || array === undefined)) throw new BadRequestError({ message: missingParameterMessage(parameter) });
+
+    if (!Array.isArray(array)) throw new BadRequestError({ message: `Incorrect format for parameter ${parameter}` });
+
+    return array;
 }
 
 const getIds = (req: Request, parameter: string, required: boolean = false, method: string = 'get'): number[] => {

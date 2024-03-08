@@ -101,7 +101,7 @@ const updateOneThread = async (
     providerUUID: string,
     templatesUUIDs: string[],
     modifiersUUIDs: string[],
-    chatMessages: ThreadChatMessage[],
+    chatMessages: { role: string, message: string, modifiers_ids: string[], templates_ids: string[] }[],
 ) => {
     const user = await userModel.getOneById(userExternalId);
     if (!user) throw new Error("User not found");
@@ -123,8 +123,6 @@ const updateOneThread = async (
     const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
     const modifiers = await modifierModel.getAllByUUIDs(modifiersUUIDs);
 
-    const modifiersIds = modifiers.map(m => m.id);
-
     const threadChatMessages = chatMessages;
 
     await threadModel.updateOne(
@@ -145,6 +143,8 @@ const updateOneThread = async (
     );
 
     for (const tcm of threadChatMessages) {
+        const modifiersIds = await modifierService.getIdsFromUUIDs(tcm.modifiers_ids);
+
         await threadChatMessageModel.createOne(
             tcm.role,
             tcm.message,

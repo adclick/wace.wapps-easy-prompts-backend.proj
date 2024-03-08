@@ -1,12 +1,8 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
 import modifierService from './modifierService';
-import { PromptChatMessage } from '../models/promptChatMessageModel';
-import templateService from './templateService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
-import templateModel from '../models/templateModel';
-import modifierModel from '../models/modifierModel';
 import BadRequestError from '../errors/BadRequestError';
 
 interface Settings {
@@ -14,53 +10,28 @@ interface Settings {
 }
 
 const chat = async (
-    text: string,
     providerUUID: string,
-    chatMessages: PromptChatMessage[],
-    modifiersUUIDs: string[],
-    templatesUUIDs: string[]
+    chatMessages: { role: string, message: string, modifiers_ids: string[] }[],
 ) => {
     // Validate provider
     const provider = await providerModel.getOneByUUID(providerUUID);
     if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
 
-    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
-    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
-    
-    for (const template of templates) {
-        const templateModifiersIds = template.templates_modifiers.map(m => m.modifier_id);
-
-        for (const templateModifierId of templateModifiersIds) {
-            if (modifiersIds.includes(templateModifierId)) {
-                continue;
-            }
-
-            modifiersIds.push(templateModifierId);
-        }
-    }
-
     const lastMessage = chatMessages.pop();
+    if (!lastMessage) throw new BadRequestError({ message: "No message to process" });
 
-    if (!lastMessage) throw new BadRequestError({message: "No message to process"});
-
-    const lastMessageModified = await modifierService.applyModifiersToText(lastMessage.message, lastMessage.threads_chat_messages_modifiers.map(m => m.modifier.id));
+    const lastMessageModified = await modifierService.applyModifiersToText(lastMessage.message, lastMessage.modifiers_ids);
 
     const chatMessagesModified = [];
     for (const chatMessage of chatMessages) {
         const newChatMessage = chatMessage;
 
         if (chatMessage.role === 'user') {
-            newChatMessage.message = await modifierService.applyModifiersToText(chatMessage.message, chatMessage.threads_chat_messages_modifiers.map(m => m.modifier.id));
+            newChatMessage.message = await modifierService.applyModifiersToText(chatMessage.message, chatMessage.modifiers_ids);
         }
 
         chatMessagesModified.push(newChatMessage);
     }
-
-    console.log(lastMessageModified);
-    console.log(chatMessagesModified);
-
-    // Apply templates or modifiers (give priority to templates)
-    // const { textModified, chatMessagesModified } = await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
 
     // Apply provider model
     const settings: Settings = {};
@@ -87,16 +58,26 @@ const chatByPromptId = async (promptUUID: string) => {
         return {
             role: m.role,
             message: m.message,
-            threads_chat_messages_modifiers: []
+            modifiers_ids: []
         }
     });
-    const templatesIds = prompt.prompts_templates.map(pt => pt.template_id);
-    const modifiersIds = prompt.prompts_modifiers.map(pm => pm.modifier_id);
 
-    // Apply templates or modifiers (give priority to templates)
-    const { textModified, chatMessagesModified } = templatesIds.length > 0
-        ? await templateService.applyTemplatesToChat(text, templatesIds, chatMessages)
-        : await modifierService.applyModifiersToChat(text, modifiersIds, chatMessages);
+
+    const lastMessage = chatMessages.pop();
+    if (!lastMessage) throw new BadRequestError({ message: "No message to process" });
+
+    const lastMessageModified = await modifierService.applyModifiersToText(lastMessage.message, lastMessage.modifiers_ids);
+
+    const chatMessagesModified = [];
+    for (const chatMessage of chatMessages) {
+        const newChatMessage = chatMessage;
+
+        if (chatMessage.role === 'user') {
+            newChatMessage.message = await modifierService.applyModifiersToText(chatMessage.message, chatMessage.modifiers_ids);
+        }
+
+        chatMessagesModified.push(newChatMessage);
+    }
 
     // Apply provider model
     const settings: Settings = {};
@@ -110,7 +91,7 @@ const chatByPromptId = async (promptUUID: string) => {
     const temperature = await parameterModel.getTemperature(provider.id);
 
     return await edenaiClient.chat(
-        textModified,
+        lastMessageModified,
         provider.slug,
         chatMessagesModified,
         temperature ? temperature.value : '0.3',
