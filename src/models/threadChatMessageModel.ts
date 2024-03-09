@@ -34,6 +34,17 @@ const createOne = async (
     });
 }
 
+const deleteAllByThreadId = async (
+    thread_id: number
+) => {
+    return await prisma.threadChatMessage.deleteMany({
+        where: {
+            thread_id
+        }
+    });
+}
+
 export default {
-    createOne
+    createOne,
+    deleteAllByThreadId
 }

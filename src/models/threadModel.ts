@@ -84,7 +84,17 @@ const getAllByWorkspace = async (workspace_id: number) => {
                                 }
                             }
                         }
-                    }
+                    },
+                    threads_chat_messages_templates: {
+                        select: {
+                            template: {
+                                select: {
+                                    uuid: true,
+                                    title: true
+                                }
+                            }
+                        }
+                    },
                 }
             },
             threads_templates: {

@@ -142,6 +142,8 @@ const updateOneThread = async (
         threadChatMessages,
     );
 
+    await threadChatMessageModel.deleteAllByThreadId(thread.id);
+
     for (const tcm of threadChatMessages) {
         const modifiersIds = await modifierService.getIdsFromUUIDs(tcm.modifiers_ids);
 
