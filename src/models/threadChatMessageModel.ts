@@ -13,12 +13,9 @@ const createOne = async (
     message: string,
     thread_id: number,
     user_id: number,
+    temmplatesIds: number[],
     modifiersIds: number[],
 ) => {
-    const modifiers = modifiersIds.map(m => ({
-        modifier_id: m
-    }))
-
     return await prisma.threadChatMessage.create({
         data: {
             role,
@@ -27,7 +24,12 @@ const createOne = async (
             user_id,
             threads_chat_messages_modifiers: {
                 createMany: {
-                    data: modifiers
+                    data: modifiersIds.map(id => ({modifier_id: id}))
+                }
+            },
+            threads_chat_messages_templates: {
+                createMany: {
+                    data: temmplatesIds.map(id => ({template_id: id}))
                 }
             }
         }

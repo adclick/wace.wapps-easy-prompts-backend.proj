@@ -56,6 +56,7 @@ const createOneThread = async (
     const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
     const modifiers = await modifierModel.getAllByUUIDs(modifiersUUIDs);
 
+    const templatesIds = templates.map(t => t.id);
     const modifiersIds = modifiers.map(m => m.id);
 
     const thread = await threadModel.createOne(
@@ -80,6 +81,7 @@ const createOneThread = async (
             tcm.message,
             thread.id,
             user.id,
+            templatesIds,
             modifiersIds
         );
     }
@@ -145,6 +147,7 @@ const updateOneThread = async (
     await threadChatMessageModel.deleteAllByThreadId(thread.id);
 
     for (const tcm of threadChatMessages) {
+        const templatesIds = await templateService.getIdsFromUUIDs(tcm.templates_ids);
         const modifiersIds = await modifierService.getIdsFromUUIDs(tcm.modifiers_ids);
 
         await threadChatMessageModel.createOne(
@@ -152,6 +155,7 @@ const updateOneThread = async (
             tcm.message,
             thread.id,
             user.id,
+            templatesIds,
             modifiersIds
         );
     }
