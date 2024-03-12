@@ -14,6 +14,7 @@ import technologyModel from '../models/technologyModel';
 import providerModel from '../models/providerModel';
 import templateService from './templateService';
 import modifierService from './modifierService';
+import modifierModel from '../models/modifierModel';
 
 const getPrompts = async (
     externalId: string,
@@ -70,6 +71,13 @@ const createPrompt = async (
     const repository = await repositoryModel.getOneByUUID(repositoryUUID);
     if (!repository) throw new BadRequestError({ message: `Repository "${repositoryUUID}" not found` });
 
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
+        externalId,
+        repository.id
+    );
+
+    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
+
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
@@ -82,23 +90,15 @@ const createPrompt = async (
     const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
     const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
 
-    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
-        externalId,
-        repository.id
-    );
-
-    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
-
     const promptChatMessages = chatMessages.map(cm => {
         return {
             role: cm.role,
             message: cm.message,
             user_id: user.id,
-            threads_chat_messages_modifiers: []
+            threads_chat_messages_templates: cm.threads_chat_messages_templates,
+            threads_chat_messages_modifiers: cm.threads_chat_messages_modifiers
         }
     });
-
-    const contentModified = content;
 
     const prompt = await promptModel.createOne(
         user.id,
@@ -116,6 +116,12 @@ const createPrompt = async (
     );
 
     for (const pcm of promptChatMessages) {
+        const templatesUUIDs = pcm.threads_chat_messages_templates.map(t => t.template.uuid);
+        const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
+
+        const modifiersUUIDs = pcm.threads_chat_messages_modifiers.map(m => m.modifier.uuid);
+        const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+
         await promptChatMessageModel.createOne(
             pcm.role,
             pcm.message,
@@ -155,6 +161,13 @@ const updatePrompt = async (
     const repository = await repositoryModel.getOneByUUID(repositoryUUID);
     if (!repository) throw new BadRequestError({ message: `Repository "${repositoryUUID}" not found` });
 
+    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
+        externalId,
+        repository.id
+    );
+
+    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
+
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
@@ -167,16 +180,7 @@ const updatePrompt = async (
     const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
     const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
 
-    const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
-        externalId,
-        repository.id
-    );
-
-    if (!isUserInRepository) throw new Error('This user does not belong to this repository');
-
-    const contentModified = content;
-
-    return await promptModel.updateOne(
+    await promptModel.updateOne(
         prompt.id,
         user.id,
         title,
@@ -189,8 +193,38 @@ const updatePrompt = async (
         provider.id,
         templatesIds,
         modifiersIds,
-        chatMessages,
-    )
+    );
+
+    const promptChatMessages = chatMessages.map(cm => {
+        return {
+            role: cm.role,
+            message: cm.message,
+            user_id: user.id,
+            threads_chat_messages_templates: cm.threads_chat_messages_templates,
+            threads_chat_messages_modifiers: cm.threads_chat_messages_modifiers
+        }
+    });
+
+    await promptChatMessageModel.deleteAllByPromptId(prompt.id);
+
+    for (const pcm of promptChatMessages) {
+        const templatesUUIDs = pcm.threads_chat_messages_templates.map(t => t.template.uuid);
+        const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
+
+        const modifiersUUIDs = pcm.threads_chat_messages_modifiers.map(m => m.modifier.uuid);
+        const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+
+        await promptChatMessageModel.createOne(
+            pcm.role,
+            pcm.message,
+            prompt.id,
+            user.id,
+            templatesIds,
+            modifiersIds
+        );
+    }
+
+    return await promptModel.getOneById(prompt.id);
 }
 
 const applyModifiersAndTemplatesFromPrompt = async (promptId: number): Promise<string> => {

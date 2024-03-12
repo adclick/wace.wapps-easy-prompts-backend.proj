@@ -1,4 +1,6 @@
+import { Parameter } from "@prisma/client";
+
 export interface ThreadParameter {
-    parameter_id: number,
+    parameter: Parameter,
     value: string
 }

@@ -392,6 +392,11 @@ const createOne = async (
         return { modifier_id: m }
     });
 
+    const parameters_ids = templateParameters.map(p => ({
+        parameter_id: p.parameter_id,
+        value: p.value
+    }));
+
     return await prisma.template.create({
         data: {
             title,
@@ -409,7 +414,7 @@ const createOne = async (
             },
             templates_parameters: {
                 createMany: {
-                    data: templateParameters
+                    data: parameters_ids
                 }
             }
         },

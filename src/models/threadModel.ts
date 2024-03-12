@@ -141,6 +141,11 @@ const createOne = async (
         return { modifier_id: m.id };
     });
 
+    const parameters_ids = threadParameters.map(p => ({
+        parameter_id: p.parameter.id,
+        value: p.value
+    }));
+
     return await prisma.thread.create({
         include: {
             threads_chat_messages: true
@@ -169,7 +174,7 @@ const createOne = async (
             },
             threads_parameters: {
                 createMany: {
-                    data: threadParameters
+                    data: parameters_ids
                 }
             },
         }

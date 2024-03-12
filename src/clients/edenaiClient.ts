@@ -49,9 +49,6 @@ const imageGeneration = async (
         
         if (!(provider in data)) throw new Error('Provider unavailable');
 
-        console.log(num_images);
-        console.log(resolution);
-        console.log(data);
         if (!('items' in data[provider])) throw new Error('Provider could not generate images');
 
         return data[provider].items.map((image: {image_resource_url: string}) => image.image_resource_url);

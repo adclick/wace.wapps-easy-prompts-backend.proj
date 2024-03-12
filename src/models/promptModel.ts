@@ -259,6 +259,11 @@ const createOne = async (
         return { modifier_id: m };
     });
 
+    const parameters_ids = promptParameters.map(p => ({
+        parameter_id: p.parameter_id,
+        value: p.value
+    }));
+
     return await prisma.prompt.create({
         data: {
             title,
@@ -282,7 +287,7 @@ const createOne = async (
             },
             prompts_parameters: {
                 createMany: {
-                    data: promptParameters
+                    data: parameters_ids
                 }
             }
         },
@@ -302,7 +307,6 @@ const updateOne = async (
     provider_id: number,
     templatesIds: number[],
     modifiersIds: number[],
-    chatMessages: PromptChatMessage[],
 ) => {
     const templates_ids = templatesIds.map(t => {
         return { template_id: t };
@@ -324,19 +328,6 @@ const updateOne = async (
         }
     });
 
-    await prisma.promptChatMessage.deleteMany({
-        where: {
-            prompt_id: id
-        }
-    });
-
-    const promptChatMessages = chatMessages.map(c => {
-        return {
-            ...c,
-            user_id
-        }
-    })
-
     return await prisma.prompt.update({
         where: { id },
         data: {
@@ -357,11 +348,6 @@ const updateOne = async (
             prompts_modifiers: {
                 createMany: {
                     data: modifiers_ids
-                }
-            },
-            prompts_chat_messages: {
-                createMany: {
-                    data: promptChatMessages
                 }
             },
         },

@@ -1,4 +1,4 @@
-import { Modifier, PrismaClient } from "@prisma/client";
+import { Modifier, PrismaClient, Template } from "@prisma/client";
 
 const prisma = new PrismaClient();
 
@@ -6,7 +6,8 @@ const prisma = new PrismaClient();
 export interface PromptChatMessage {
     role: string,
     message: string,
-    threads_chat_messages_modifiers: {modifier: Modifier}[]
+    threads_chat_messages_templates: {template: Template}[],
+    threads_chat_messages_modifiers: {modifier: Modifier}[],
 }
 
 const createOne = async (
