@@ -4,7 +4,6 @@ import providerModel from "../models/providerModel";
 import technologyModel from "../models/technologyModel";
 import templateModel from "../models/templateModel";
 import threadChatMessageModel, { ThreadChatMessage } from "../models/threadChatMessageModel";
-import threadChatMessageModifierModel from "../models/threadChatMessageModifierModel";
 import threadModel from "../models/threadModel";
 import { ThreadParameter } from "../models/threadParameter";
 import userModel from "../models/userModel";

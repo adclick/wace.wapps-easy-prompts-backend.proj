@@ -15,6 +15,7 @@ import providerModel from '../models/providerModel';
 import templateService from './templateService';
 import modifierService from './modifierService';
 import modifierModel from '../models/modifierModel';
+import templateModel from '../models/templateModel';
 
 const getPrompts = async (
     externalId: string,
@@ -87,8 +88,8 @@ const createPrompt = async (
     }
     if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
-    const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
-    const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
+    const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
+    const modifiers = await modifierModel.getAllByUUIDs(modifiersUUIDs);
 
     const promptChatMessages = chatMessages.map(cm => {
         return {
@@ -110,8 +111,8 @@ const createPrompt = async (
         repository.id,
         technology.id,
         provider.id,
-        templatesIds,
-        modifiersIds,
+        templates,
+        modifiers,
         promptParameters
     );
 

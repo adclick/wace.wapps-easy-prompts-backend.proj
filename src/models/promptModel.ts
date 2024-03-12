@@ -1,4 +1,4 @@
-import { PrismaClient } from "@prisma/client";
+import { Modifier, PrismaClient, Template } from "@prisma/client";
 import { PromptChatMessage } from "./promptChatMessageModel";
 import { PromptParameter } from "./promptParameter";
 import userModel from "./userModel";
@@ -13,6 +13,8 @@ export const PUBLIC_FIELDS = {
     slug: true,
     created_at: true,
     public: true,
+    templates: true,
+    modifiers: true
 }
 
 const getOneByUUID = async (uuid: string) => {
@@ -247,16 +249,16 @@ const createOne = async (
     repository_id: number,
     technology_id: number,
     provider_id: number,
-    templatesIds: number[],
-    modifiersIds: number[],
+    templates: Template[],
+    modifiers: Modifier[],
     promptParameters: PromptParameter[]
 ) => {
-    const templates_ids = templatesIds.map(t => {
-        return { template_id: t };
+    const templates_ids = templates.map(t => {
+        return { template_id: t.id };
     });
 
-    const modifiers_ids = modifiersIds.map(m => {
-        return { modifier_id: m };
+    const modifiers_ids = modifiers.map(m => {
+        return { modifier_id: m.id };
     });
 
     const parameters_ids = promptParameters.map(p => ({
@@ -275,6 +277,8 @@ const createOne = async (
             technology_id,
             provider_id,
             user_id,
+            templates,
+            modifiers,
             prompts_templates: {
                 createMany: {
                     data: templates_ids
