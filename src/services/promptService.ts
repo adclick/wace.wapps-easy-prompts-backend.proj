@@ -3,7 +3,7 @@ import userModel from '../models/userModel';
 import promptModel from '../models/promptModel';
 import textUtils from '../utils/textUtils';
 import promptUtils from '../utils/promptUtils';
-import { PromptChatMessage } from '../models/promptChatMessageModel';
+import promptChatMessageModel, { PromptChatMessage } from '../models/promptChatMessageModel';
 import { PromptParameter } from '../models/promptParameter';
 import languageService from './languageService';
 import repositoryService from './repositoryService';
@@ -100,7 +100,7 @@ const createPrompt = async (
 
     const contentModified = content;
 
-    return await promptModel.createOne(
+    const prompt = await promptModel.createOne(
         user.id,
         title,
         textUtils.toSlug(title),
@@ -112,9 +112,21 @@ const createPrompt = async (
         provider.id,
         templatesIds,
         modifiersIds,
-        promptChatMessages,
         promptParameters
-    )
+    );
+
+    for (const pcm of promptChatMessages) {
+        await promptChatMessageModel.createOne(
+            pcm.role,
+            pcm.message,
+            prompt.id,
+            user.id,
+            templatesIds,
+            modifiersIds
+        );
+    }
+
+    return await promptModel.getOneById(prompt.id);
 }
 
 const updatePrompt = async (

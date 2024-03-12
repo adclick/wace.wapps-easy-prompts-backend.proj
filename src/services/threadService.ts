@@ -71,7 +71,6 @@ const createOneThread = async (
         provider.id,
         templates,
         modifiers,
-        threadChatMessages,
         threadParameters,
     );
 

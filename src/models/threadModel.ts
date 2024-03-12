@@ -131,7 +131,6 @@ const createOne = async (
     provider_id: number,
     templates: Template[],
     modifiers: Modifier[],
-    chatMessages: ThreadChatMessage[],
     threadParameters: ThreadParameter[]
 ) => {
     const templates_ids = templates.map(t => {
@@ -140,14 +139,6 @@ const createOne = async (
 
     const modifiers_ids = modifiers.map(m => {
         return { modifier_id: m.id };
-    });
-
-    const threadChatMessages = chatMessages.map(c => {
-        return {
-            role: c.role,
-            message: c.message,
-            user_id
-        }
     });
 
     return await prisma.thread.create({
@@ -166,6 +157,16 @@ const createOne = async (
             provider_id,
             templates,
             modifiers,
+            threads_templates: {
+                createMany: {
+                    data: templates_ids
+                }
+            },
+            threads_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            },
             threads_parameters: {
                 createMany: {
                     data: threadParameters
@@ -211,19 +212,6 @@ const updateOne = async (
         }
     });
 
-    // await prisma.threadChatMessage.deleteMany({
-    //     where: {
-    //         thread_id: id
-    //     }
-    // });
-    
-    const threadChatMessages = chatMessages.map(c => {
-        return {
-            ...c,
-            user_id
-        }
-    })
-
     return await prisma.thread.update({
         include: {
             threads_chat_messages: true
@@ -236,11 +224,22 @@ const updateOne = async (
             content,
             response,
             collapsed,
+            templates,
             modifiers,  
             user_id,
             workspace_id,
             technology_id,
             provider_id,
+            threads_templates: {
+                createMany: {
+                    data: templates_ids
+                }
+            },
+            threads_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            }
         }
     });
 }

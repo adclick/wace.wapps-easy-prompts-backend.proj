@@ -206,7 +206,30 @@ const getAll = async (
                     }
                 }
             },
-            prompts_chat_messages: true,
+            prompts_chat_messages: {
+                include: {
+                    prompts_chat_messages_modifiers: {
+                        select: {
+                            modifier: {
+                                select: {
+                                    uuid: true,
+                                    title: true
+                                }
+                            }
+                        }
+                    },
+                    prompts_chat_messages_templates: {
+                        select: {
+                            template: {
+                                select: {
+                                    uuid: true,
+                                    title: true
+                                }
+                            }
+                        }
+                    },
+                }
+            },
         },
         orderBy: [{ id: "desc" }],
         take: limit,
@@ -226,7 +249,6 @@ const createOne = async (
     provider_id: number,
     templatesIds: number[],
     modifiersIds: number[],
-    chatMessages: PromptChatMessage[],
     promptParameters: PromptParameter[]
 ) => {
     const templates_ids = templatesIds.map(t => {
@@ -236,13 +258,6 @@ const createOne = async (
     const modifiers_ids = modifiersIds.map(m => {
         return { modifier_id: m };
     });
-
-    const promptChatMessages = chatMessages.map(c => {
-        return {
-            ...c,
-            user_id
-        }
-    })
 
     return await prisma.prompt.create({
         data: {
@@ -263,11 +278,6 @@ const createOne = async (
             prompts_modifiers: {
                 createMany: {
                     data: modifiers_ids
-                }
-            },
-            prompts_chat_messages: {
-                createMany: {
-                    data: promptChatMessages
                 }
             },
             prompts_parameters: {
