@@ -384,7 +384,7 @@ const createOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number,
+    provider_id: number | null,
     modifiersIds: number[],
     templateParameters: TemplateParameter[]
 ) => {
@@ -430,7 +430,7 @@ const updateOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number,
+    provider_id: number | null,
     modifiersIds: number[],
 ) => {
     const modifiers_ids = modifiersIds.map(m => {

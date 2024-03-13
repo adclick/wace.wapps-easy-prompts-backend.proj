@@ -262,7 +262,7 @@ const createOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number,
+    provider_id: number | null,
     templates: Template[],
     modifiers: Modifier[],
     promptParameters: PromptParameter[]
@@ -322,7 +322,7 @@ const updateOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number,
+    provider_id: number | null,
     templatesIds: number[],
     modifiersIds: number[],
 ) => {

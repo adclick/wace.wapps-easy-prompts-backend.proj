@@ -82,11 +82,13 @@ const createPrompt = async (
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
-    let provider = await providerModel.getOneByUUID(providerUUID);
-    if (!provider) {
-        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    let providerId = null;
+    if (providerUUID !== null) {
+        let provider = await providerModel.getOneByUUID(providerUUID);
+        if (provider) {
+            providerId = provider.id;
+        }
     }
-    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
     const templates = await templateModel.getAllByUUIDs(templatesUUIDs);
     const modifiers = await modifierModel.getAllByUUIDs(modifiersUUIDs);
@@ -110,7 +112,7 @@ const createPrompt = async (
         language.id,
         repository.id,
         technology.id,
-        provider.id,
+        providerId,
         templates,
         modifiers,
         promptParameters
@@ -172,11 +174,13 @@ const updatePrompt = async (
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
-    let provider = await providerModel.getOneByUUID(providerUUID);
-    if (!provider) {
-        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    let providerId = null;
+    if (providerUUID !== null) {
+        let provider = await providerModel.getOneByUUID(providerUUID);
+        if (provider) {
+            providerId = provider.id;
+        }
     }
-    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
     const templatesIds = await templateService.getIdsFromUUIDs(templatesUUIDs);
     const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
@@ -191,7 +195,7 @@ const updatePrompt = async (
         language.id,
         repository.id,
         technology.id,
-        provider.id,
+        providerId,
         templatesIds,
         modifiersIds,
     );

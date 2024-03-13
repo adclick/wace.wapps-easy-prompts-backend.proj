@@ -54,7 +54,7 @@ const getTemplateById = async (templateUUID: string) => {
     const template = await templateModel.getOneByUUID(templateUUID);
 
     if (!template) throw new BadRequestError({ message: `Template "${templateUUID}" not found` });
-    
+
     return await templateModel.getOneById(template.id);
 };
 
@@ -80,15 +80,16 @@ const createTemplate = async (
 
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
-
-    let provider = await providerModel.getOneByUUID(providerUUID);
-    if (!provider) {
-        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    
+    let providerId = null;
+    if (providerUUID !== null) {
+        let provider = await providerModel.getOneByUUID(providerUUID);
+        if (provider) {
+            providerId = provider.id;
+        }
     }
-    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
     const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
-
 
     const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
         externalId,
@@ -96,10 +97,6 @@ const createTemplate = async (
     );
 
     if (!isUserInRepository) throw new Error('This user does not belong to this repository');
-
-    // Clone
-    // const history: any = [];
-    // chatHistory.forEach(h => history.push(h));
 
     return await templateModel.createOne(
         user.id,
@@ -109,7 +106,7 @@ const createTemplate = async (
         language.id,
         repository.id,
         technology.id,
-        provider.id,
+        providerId,
         modifiersIds,
         templateParameters
     )
@@ -141,11 +138,13 @@ const updateTemplate = async (
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
-    let provider = await providerModel.getOneByUUID(providerUUID);
-    if (!provider) {
-        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    let providerId = null;
+    if (providerUUID !== null) {
+        let provider = await providerModel.getOneByUUID(providerUUID);
+        if (provider) {
+            providerId = provider.id;
+        }
     }
-    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
     const modifiersIds = await modifierService.getIdsFromUUIDs(modifiersUUIDs);
 
@@ -165,7 +164,7 @@ const updateTemplate = async (
         language.id,
         repository.id,
         technology.id,
-        provider.id,
+        providerId,
         modifiersIds,
     )
 }

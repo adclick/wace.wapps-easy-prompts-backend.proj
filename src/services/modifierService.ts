@@ -79,12 +79,13 @@ const createModifier = async (
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
-    let provider = await providerModel.getOneByUUID(providerUUID);
-    if (!provider) {
-        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    let providerId = null;
+    if (providerUUID !== null) {
+        let provider = await providerModel.getOneByUUID(providerUUID);
+        if (provider) {
+            providerId = provider.id;
+        }
     }
-    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
-
 
     const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
         externalId,
@@ -102,7 +103,7 @@ const createModifier = async (
         language.id,
         repository.id,
         technology.id,
-        provider.id,
+        providerId,
     )
 }
 
@@ -132,11 +133,13 @@ const updateModifier = async (
     const technology = await technologyModel.getOneByUUID(technologyUUID);
     if (!technology) throw new BadRequestError({ message: `Technology "${technologyUUID}" not found` });
 
-    let provider = await providerModel.getOneByUUID(providerUUID);
-    if (!provider) {
-        provider = await providerModel.getOneDefaultByTechnologyId(technology.id);
+    let providerId = null;
+    if (providerUUID !== null) {
+        let provider = await providerModel.getOneByUUID(providerUUID);
+        if (provider) {
+            providerId = provider.id;
+        }
     }
-    if (!provider) throw new BadRequestError({ message: `Provider "${providerUUID}" not found` });
 
     const isUserInRepository = await repositoryModel.getOneByUserAndRepository(
         externalId,
@@ -155,7 +158,7 @@ const updateModifier = async (
         language.id,
         repository.id,
         technology.id,
-        provider.id,
+        providerId,
     )
 }
 
