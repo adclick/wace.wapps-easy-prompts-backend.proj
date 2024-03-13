@@ -79,7 +79,21 @@ const getOneById = async (id: number) => {
                     modifier: true
                 }
             },
-            prompts_parameters: true,
+            prompts_parameters: {
+                select: {
+                    value: true,
+                    parameter: {
+                        select: {
+                            id: true,
+                            uuid: true,
+                            name: true,
+                            slug: true,
+                            data: true,
+                            value: true
+                        }
+                    }
+                }
+            },
             prompts_chat_messages: true
         }
     });
