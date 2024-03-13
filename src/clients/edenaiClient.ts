@@ -62,7 +62,7 @@ const imageGeneration = async (
 const chat = async (
     text: string,
     provider: string,
-    previous_history: PromptChatMessage[],
+    previous_history: { role: string, message: string }[],
     temperature: string,
     settings: string
 ) => {

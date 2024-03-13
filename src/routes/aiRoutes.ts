@@ -1,7 +1,9 @@
+import "express-async-errors";
 import express from 'express';
 import aiController from '../controllers/aiChatController';
 import aiTextGenerationController from '../controllers/aiTextGenerationController';
 import aiImageGenerationController from '../controllers/aiImageGenerationController';
+import { errorHandler } from '../middlewares/errors';
 
 const router = express.Router();
 
@@ -16,5 +18,8 @@ router.post('/image-generation/prompt/:prompt_id', aiImageGenerationController.i
 // Chat
 router.post('/chat/', aiController.chat);
 router.post('/chat/prompt/:prompt_id', aiController.chatByPromptId);
+
+
+router.use(errorHandler);
 
 export default router;

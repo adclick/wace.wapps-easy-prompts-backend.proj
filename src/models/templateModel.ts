@@ -13,6 +13,64 @@ export interface Modifier {
     content: string
 }
 
+const getOneByUUID = async (uuid: string) => await prisma.template.findUnique({ where: { uuid } });
+
+const getAllByUUIDs = async (uuids: string[]) => {
+    return await prisma.template.findMany({
+        where: {
+            uuid: { in: uuids }
+        },
+        include: {
+            language: {
+                select: {
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                    default: true
+                }
+            },
+            provider: {
+                select: {
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
+            },
+            user: {
+                select: {
+                    uuid: true,
+                    email: true,
+                    username: true,
+                    external_id: true
+                }
+            },
+            templates_modifiers: {
+                include: {
+                    modifier: true
+                }
+            }
+        }
+    })
+}
+
 const getOneById = async (id: number) => {
     return await prisma.template.findUnique({
         where: { id },
@@ -52,18 +110,21 @@ const getAllByIds = async (ids: number[]) => {
         include: {
             language: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             repository: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             technology: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     default: true
@@ -71,6 +132,7 @@ const getAllByIds = async (ids: number[]) => {
             },
             provider: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -81,6 +143,7 @@ const getAllByIds = async (ids: number[]) => {
             },
             user: {
                 select: {
+                    uuid: true,
                     email: true,
                     username: true,
                     external_id: true
@@ -95,11 +158,12 @@ const getAllByIds = async (ids: number[]) => {
     })
 }
 
-const getAll = async (
+const getAllByFilters = async (
     external_id: string,
     search_term: string,
     languages_ids: number[],
     repositories_ids: number[],
+    technologies_ids: number[],
     limit: number,
     offset: number
 ) => {
@@ -134,10 +198,12 @@ const getAll = async (
                     }
                 ]
             },
+            technology: { id: { in: technologies_ids } },
         },
         include: {
             user: {
                 select: {
+                    uuid: true,
                     external_id: true,
                     email: true,
                     username: true,
@@ -146,6 +212,7 @@ const getAll = async (
             language: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -153,6 +220,7 @@ const getAll = async (
             repository: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -160,6 +228,7 @@ const getAll = async (
             technology: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -167,6 +236,7 @@ const getAll = async (
             provider: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -181,6 +251,7 @@ const getAll = async (
                     parameter: {
                         select: {
                             id: true,
+                            uuid: true,
                             name: true,
                             slug: true,
                             data: true,
@@ -194,6 +265,7 @@ const getAll = async (
                     modifier: {
                         select: {
                             id: true,
+                            uuid: true,
                             title: true,
                             slug: true
                         }
@@ -207,6 +279,103 @@ const getAll = async (
     });
 }
 
+const getAllByUser = async (
+    external_id: string,
+) => {
+    return await prisma.template.findMany({
+        where: {
+            repository: {
+                OR: [
+                    {
+                        users_repositories: {
+                            some: {
+                                user: { external_id },
+                            }
+                        }
+                    },
+                    {
+                        user: { external_id },
+                    }
+                ]
+            },
+        },
+        include: {
+            user: {
+                select: {
+                    external_id: true,
+                    uuid: true,
+                    email: true,
+                    username: true,
+                }
+            },
+            language: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            provider: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
+            },
+            templates_parameters: {
+                select: {
+                    value: true,
+                    parameter: {
+                        select: {
+                            id: true,
+                            uuid: true,
+                            name: true,
+                            slug: true,
+                            data: true,
+                            value: true
+                        }
+                    }
+                }
+            },
+            templates_modifiers: {
+                include: {
+                    modifier: {
+                        select: {
+                            id: true,
+                            uuid: true,
+                            title: true,
+                            slug: true
+                        }
+                    }
+                }
+            }
+        },
+        orderBy: [{ created_at: "desc" }],
+    });
+}
+
 const createOne = async (
     user_id: number,
     title: string,
@@ -215,13 +384,18 @@ const createOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number,
+    provider_id: number | null,
     modifiersIds: number[],
     templateParameters: TemplateParameter[]
 ) => {
     const modifiers_ids = modifiersIds.map(m => {
         return { modifier_id: m }
     });
+
+    const parameters_ids = templateParameters.map(p => ({
+        parameter_id: p.parameter_id,
+        value: p.value
+    }));
 
     return await prisma.template.create({
         data: {
@@ -240,7 +414,7 @@ const createOne = async (
             },
             templates_parameters: {
                 createMany: {
-                    data: templateParameters
+                    data: parameters_ids
                 }
             }
         },
@@ -256,8 +430,19 @@ const updateOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number,
+    provider_id: number | null,
+    modifiersIds: number[],
 ) => {
+    const modifiers_ids = modifiersIds.map(m => {
+        return { modifier_id: m };
+    });
+
+    await prisma.templateModifier.deleteMany({
+        where: {
+            template_id: id
+        }
+    });
+
     return await prisma.template.update({
         where: { id },
         data: {
@@ -269,6 +454,11 @@ const updateOne = async (
             technology_id,
             provider_id,
             user_id,
+            templates_modifiers: {
+                createMany: {
+                    data: modifiers_ids
+                }
+            },
         },
     })
 }
@@ -278,9 +468,12 @@ const deleteOne = async (id: number) => {
 }
 
 export default {
+    getOneByUUID,
+    getAllByUUIDs,
     getOneById,
     getAllByIds,
-    getAll,
+    getAllByUser,
+    getAllByFilters,
     createOne,
     updateOne,
     deleteOne,

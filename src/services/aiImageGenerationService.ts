@@ -1,10 +1,9 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
-import templateService from './templateService';
 import modifierService from './modifierService';
-import promptService from './promptService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
+import BadRequestError from '../errors/BadRequestError';
 
 const BASE_URL = process.env.BASE_URL;
 const API_URL = BASE_URL + '/ai/image/generate-image';
@@ -15,20 +14,19 @@ interface Settings {
 
 const imageGeneration = async (
     text: string,
-    providerId: number,
-    modifiersIds: number[],
-    templatesIds: number[],
+    providerUUID: string,
+    modifiersUUIDs: string[],
+    templatesUUIDs: string[],
     numImages: number,
     imageResolution: string
 ) => {
     // Validate provider
-    const provider = await providerModel.getOneById(providerId);
-    if (!provider) throw new Error(`Provider (${providerId}) not found`);
+    const provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
 
-    // Apply templates or modifiers (give priority to templates)
-    const textModified = templatesIds.length > 0
-        ? await templateService.applyTemplatesToText(text, templatesIds)
-        : await modifierService.applyModifiersToText(text, modifiersIds);
+    const modifiersUUIDsDeduplicated = await modifierService.deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
+
+    const textModified = await modifierService.applyModifiersToText(text, modifiersUUIDsDeduplicated);
 
     // Apply provider model
     const settings: Settings = {};
@@ -46,13 +44,17 @@ const imageGeneration = async (
     );
 };
 
-const imageGenerationByPromptId = async (promptId: number) => {
+const imageGenerationByPromptId = async (promptUUID: string) => {
     // Validate Prompt
-    const prompt = await promptModel.getOneById(promptId);
-    if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
+    const prompt = await promptModel.getOneByUUID(promptUUID);
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
 
-    // Apply modifiers
-    const textModified = await promptService.applyModifiersAndTemplatesFromPrompt(prompt.id);
+    const templatesUUIDs = prompt.prompts_templates.map(t => t.template.uuid);
+    const modifiersUUIDs = prompt.prompts_modifiers.map(m => m.modifier.uuid);
+
+    const modifiersUUIDsDeduplicated = await modifierService.deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
+
+    const textModified = await modifierService.applyModifiersToText(prompt.content, modifiersUUIDsDeduplicated);
 
     let resolution = '1024x1024';
     let num_images = 1;

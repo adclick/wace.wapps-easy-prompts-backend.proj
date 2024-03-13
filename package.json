@@ -26,6 +26,7 @@
     "axios": "^1.6.2",
     "cors": "^2.8.5",
     "express": "^4.18.2",
+    "express-async-errors": "^3.1.1",
     "express-oauth2-jwt-bearer": "^1.6.0",
     "slugify": "^1.6.6"
   }

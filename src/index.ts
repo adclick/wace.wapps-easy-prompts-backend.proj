@@ -7,7 +7,10 @@ import providerRoutes from './routes/providerRoutes';
 import promptRoutes from './routes/promptRoutes';
 import modifierRoutes from './routes/modifierRoutes';
 import templateRoutes from './routes/templateRoutes';
+import threadsRoutes from './routes/threadRoutes';
+import workspaceRoutes from './routes/workspaceRoutes';
 import aiRoutes from './routes/aiRoutes';
+
 
 const cors = require('cors');
 
@@ -37,6 +40,8 @@ app.use('/api/providers', providerRoutes);
 app.use('/api/prompts', promptRoutes);
 app.use('/api/modifiers', modifierRoutes);
 app.use('/api/templates', templateRoutes);
+app.use('/api/threads', threadsRoutes);
+app.use('/api/workspaces', workspaceRoutes);
 app.use('/api/ai', aiRoutes);
 
 const PORT = process.env.PORT || 3000;

@@ -1,17 +1,25 @@
+import languageModel from '../models/languageModel';
 import repositoryModel from '../models/repositoryModel';
 import userModel from '../models/userModel';
 import userRepositoryModel from '../models/userRepositoryModel';
+import workspaceModel from '../models/workspaceModel';
 import textUtils from '../utils/textUtils';
 
 const login = async (email: string, username: string, externalId: string) => {
-    // Create or update user
-    const user = await userModel.upsertOne(email, username, externalId);
-    // let user = await userModel.getOneByEmailAndExternalId(email, externalId);
+    const defaultLanguage = await languageModel.getDefault();
+    if (!defaultLanguage) throw new Error('No default language defined in the system. Please contact support');
 
-    // if (!user) {
-    //     console.log("update");
-    //     user = await userModel.insertOne(externalId, email, username);
-    // }
+    const user = await userModel.upsertOne(email, username, externalId, defaultLanguage.id);
+
+    // Create or update main personal repo
+    const repoName = "My Repository";
+    const repoSlug = textUtils.toSlug(repoName);
+    const repository = await repositoryModel.upsertOne(repoName, repoSlug, user.id, true);
+    
+    // Create or update main Workspace
+    const workspaceName = "My Workspace";
+    const workspaceSlug = textUtils.toSlug(workspaceName);
+    const workspace = await workspaceModel.upsertOne(workspaceName, workspaceSlug, user.id, true);
 
     upsertUserToRepositories(email, user.id);
 
@@ -19,11 +27,6 @@ const login = async (email: string, username: string, externalId: string) => {
 };
 
 const upsertUserToRepositories = async (email: string, userId: number) => {
-    // Create or update main personal repo
-    const repoName = "My Repository";
-    const repoSlug = textUtils.toSlug(repoName);
-    await repositoryModel.upsertOne(repoName, repoSlug, userId);
-
     // HARDCODE
     // Subscribe user to specific repos
     if (email.endsWith('wacestudio.com')) {

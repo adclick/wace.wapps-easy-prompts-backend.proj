@@ -1,27 +1,30 @@
 import providerModel from '../models/providerModel';
 import promptModel from '../models/promptModel';
-import templateService from './templateService';
 import modifierService from './modifierService';
-import promptService from './promptService';
 import parameterModel from '../models/parameterModel';
 import edenaiClient from '../clients/edenaiClient';
-
-const BASE_URL = process.env.BASE_URL;
-const API_URL = BASE_URL + '/ai/text/generate-text';
+import templateModel from '../models/templateModel';
+import templateService from './templateService';
+import BadRequestError from '../errors/BadRequestError';
 
 interface Settings {
     [key: string]: string
 }
 
-const textGeneration = async (text: string, providerId: number, modifiersIds: number[], templatesIds: number[]) => {
+const textGeneration = async (
+    text: string,
+    providerUUID: string,
+    modifiersUUIDs: string[],
+    templatesUUIDs: string[]
+) => {
     // Validate provider
-    const provider = await providerModel.getOneById(providerId);
-    if (!provider) throw new Error(`Provider (${providerId}) not found`);
+    const provider = await providerModel.getOneByUUID(providerUUID);
+    if (!provider) throw new Error(`Provider "${providerUUID}" not found`);
+
+    const modifiersIds = await modifierService.deduplicateModifiersIds(templatesUUIDs, modifiersUUIDs);
 
     // Apply templates or modifiers (give priority to templates)
-    const textModified = templatesIds.length > 0
-        ? await templateService.applyTemplatesToText(text, templatesIds)
-        : await modifierService.applyModifiersToText(text, modifiersIds);
+    const textModified = await modifierService.applyModifiersToText(text, modifiersIds);
 
     // Apply provider model
     const settings: Settings = {};
@@ -29,7 +32,6 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
 
     const temperature = await parameterModel.getTemperature(provider.id);
 
-    // Request
     return await edenaiClient.textGeneration(
         textModified,
         provider.slug,
@@ -38,13 +40,18 @@ const textGeneration = async (text: string, providerId: number, modifiersIds: nu
     );
 };
 
-const textGenerationByPromptId = async (promptId: number) => {
+const textGenerationByPromptId = async (promptUUID: string) => {
     // Validate Prompt
-    const prompt = await promptModel.getOneById(promptId);
-    if (!prompt) throw new Error(`Prompt (${promptId}) not found`);
+    const prompt = await promptModel.getOneByUUID(promptUUID);
+    if (!prompt) throw new BadRequestError({ message: `Prompt "${promptUUID}" not found` });
+
+    const modifiersIds = await modifierService.deduplicateModifiersIds(
+        prompt.prompts_templates.map(t => t.template.uuid),
+        prompt.prompts_modifiers.map(m => m.modifier.uuid)
+    );
 
     // Apply modifiers
-    const textModified = await promptService.applyModifiersAndTemplatesFromPrompt(prompt.id);
+    const textModified = await modifierService.applyModifiersToText(prompt.content, modifiersIds);
 
     // Apply provider model
     const settings: Settings = {};

@@ -6,6 +6,28 @@ export interface Modifier {
     content: string,
 }
 
+const getOneByUUID = async (uuid: string) => await prisma.modifier.findUnique({ where: { uuid } });
+
+const getAllByUUIDs = async (uuids: string[]) => {
+    return await prisma.modifier.findMany({
+        where: {
+            uuid: { in: uuids },
+        },
+        include: {
+            language: true,
+            repository: true,
+            technology: true,
+            provider: {
+                include: {
+                    technology: true,
+                    parameters: true
+                }
+            },
+            user: true
+        }
+    })
+}
+
 const getOneById = async (id: number) => {
     return await prisma.modifier.findUnique({
         where: { id },
@@ -34,18 +56,21 @@ const getAllByIds = async (ids: number[]) => {
         include: {
             language: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             repository: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
             },
             technology: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     default: true
@@ -53,6 +78,7 @@ const getAllByIds = async (ids: number[]) => {
             },
             provider: {
                 select: {
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -63,6 +89,7 @@ const getAllByIds = async (ids: number[]) => {
             },
             user: {
                 select: {
+                    uuid: true,
                     email: true,
                     username: true,
                     external_id: true
@@ -72,11 +99,12 @@ const getAllByIds = async (ids: number[]) => {
     })
 }
 
-const getAll = async (
+const getAllByFilters = async (
     external_id: string,
     search_term: string,
     languages_ids: number[],
     repositories_ids: number[],
+    technologies_ids: number[],
     limit: number,
     offset: number
 ) => {
@@ -111,10 +139,12 @@ const getAll = async (
                     }
                 ]
             },
+            technology: { id: { in: technologies_ids } },
         },
         include: {
             user: {
                 select: {
+                    uuid: true,
                     external_id: true,
                     email: true,
                     username: true,
@@ -123,6 +153,7 @@ const getAll = async (
             language: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -130,6 +161,7 @@ const getAll = async (
             repository: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -137,6 +169,7 @@ const getAll = async (
             technology: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                 }
@@ -144,6 +177,7 @@ const getAll = async (
             provider: {
                 select: {
                     id: true,
+                    uuid: true,
                     name: true,
                     slug: true,
                     model_name: true,
@@ -159,6 +193,76 @@ const getAll = async (
     });
 }
 
+const getAllByUser = async (
+    external_id: string,
+) => {
+    return await prisma.modifier.findMany({
+        where: {
+            repository: {
+                OR: [
+                    {
+                        users_repositories: {
+                            some: {
+                                user: { external_id },
+                            }
+                        }
+                    },
+                    {
+                        user: { external_id },
+                    }
+                ]
+            },
+        },
+        include: {
+            user: {
+                select: {
+                    external_id: true,
+                    uuid: true,
+                    email: true,
+                    username: true,
+                }
+            },
+            language: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            repository: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            technology: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                }
+            },
+            provider: {
+                select: {
+                    id: true,
+                    uuid: true,
+                    name: true,
+                    slug: true,
+                    model_name: true,
+                    model_slug: true,
+                    technology: true,
+                    parameters: true
+                },
+            },
+        },
+        orderBy: [{ created_at: "desc" }],
+    });
+}
+
 const createOne = async (
     user_id: number,
     title: string,
@@ -168,7 +272,7 @@ const createOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number
+    provider_id: number | null
 ) => {
     return await prisma.modifier.create({
         data: {
@@ -195,7 +299,7 @@ const updateOne = async (
     language_id: number,
     repository_id: number,
     technology_id: number,
-    provider_id: number
+    provider_id: number | null
 ) => {
     return await prisma.modifier.update({
         where: {id},
@@ -218,9 +322,12 @@ const deleteOne = async (id: number) => {
 }
 
 export default {
+    getOneByUUID,
+    getAllByUUIDs,
     getOneById,
     getAllByIds,
-    getAll,
+    getAllByFilters,
+    getAllByUser,
     createOne,
     updateOne,
     deleteOne,

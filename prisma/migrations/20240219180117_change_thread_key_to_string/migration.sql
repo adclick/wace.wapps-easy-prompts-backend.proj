@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE "threads" ALTER COLUMN "key" SET DATA TYPE TEXT;

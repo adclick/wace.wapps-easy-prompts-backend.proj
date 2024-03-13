@@ -10,20 +10,30 @@ datasource db {
 }
 
 model User {
-    id                 Int              @id @default(autoincrement())
-    email              String           @db.VarChar(255)
-    username           String           @db.VarChar(255)
-    theme              String           @default("dark") @db.VarChar(255)
-    first_login        Boolean          @default(true)
-    external_id        String
-    prompts            Prompt[]
-    modifiers          Modifier[]
-    templates          Template[]
-    repositories       Repository[]
-    users_repositories UserRepository[]
+    id                    Int                 @id @default(autoincrement())
+    uuid                  String              @default(uuid()) @db.VarChar(255)
+    email                 String              @db.VarChar(255)
+    username              String              @db.VarChar(255)
+    theme                 String              @default("dark") @db.VarChar(255)
+    first_login           Boolean             @default(true)
+    external_id           String
+    language_id           Int
+    language              Language            @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts               Prompt[]
+    modifiers             Modifier[]
+    templates             Template[]
+    repositories          Repository[]
+    users_repositories    UserRepository[]
+    users_workspaces      UserWorkspace[]
+    threads               Thread[]
+    workspaces            Workspace[]
+    threads_chat_messages ThreadChatMessage[]
+    prompts_chat_messages PromptChatMessage[]
 
+    @@unique([uuid])
     @@unique([email])
     @@unique([external_id])
+    @@index([uuid])
     @@index([email])
     @@index([external_id])
     @@map("users")
@@ -31,21 +41,28 @@ model User {
 
 model Language {
     id        Int        @id @default(autoincrement())
+    uuid      String     @default(uuid()) @db.VarChar(255)
     name      String     @db.VarChar(255)
     slug      String     @db.VarChar(255)
+    default   Boolean    @default(false)
     prompts   Prompt[]
     modifiers Modifier[]
     templates Template[]
+    users     User[]
 
+    @@unique([uuid])
     @@unique([slug])
+    @@index([uuid])
     @@map("languages")
 }
 
 model Repository {
     id                     Int                  @id @default(autoincrement())
+    uuid                   String               @default(uuid()) @db.VarChar(255)
     name                   String               @db.VarChar(255)
     slug                   String?              @db.VarChar(255)
     user_id                Int
+    default                Boolean              @default(false)
     prompts                Prompt[]
     modifiers              Modifier[]
     templates              Template[]
@@ -55,12 +72,15 @@ model Repository {
     templates_repositories TemplateRepository[]
     modifiers_repositories ModifierRepository[]
 
+    @@unique([uuid])
     @@unique([user_id, slug])
+    @@index([uuid])
     @@map("repositories")
 }
 
 model Technology {
     id        Int        @id @default(autoincrement())
+    uuid      String     @default(uuid()) @db.VarChar(255)
     name      String     @db.VarChar
     slug      String     @db.VarChar
     default   Boolean?
@@ -68,13 +88,17 @@ model Technology {
     prompts   Prompt[]
     templates Template[]
     modifier  Modifier[]
+    threads   Thread[]
 
+    @@unique([uuid])
     @@unique([slug])
+    @@index([uuid])
     @@map("technologies")
 }
 
 model Provider {
     id            Int         @id @default(autoincrement())
+    uuid          String      @default(uuid()) @db.VarChar(255)
     name          String      @db.VarChar(255)
     slug          String      @db.VarChar(255)
     model_name    String      @db.VarChar(255)
@@ -85,13 +109,64 @@ model Provider {
     templates     Template[]
     modifier      Modifier[]
     parameters    Parameter[]
+    threads       Thread[]
 
+    @@unique([uuid])
     @@unique([slug, model_slug])
+    @@index([uuid])
     @@map("providers")
+}
+
+model Workspace {
+    id               Int             @id @default(autoincrement())
+    uuid             String          @default(uuid()) @db.VarChar(255)
+    name             String          @db.VarChar(255)
+    slug             String          @db.VarChar(255)
+    default          Boolean         @default(false)
+    user_id          Int
+    user             User            @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    users_workspaces UserWorkspace[]
+    threads          Thread[]
+
+    @@unique([uuid])
+    @@unique([user_id, slug])
+    @@index([uuid])
+    @@map("workspaces")
+}
+
+model Thread {
+    id                    Int                 @id @default(autoincrement())
+    uuid                  String              @default(uuid()) @db.VarChar(255)
+    title                 String              @db.VarChar(255)
+    slug                  String              @db.VarChar(255)
+    content               String
+    response              String
+    created_at            DateTime            @default(now()) @db.Timestamptz(6)
+    key                   String
+    technology_id         Int
+    provider_id           Int?
+    user_id               Int
+    workspace_id          Int
+    collapsed             Boolean             @default(false)
+    templates             Json[]
+    modifiers             Json[]
+    technology            Technology          @relation(fields: [technology_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    provider              Provider?           @relation(fields: [provider_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    user                  User                @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    workspace             Workspace           @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    threads_chat_messages ThreadChatMessage[]
+    threads_templates     ThreadTemplate[]
+    threads_modifiers     ThreadModifier[]
+    threads_parameters    ThreadParameter[]
+
+    @@unique([uuid])
+    @@index([uuid])
+    @@map("threads")
 }
 
 model Prompt {
     id                    Int                 @id @default(autoincrement())
+    uuid                  String              @default(uuid()) @db.VarChar(255)
     title                 String              @db.VarChar(255)
     slug                  String              @db.VarChar(255)
     content               String
@@ -105,6 +180,8 @@ model Prompt {
     provider_id           Int?
     user_id               Int
     history               Json?
+    templates             Json[]
+    modifiers             Json[]
     public                Boolean             @default(false)
     language              Language            @relation(fields: [language_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     repository            Repository          @relation(fields: [repository_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
@@ -117,70 +194,82 @@ model Prompt {
     prompts_chat_messages PromptChatMessage[]
     prompts_respositories PromptRepository[]
 
-    @@unique([slug, language_id, repository_id, technology_id])
-    @@index(fields: [hash], type: Hash)
+    @@unique([uuid])
+    @@index([uuid])
     @@map("prompts")
 }
 
 model Template {
-    id                     Int                  @id @default(autoincrement())
-    title                  String               @db.VarChar(255)
-    slug                   String               @db.VarChar(255)
-    description            String?
-    hash                   String?
-    created_at             DateTime             @default(now()) @db.Timestamptz(6)
-    updated_at             DateTime             @default(now()) @db.Timestamptz(6)
-    language_id            Int
-    repository_id          Int
-    technology_id          Int
-    provider_id            Int?
-    user_id                Int
-    language               Language             @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    repository             Repository           @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    technology             Technology           @relation(fields: [technology_id], references: [id])
-    provider               Provider?            @relation(fields: [provider_id], references: [id])
-    user                   User                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    prompts_templates      PromptTemplate[]
-    templates_modifiers    TemplateModifier[]
-    templates_repositories TemplateRepository[]
-    templates_parameters   TemplateParameter[]
+    id                              Int                         @id @default(autoincrement())
+    uuid                            String                      @default(uuid()) @db.VarChar(255)
+    title                           String                      @db.VarChar(255)
+    slug                            String                      @db.VarChar(255)
+    description                     String?
+    hash                            String?
+    created_at                      DateTime                    @default(now()) @db.Timestamptz(6)
+    updated_at                      DateTime                    @default(now()) @db.Timestamptz(6)
+    language_id                     Int
+    repository_id                   Int
+    technology_id                   Int
+    provider_id                     Int?
+    user_id                         Int
+    modifiers                       Json[]
+    language                        Language                    @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    repository                      Repository                  @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology                      Technology                  @relation(fields: [technology_id], references: [id])
+    provider                        Provider?                   @relation(fields: [provider_id], references: [id])
+    user                            User                        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts_templates               PromptTemplate[]
+    templates_modifiers             TemplateModifier[]
+    templates_repositories          TemplateRepository[]
+    templates_parameters            TemplateParameter[]
+    threads_templates               ThreadTemplate[]
+    prompts_chat_messages_templates PromptChatMessageTemplate[]
+    threads_chat_messages_templates ThreadChatMessageTemplate[]
 
-    @@unique([slug, language_id, repository_id])
+    @@unique([uuid])
+    @@index([uuid])
     @@index(fields: [hash], type: Hash)
     @@map("templates")
 }
 
 model Modifier {
-    id                     Int                  @id @default(autoincrement())
-    title                  String               @db.VarChar(255)
-    slug                   String               @db.VarChar(255)
-    content                String
-    description            String?
-    hash                   String?
-    created_at             DateTime             @default(now()) @db.Timestamptz(6)
-    updated_at             DateTime             @default(now()) @db.Timestamptz(6)
-    language_id            Int
-    repository_id          Int
-    technology_id          Int
-    provider_id            Int?
-    user_id                Int
-    public                 Boolean              @default(false)
-    language               Language             @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    repository             Repository           @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    technology             Technology           @relation(fields: [technology_id], references: [id])
-    provider               Provider?            @relation(fields: [provider_id], references: [id])
-    user                   User                 @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
-    prompts_modifiers      PromptModifier[]
-    templates_modifiers    TemplateModifier[]
-    modifiers_repositories ModifierRepository[]
+    id                        Int                         @id @default(autoincrement())
+    uuid                      String                      @default(uuid()) @db.VarChar(255)
+    title                     String                      @db.VarChar(255)
+    slug                      String                      @db.VarChar(255)
+    content                   String
+    description               String?
+    hash                      String?
+    created_at                DateTime                    @default(now()) @db.Timestamptz(6)
+    updated_at                DateTime                    @default(now()) @db.Timestamptz(6)
+    language_id               Int
+    repository_id             Int
+    technology_id             Int
+    provider_id               Int?
+    user_id                   Int
+    public                    Boolean                     @default(false)
+    language                  Language                    @relation(fields: [language_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    repository                Repository                  @relation(fields: [repository_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    technology                Technology                  @relation(fields: [technology_id], references: [id])
+    provider                  Provider?                   @relation(fields: [provider_id], references: [id])
+    user                      User                        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts_modifiers         PromptModifier[]
+    templates_modifiers       TemplateModifier[]
+    modifiers_repositories    ModifierRepository[]
+    threads_modifiers         ThreadModifier[]
+    PromptChatMessageModifier PromptChatMessageModifier[]
+    ThreadChatMessageModifier ThreadChatMessageModifier[]
 
-    @@unique([slug, language_id, repository_id])
+    @@unique([uuid])
+    @@index([uuid])
     @@index(fields: [hash], type: Hash)
     @@map("modifiers")
 }
 
 model Parameter {
     id                   Int                 @id @default(autoincrement())
+    uuid                 String              @default(uuid()) @db.VarChar(255)
     name                 String              @db.VarChar(255)
     slug                 String              @db.VarChar(255)
     value                String
@@ -189,20 +278,58 @@ model Parameter {
     provider             Provider            @relation(fields: [provider_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
     prompts_parameters   PromptParameter[]
     templates_parameters TemplateParameter[]
+    threads_parameters   ThreadParameter[]
 
+    @@unique([uuid])
     @@unique([slug, provider_id])
+    @@index([uuid])
     @@map("parameters")
 }
 
-model PromptChatMessage {
-    id        Int    @id @default(autoincrement())
-    prompt_id Int
-    role      String @db.VarChar(255)
-    message   String @db.Text
-    prompt    Prompt @relation(fields: [prompt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+model UserWorkspace {
+    user_id      Int
+    workspace_id Int
+    user         User      @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    workspace    Workspace @relation(fields: [workspace_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
+    @@id([user_id, workspace_id])
+    @@map("users_workspaces")
+}
+
+model PromptChatMessage {
+    id                              Int                         @id @default(autoincrement())
+    uuid                            String                      @default(uuid()) @db.VarChar(255)
+    prompt_id                       Int
+    user_id                         Int
+    role                            String                      @db.VarChar(255)
+    message                         String                      @db.Text
+    prompt                          Prompt                      @relation(fields: [prompt_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    user                            User                        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    prompts_chat_messages_templates PromptChatMessageTemplate[]
+    prompts_chat_messages_modifiers PromptChatMessageModifier[]
+
+    @@unique([uuid])
+    @@index([uuid])
     @@index([prompt_id])
     @@map("prompts_chat_messages")
+}
+
+model ThreadChatMessage {
+    id                              Int                         @id @default(autoincrement())
+    uuid                            String                      @default(uuid()) @db.VarChar(255)
+    thread_id                       Int
+    user_id                         Int
+    role                            String                      @db.VarChar(255)
+    message                         String                      @db.Text
+    thread                          Thread                      @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    user                            User                        @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction)
+    threads_chat_messages_templates ThreadChatMessageTemplate[]
+    threads_chat_messages_modifiers ThreadChatMessageModifier[]
+
+    @@unique([uuid])
+    @@index([uuid])
+    @@index([thread_id])
+    @@map("threads_chat_messages")
 }
 
 model PromptRepository {
@@ -238,6 +365,50 @@ model ModifierRepository {
     @@map("modifiers_repositories")
 }
 
+model PromptChatMessageTemplate {
+    prompt_chat_message_id Int
+    template_id            Int
+
+    prompt_chat_message PromptChatMessage @relation(fields: [prompt_chat_message_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    template            Template          @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([prompt_chat_message_id, template_id])
+    @@map("prompts_chat_messages_templates")
+}
+
+model ThreadChatMessageTemplate {
+    thread_chat_message_id Int
+    template_id            Int
+
+    thread_chat_message ThreadChatMessage @relation(fields: [thread_chat_message_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    template            Template          @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_chat_message_id, template_id])
+    @@map("threads_chat_messages_templates")
+}
+
+model PromptChatMessageModifier {
+    prompt_chat_message_id Int
+    modifier_id            Int
+
+    prompt_chat_message PromptChatMessage @relation(fields: [prompt_chat_message_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    modifier            Modifier          @relation(fields: [modifier_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([prompt_chat_message_id, modifier_id])
+    @@map("prompts_chat_messages_modifiers")
+}
+
+model ThreadChatMessageModifier {
+    thread_chat_message_id Int
+    modifier_id            Int
+
+    thread_chat_message ThreadChatMessage @relation(fields: [thread_chat_message_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    modifier            Modifier          @relation(fields: [modifier_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_chat_message_id, modifier_id])
+    @@map("threads_chat_messages_modifiers")
+}
+
 model PromptTemplate {
     prompt_id   Int
     template_id Int
@@ -249,6 +420,17 @@ model PromptTemplate {
     @@map("prompts_templates")
 }
 
+model ThreadTemplate {
+    thread_id   Int
+    template_id Int
+
+    thread   Thread   @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    template Template @relation(fields: [template_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_id, template_id])
+    @@map("threads_templates")
+}
+
 model PromptModifier {
     prompt_id   Int
     modifier_id Int
@@ -258,6 +440,17 @@ model PromptModifier {
 
     @@id([prompt_id, modifier_id])
     @@map("prompts_modifiers")
+}
+
+model ThreadModifier {
+    thread_id   Int
+    modifier_id Int
+
+    thread   Thread   @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    modifier Modifier @relation(fields: [modifier_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_id, modifier_id])
+    @@map("threads_modifiers")
 }
 
 model TemplateModifier {
@@ -280,6 +473,17 @@ model PromptParameter {
 
     @@id([prompt_id, parameter_id])
     @@map("prompts_parameters")
+}
+
+model ThreadParameter {
+    thread_id    Int
+    parameter_id Int
+    value        String?
+    parameter    Parameter @relation(fields: [parameter_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+    thread       Thread    @relation(fields: [thread_id], references: [id], onDelete: Cascade, onUpdate: NoAction)
+
+    @@id([thread_id, parameter_id])
+    @@map("threads_parameters")
 }
 
 model TemplateParameter {
